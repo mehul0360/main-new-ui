@@ -1,0 +1,606 @@
+// Fonts
+@import url('https://fonts.bunny.net/css?family=Nunito');
+
+// Variables
+@import 'variables';
+
+// Bootstrap
+@import 'bootstrap/scss/bootstrap';
+
+body {
+    margin: 0;
+    padding: 0;
+    font-family: 'Geist', sans-serif;
+}
+
+.body {
+    background-color: #f8f9fa;
+}
+
+.sidebar {
+    width: 256px;
+    height: 100vh;
+    background-color: #1d293d;
+    position: fixed;
+    display: flex;
+    flex-direction: column;
+}
+
+.main-content {
+    margin-left: 16rem;
+}
+
+.horizontal-border {
+    border-bottom: 1px solid #314158;
+}
+
+.logo-section {
+    padding: 24px 24px 25px 24px;
+}
+
+.logo-container {
+    display: flex;
+    gap: 12px;
+    align-items: center;
+}
+
+.logo-image {
+    width: 40px;
+    height: 40px;
+    border-radius: 10px;
+    background-image: url("/public/images/saas-logo.png");
+    background-size: 100% 100%;
+    background-repeat: no-repeat;
+    flex-shrink: 0;
+}
+
+.logo-text {
+    font-family: 'Geist', sans-serif;
+    font-weight: 600;
+    font-size: 18px;
+    line-height: 28px;
+    color: white;
+    white-space: nowrap;
+    margin: 0;
+}
+
+.user-section {
+    padding: 16px;
+}
+
+.user-container {
+    display: flex;
+    gap: 12px;
+    align-items: center;
+}
+
+.user-avatar {
+    width: 32px;
+    height: 32px;
+    background-color: #ff8904;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.user-initials {
+    font-family: 'Geist', sans-serif;
+    font-weight: 500;
+    font-size: 14px;
+    line-height: 20px;
+    color: white;
+    margin: 0;
+}
+
+.user-name {
+    font-family: 'Geist', sans-serif;
+    font-weight: 400;
+    font-size: 14px;
+    line-height: 20px;
+    color: #d1d5dc;
+    white-space: nowrap;
+    margin: 0;
+}
+
+.menu-content {
+    flex: 1;
+    min-height: 0;
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+}
+
+.menu-section {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.section-heading {
+    font-family: 'Geist', sans-serif;
+    font-weight: 600;
+    font-size: 12px;
+    line-height: 16px;
+    color: #90a1b9;
+    text-transform: uppercase;
+    letter-spacing: 0.6px;
+    margin: 0;
+}
+
+.nav-links {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.nav-link-item {
+    display: flex;
+    align-items: flex-start;
+    padding: 8px 12px;
+    border-radius: 8px;
+    text-decoration: none;
+    gap: 12px;
+    transition: background-color 0.2s;
+}
+
+.nav-link-item:hover {
+    background-color: rgba(49, 65, 88, 0.5);
+}
+
+.nav-icon {
+    width: 16px;
+    height: 16px;
+    flex-shrink: 0;
+}
+
+.nav-icon img {
+    vertical-align: text-top;
+}
+
+.nav-text {
+    font-family: 'Geist', sans-serif;
+    font-weight: 400;
+    font-size: 14px;
+    line-height: 20px;
+    color: #d1d5dc;
+    white-space: nowrap;
+    margin: 0;
+}
+
+.icon-box {
+    width: 32px;
+    height: 32px;
+    border-radius: 0.25rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+}
+
+.icon-box-sm {
+    font-size: 10px;
+}
+
+.icon-box-md {
+    font-size: 14px;
+}
+
+.btn-primary-custom {
+    background-color: #6366f1 !important;
+    border-color: #6366f1 !important;
+    color: white !important;
+    border-radius: .5rem !important;
+    font-size: 14px !important;
+    font-weight: 500 !important;
+}
+
+.btn-primary-custom:hover {
+    background-color: #5855eb !important;
+    border-color: #5855eb !important;
+    color: white !important;
+}
+
+.table .table-header th:first-child {
+    border-top-left-radius: 8px !important;
+}
+
+.table .table-header th:last-child {
+    border-top-right-radius: 8px !important;
+}
+
+.table-header th {
+    background-color: #6366f1 !important;
+    color: white !important;
+}
+
+.table-header th:first-child {
+    padding: 1rem 1.5rem !important;
+}
+
+.action-btn {
+    width: 32px;
+    height: 32px;
+    padding: 0;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border: none;
+    background: transparent;
+    color: #9ca3af;
+    border-radius: 0.375rem;
+    transition: all 0.2s;
+}
+
+.action-btn:hover {
+    background-color: #f3f4f6;
+    color: #4b5563;
+}
+
+.action-btn.btn-delete:hover {
+    background-color: #fef2f2;
+    color: #dc2626;
+}
+
+.arrow-icon {
+    color: #9ca3af;
+}
+
+.settings-box {
+    padding: 0.5rem;
+    background-color: #155dfc;
+    border-radius: 0.375rem;
+    cursor: pointer;
+    transition: transform 0.2s;
+}
+
+.settings-box:hover {
+    transform: scale(1.05);
+}
+
+.breadcrumb-item.active {
+    color: #6c757d;
+}
+
+.breadcrumb-item a {
+    color: #6366f1;
+    text-decoration: none;
+}
+
+.breadcrumb-item a:hover {
+    color: #5855eb;
+}
+
+.search-input {
+    padding-left: 2.5rem !important;
+}
+
+.search-icon {
+    position: absolute;
+    left: .75rem;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #9ca3af;
+}
+
+.table-hover tbody tr:hover {
+    background-color: #f9fafb;
+}
+
+.close-icon-box {
+    width: 32px;
+    height: 32px;
+    background-color: #ef4444;
+    border-radius: 0.25rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.bg-purple {
+    background-color: #9333ea;
+}
+
+.plugin-logo-image {
+    width: 80px;
+    height: 80px;
+    border-radius: 10px;
+    border: 2px solid #e7e5e5;
+    box-shadow: #ccc !important;
+    background-color: #fff;
+    background-size: 100% 100%;
+    background-repeat: no-repeat;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.plugin-logo-image img {
+    width: 100%;
+    padding: .25rem;
+}
+
+.swap-icon {
+    width: 32px;
+    height: 32px;
+}
+
+.shopify-logo-container {
+    width: 80px;
+    height: 80px;
+    border-radius: 10px;
+    border: 2px solid #b9f8cf;
+    padding: 2px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.shopify-logo-container img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+}
+
+.progress-card {
+    background: white;
+    border-radius: 14px;
+    border: 1px solid #e5e7eb;
+    box-shadow: 0px 1px 3px 0px rgba(0, 0, 0, 0.1), 0px 1px 2px -1px rgba(0, 0, 0, 0.1);
+}
+
+.step-circle {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    z-index: 2;
+}
+
+.step-circle.active {
+    background-color: #155dfc;
+}
+
+.step-circle.inactive {
+    background-color: #d1d5dc;
+}
+
+.step-circle.completed {
+    background-color: #22c55e;
+}
+
+.step-wrapper {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    position: relative;
+    z-index: 1;
+}
+
+.step-wrapper.disabled {
+    cursor: not-allowed;
+    opacity: 0.5;
+}
+
+.step-wrapper.active {
+    cursor: pointer;
+}
+
+.progress-line {
+    position: absolute;
+    height: 2px;
+    background-color: #d1d5dc;
+    top: 20px;
+    left: 20px;
+    right: 20px;
+    z-index: 0;
+}
+
+.step-label {
+    font-size: 12px;
+    line-height: 16px;
+    text-align: center;
+    margin-top: 12px;
+    max-width: 80px;
+    min-width: 64px;
+}
+
+.step-label.active {
+    color: #155dfc;
+    font-weight: 500;
+}
+
+.step-label.completed {
+    color: #22c55e;
+    font-weight: 500;
+}
+
+.step-label.inactive {
+    color: #4a5565;
+}
+
+.main-card {
+    background: white;
+    border-radius: 14px;
+    border: 1px solid #e5e7eb;
+    box-shadow: 0px 1px 3px 0px rgba(0, 0, 0, 0.1), 0px 1px 2px -1px rgba(0, 0, 0, 0.1);
+    padding: 40px;
+}
+
+.main-title {
+    font-family: 'Poppins', sans-serif;
+    font-size: 36px;
+    line-height: 44px;
+    font-weight: 600;
+    color: #101828;
+}
+
+.main-description {
+    font-family: 'Roboto', sans-serif;
+    font-size: 16px;
+    line-height: 25px;
+    color: #4a5565;
+}
+
+.small-text {
+    font-size: 14px;
+    color: #6a7282;
+}
+
+.info-box {
+    background-color: #f8f9fc;
+    border-radius: 8px;
+    padding: 24px;
+}
+
+.info-title {
+    font-family: 'Poppins', sans-serif;
+    font-size: 20px;
+    line-height: 28px;
+    font-weight: 500;
+    color: #101828;
+}
+
+.check-icon {
+    background-color: #22c55e;
+    border-radius: 50%;
+    padding: 4px;
+    width: 24px;
+    height: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.check-text {
+    font-family: 'Roboto', sans-serif;
+    font-size: 14px;
+    line-height: 20px;
+    color: #4a5565;
+}
+
+.icon-circle {
+    background-color: #5a67d8;
+    border-radius: 50%;
+    padding: 24px;
+    width: 96px;
+    height: 96px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.store-label {
+    font-family: 'Poppins', sans-serif;
+    font-size: 16px;
+    line-height: 24px;
+    font-weight: 500;
+    color: #4a5565;
+}
+
+.success-text {
+    font-family: 'Roboto', sans-serif;
+    font-size: 14px;
+    line-height: 20px;
+    color: #22c55e;
+}
+
+.btn-primary-custom {
+    background-color: #5a67d8;
+    border: none;
+    color: white;
+    padding: 12px 32px;
+    font-size: 16px;
+    border-radius: 6px;
+    transition: all 0.3s;
+}
+
+.btn-primary-custom:hover {
+    background-color: #4c51d4;
+}
+
+.redirect-text {
+    font-family: 'Roboto', sans-serif;
+    font-size: 12px;
+    line-height: 16px;
+    color: #6a7282;
+}
+
+.security-badge {
+    color: #22c55e;
+    font-size: 12px;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.badge-separator {
+    width: 4px;
+    height: 4px;
+    background-color: #d1d5dc;
+    border-radius: 50%;
+}
+
+.btn-back {
+    text-decoration: none;
+    font-size: 14px;
+    font-weight: 500;
+    border: 1px solid #F20F52;
+    color: #F20F52;
+    background: white;
+    padding-inline: 1.5rem;
+    padding-block: .5rem;
+    border-radius: 6px;
+    transition: all 0.3s;
+}
+
+.btn-back:hover {
+    background-color: #F20F52;
+    color: white;
+}
+
+.btn-continue {
+    text-decoration: none;
+    font-size: 14px;
+    font-weight: 500;
+    background-color: #F20F52;
+    border: none;
+    color: white;
+    padding-inline: 1.5rem;
+    padding-block: .5rem;
+    border-radius: 6px;
+    transition: all 0.3s;
+}
+
+.btn-continue:hover {
+    background-color: #d40d47;
+}
+
+.section-header {
+    font-family: 'Geist', sans-serif;
+    font-size: 18px;
+    line-height: 28px;
+    font-weight: 500;
+    color: #101828;
+}
+
+.step-counter {
+    font-family: 'Geist', sans-serif;
+    font-size: 14px;
+    line-height: 20px;
+    color: #6a7282;
+}
+
+@media (max-width: 991px) {
+    .icon-circle {
+        width: 80px;
+        height: 80px;
+        padding: 20px;
+    }
+}
