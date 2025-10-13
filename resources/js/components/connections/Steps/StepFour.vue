@@ -1,5 +1,8 @@
 <script setup>
 import { onMounted, ref } from 'vue';
+import AdditionalMappings from './Customers/AdditionalMapping.vue';
+import SyncBehaviourSettings from './Customers/SyncBehaviourSettings.vue';
+import TierGroups from './Customers/TierGroups.vue';
 
 const primaryId = ref('email');
 
@@ -95,7 +98,7 @@ onMounted(() => {
                                 <div class="d-flex align-items-center gap-2 mb-2">
                                     <div class="logic-item-title">Contact Information Sync</div>
                                     <button type="button" class="info-btn-blue" data-bs-toggle="tooltip"
-                                        title="Customer contact details are automatically synchronized">
+                                        title="Essential customer contact details automatically sync between systems including first name, last name, email address (mandatory), phone number, and company information.">
                                         <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
                                             viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
                                             stroke-linecap="round" stroke-linejoin="round" class="info-icon-small">
@@ -126,7 +129,7 @@ onMounted(() => {
                                 <div class="d-flex align-items-center gap-2 mb-2">
                                     <div class="logic-item-title">Address Information Sync</div>
                                     <button type="button" class="info-btn-blue" data-bs-toggle="tooltip"
-                                        title="Full address details mapped between systems">
+                                        title="Complete address information syncs between systems including billing and shipping addresses with proper field mapping (suburb→city, state→province, postcode→zip).">
                                         <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
                                             viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
                                             stroke-linecap="round" stroke-linejoin="round" class="info-icon-small">
@@ -156,7 +159,7 @@ onMounted(() => {
                                 <div class="d-flex align-items-center gap-2 mb-2">
                                     <div class="logic-item-title">Marketing Consent Management</div>
                                     <button type="button" class="info-btn-blue" data-bs-toggle="tooltip"
-                                        title="Marketing preferences sync to maintain consent compliance">
+                                        title="Customer marketing preferences (email and SMS subscriptions) are synchronized to maintain compliance and ensure consistent marketing consent across both platforms.">
                                         <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
                                             viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
                                             stroke-linecap="round" stroke-linejoin="round" class="info-icon-small">
@@ -186,7 +189,7 @@ onMounted(() => {
                                 <div class="d-flex align-items-center gap-2 mb-2">
                                     <div class="logic-item-title">Customer ID Cross-Reference</div>
                                     <button type="button" class="info-btn-blue" data-bs-toggle="tooltip"
-                                        title="Unique customer identifiers maintained for tracking">
+                                        title="Unique customer identifiers are automatically maintained and cross-referenced between systems to ensure data integrity and prevent duplicate customer records.">
                                         <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
                                             viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
                                             stroke-linecap="round" stroke-linejoin="round" class="info-icon-small">
@@ -215,8 +218,8 @@ onMounted(() => {
                             <div class="flex-fill">
                                 <div class="d-flex align-items-center gap-2 mb-2">
                                     <div class="logic-item-title">✓ Export to Web Filter</div>
-                                    <button type="button" class="info-btn-blue" data-bs-toggle="tooltip"
-                                        title="Only customers marked 'export to web' are synced">
+                                    <button type="button" class="info-btn-blue" data-bs-toggle="tooltip" title="Only customers marked as 'export to web' in Retail Express will be
+                                        included in the sync process to Shopify.">
                                         <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
                                             viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
                                             stroke-linecap="round" stroke-linejoin="round" class="info-icon-small">
@@ -235,6 +238,12 @@ onMounted(() => {
                 </div>
             </div>
         </div>
+
+        <additional-mappings />
+
+        <sync-behaviour-settings />
+
+        <tier-groups />
     </div>
 </template>
 
