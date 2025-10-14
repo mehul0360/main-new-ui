@@ -4,6 +4,7 @@ import StepOne from './Steps/StepOne.vue';
 import StepTwo from './Steps/StepTwo.vue';
 import StepThree from './Steps/StepThree.vue';
 import StepFour from './Steps/StepFour.vue';
+import StepFive from './Steps/StepFive.vue';
 
 // Icons as functional components
 const ShopifyIcon = ({ stroke = 'white' }) => h('svg', {
@@ -206,7 +207,11 @@ const steps = ref([
 // Navigation functions
 const goNext = () => {
     if (currentStep.value < steps.value.length) {
-        currentStep.value++;
+        window.scrollTo({ top: 0, left: 0, behavior: 'smooth' });
+
+        setTimeout(() => {
+            currentStep.value++;
+        }, 200);
     }
 };
 
@@ -217,7 +222,11 @@ const goBack = () => {
     }
 
     if (currentStep.value > 1) {
-        currentStep.value--;
+        window.scrollTo({ top: 0, left: 0, behavior: 'smooth' });
+
+        setTimeout(() => {
+            currentStep.value--;
+        }, 200);
     }
 };
 
@@ -274,6 +283,7 @@ const getIconColor = (index) => {
     <step-two v-if="currentStep === 2"></step-two>
     <step-three v-if="currentStep === 3"></step-three>
     <step-four v-if="currentStep === 4"></step-four>
+    <step-five v-if="currentStep === 5"></step-five>
 
     <div class="d-flex justify-content-between align-items-center gap-3 mt-4">
         <button class="btn-back" @click.prevent="goBack()">
