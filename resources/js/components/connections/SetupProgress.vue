@@ -5,6 +5,7 @@ import StepTwo from './Steps/StepTwo.vue';
 import StepThree from './Steps/StepThree.vue';
 import StepFour from './Steps/StepFour.vue';
 import StepFive from './Steps/StepFive.vue';
+import StepSix from './Steps/StepSix.vue';
 
 // Icons as functional components
 const ShopifyIcon = ({ stroke = 'white' }) => h('svg', {
@@ -206,6 +207,11 @@ const steps = ref([
 
 // Navigation functions
 const goNext = () => {
+    if (currentStep.value === 6) {
+        window.location.href = '/connections';
+        return;
+    }
+
     if (currentStep.value < steps.value.length) {
         window.scrollTo({ top: 0, left: 0, behavior: 'smooth' });
 
@@ -284,12 +290,18 @@ const getIconColor = (index) => {
     <step-three v-if="currentStep === 3"></step-three>
     <step-four v-if="currentStep === 4"></step-four>
     <step-five v-if="currentStep === 5"></step-five>
+    <step-six v-if="currentStep === 6"></step-six>
 
     <div class="d-flex justify-content-between align-items-center gap-3 mt-4">
         <button class="btn-back" @click.prevent="goBack()">
             <span v-if="currentStep === 1">Back to Connections Page</span>
             <span v-if="currentStep > 1">Back to {{ steps[currentStep - 2].title }}</span>
         </button>
-        <button class="btn-continue" @click="goNext">Continue to {{ steps[currentStep].title }}</button>
+        <button class="btn-continue" @click="goNext" v-if="currentStep <= 5">
+            Continue to {{ steps[currentStep].title }}
+        </button>
+        <button class="btn-finish" @click="goNext" v-if="currentStep === 6">
+            Complete Setup
+        </button>
     </div>
 </template>
