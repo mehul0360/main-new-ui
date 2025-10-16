@@ -161,7 +161,7 @@ const StoreIcon = ({ stroke = '#4A5565' }) => h('svg', {
 ]);
 
 // Current step (1-indexed)
-const currentStep = ref(1);
+const currentStep = ref(0);
 
 // Steps configuration
 const steps = ref([
@@ -170,6 +170,7 @@ const steps = ref([
         icon: ShopifyIcon,
         title: 'Connect to Shopify',
         description: 'Link your Shopify store to sync products, orders, and customer data.',
+        isCompleted: false,
         component: StepOne
     },
     {
@@ -177,43 +178,54 @@ const steps = ref([
         icon: LinkIcon,
         title: 'Connect Retail Express',
         description: 'Integrate with Retail Express to manage your retail operations seamlessly.',
+        isCompleted: false,
         component: StepTwo
     },
     {
         label: ['Products'],
         icon: PackageIcon,
         title: 'Products',
-        description: 'Import and configure your product catalog for both online and retail channels.'
+        description: 'Import and configure your product catalog for both online and retail channels.',
+        isCompleted: false,
+        component: StepThree
     },
     {
         label: ['Customers'],
         icon: UsersIcon,
         title: 'Customers',
-        description: 'Sync customer information and create unified customer profiles across channels.'
+        description: 'Sync customer information and create unified customer profiles across channels.',
+        isCompleted: false,
+        component: StepFour
     },
     {
         label: ['Orders'],
         icon: CartIcon,
         title: 'Orders',
-        description: 'Configure order management and fulfillment settings for your business.'
+        description: 'Configure order management and fulfillment settings for your business.',
+        isCompleted: false,
+        component: StepFive
     },
     {
         label: ['Stores &', 'Inventory'],
         icon: StoreIcon,
         title: 'Stores & Inventory',
-        description: 'Set up your store locations and inventory management preferences.'
+        description: 'Set up your store locations and inventory management preferences.',
+        isCompleted: false,
+        component: StepSix
     }
 ]);
 
+const goToConnectionsListingPage = () => {
+    window.location.href = '/connections';
+    return;
+};
+
 // Navigation functions
 const goNext = () => {
-    if (currentStep.value === 6) {
-        window.location.href = '/connections';
-        return;
-    }
-
     if (currentStep.value < steps.value.length) {
         window.scrollTo({ top: 0, left: 0, behavior: 'smooth' });
+
+        steps.value[currentStep.value].isCompleted = true;
 
         setTimeout(() => {
             currentStep.value++;
@@ -222,7 +234,7 @@ const goNext = () => {
 };
 
 const goBack = () => {
-    if (currentStep.value === 1) {
+    if (currentStep.value === 0) {
         window.location.href = '/connections';
         return;
     }
@@ -236,27 +248,33 @@ const goBack = () => {
     }
 };
 
+const showStepIfCompleted = (index) => {
+    if (currentStep.value > index || steps.value[index].isCompleted) {
+        currentStep.value = index;
+    }
+}
+
 // Style helper functions
 const getStepWrapperClass = (index) => {
-    if (index + 1 < currentStep.value) return 'completed';
-    if (index + 1 === currentStep.value) return 'active';
+    if (index < currentStep.value || steps.value[index].isCompleted) return 'completed';
+    if (index === currentStep.value || steps.value[index].isCompleted) return 'active';
     return 'disabled';
 };
 
 const getStepCircleClass = (index) => {
-    if (index + 1 < currentStep.value) return 'completed';
-    if (index + 1 === currentStep.value) return 'active';
+    if (index < currentStep.value || steps.value[index].isCompleted) return 'completed';
+    if (index === currentStep.value) return 'active';
     return 'inactive';
 };
 
 const getStepLabelClass = (index) => {
-    if (index + 1 < currentStep.value) return 'completed';
-    if (index + 1 === currentStep.value) return 'active';
+    if (index < currentStep.value || steps.value[index].isCompleted) return 'completed';
+    if (index === currentStep.value) return 'active';
     return 'inactive';
 };
 
 const getIconColor = (index) => {
-    if (index + 1 <= currentStep.value) return 'white';
+    if (index <= currentStep.value || steps.value[index].isCompleted) return 'white';
     return '#4A5565';
 };
 </script>
@@ -265,7 +283,7 @@ const getIconColor = (index) => {
     <div class="progress-card p-4 mb-4">
         <div class="d-flex justify-content-between align-items-center mb-4 pb-4">
             <div class="section-header">Setup Progress</div>
-            <div class="step-counter">Step {{ currentStep }} of {{ steps.length }}</div>
+            <div class="step-counter">Step {{ currentStep + 1 }} of {{ steps.length }}</div>
         </div>
 
         <div class="position-relative">
@@ -273,7 +291,7 @@ const getIconColor = (index) => {
 
             <div class="d-flex justify-content-between">
                 <div v-for="(step, index) in steps" :key="index" class="step-wrapper"
-                    :class="getStepWrapperClass(index)">
+                    :class="getStepWrapperClass(index)" @click="showStepIfCompleted(index)">
                     <div class="step-circle" :class="getStepCircleClass(index)">
                         <component :is="step.icon" :stroke="getIconColor(index)" />
                     </div>
@@ -285,22 +303,22 @@ const getIconColor = (index) => {
         </div>
     </div>
 
-    <step-one v-if="currentStep === 1"></step-one>
-    <step-two v-if="currentStep === 2"></step-two>
-    <step-three v-if="currentStep === 3"></step-three>
-    <step-four v-if="currentStep === 4"></step-four>
-    <step-five v-if="currentStep === 5"></step-five>
-    <step-six v-if="currentStep === 6"></step-six>
+    <step-one v-if="currentStep === 0"></step-one>
+    <step-two v-if="currentStep === 1"></step-two>
+    <step-three v-if="currentStep === 2"></step-three>
+    <step-four v-if="currentStep === 3"></step-four>
+    <step-five v-if="currentStep === 4"></step-five>
+    <step-six v-if="currentStep === 5"></step-six>
 
     <div class="d-flex justify-content-between align-items-center gap-3 mt-4">
         <button class="btn-back" @click.prevent="goBack()">
-            <span v-if="currentStep === 1">Back to Connections Page</span>
-            <span v-if="currentStep > 1">Back to {{ steps[currentStep - 2].title }}</span>
+            <span v-if="currentStep === 0">Back to Connections Page</span>
+            <span v-if="currentStep > 0">Back to {{ steps[currentStep - 1].title }}</span>
         </button>
-        <button class="btn-continue" @click="goNext" v-if="currentStep <= 5">
-            Continue to {{ steps[currentStep].title }}
+        <button class="btn-continue" @click="goNext" v-if="currentStep <= 4">
+            Continue to {{ steps[currentStep + 1].title }}
         </button>
-        <button class="btn-finish" @click="goNext" v-if="currentStep === 6">
+        <button class="btn-finish" @click="goToConnectionsListingPage" v-if="currentStep === 5">
             Complete Setup
         </button>
     </div>
