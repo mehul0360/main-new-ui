@@ -68,6 +68,11 @@ const toggleVariantAttribute = (attr) => {
         }
     }
 };
+
+const removeVariant = (attr) => {
+    const index = variantAttributes.value.indexOf(attr);
+    variantAttributes.value.splice(index, 1);
+}
 </script>
 
 <template>
@@ -442,8 +447,26 @@ const toggleVariantAttribute = (attr) => {
                                         @change="toggleVariantAttribute(attr)"
                                         :disabled="!variantAttributes.includes(attr) && maxVariantsReached"
                                         class="form-check-input checkbox-custom">
-                                    <span class="checkbox-label">{{ attr }}</span>
+                                    <span :class="{
+                                        'checkbox-label': variantAttributes.includes(attr) || !maxVariantsReached,
+                                        'checkbox-label-disabled': !variantAttributes.includes(attr) && maxVariantsReached,
+                                    }">
+                                        {{ attr }}
+                                    </span>
                                 </label>
+                            </div>
+
+                            <div v-if="variantAttributes.length" class="mt-3">
+                                <div style="font-size: 13px">
+                                    Selected Attributes ({{ variantAttributes.length }}/3):
+                                </div>
+
+                                <div v-for="attr in variantAttributes"
+                                    class="mt-2 d-inline-flex align-items-center px-1 bg-purple-light mx-1 gap-2 border rounded">
+                                    <span class="ml-1 text-purple" style="font-size: 13px;">{{ attr }}</span>
+                                    <span class="text-purple" style="font-size: 1.2rem; cursor: pointer;"
+                                        @click="removeVariant(attr)">&times;</span>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -803,6 +826,15 @@ const toggleVariantAttribute = (attr) => {
     margin: 0;
 }
 
+.checkbox-label-disabled {
+    font-family: 'Roboto', sans-serif;
+    font-size: 13px;
+    color: #30343b;
+    margin: 0;
+    cursor: not-allowed;
+    opacity: 0.6;
+}
+
 .btn-group-toggle {
     display: inline-flex;
     padding: 0.25rem;
@@ -882,6 +914,14 @@ const toggleVariantAttribute = (attr) => {
 .info-highlight {
     font-weight: 500;
     color: #1d4ed8;
+}
+
+.bg-purple-light {
+    background-color: #efe4fa;
+}
+
+.text-purple {
+    color: #9333ea;
 }
 
 /* Responsive adjustments */
