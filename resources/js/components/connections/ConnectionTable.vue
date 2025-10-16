@@ -1,9 +1,11 @@
 <script setup>
+import { onMounted } from 'vue';
+
 const connections = [
     {
         plugins: {
-            main: {image: "M", color: 'bg-warning'},
-            other: {image: "RE", color: 'bg-primary'},
+            main: { image: "M", color: 'bg-warning' },
+            other: { image: "RE", color: 'bg-primary' },
         },
         name: 'Alpine',
         status: 'Active',
@@ -12,8 +14,8 @@ const connections = [
     },
     {
         plugins: {
-            main: {image: "RE", color: 'bg-primary'},
-            other: {image: "S", color: 'bg-success'},
+            main: { image: "RE", color: 'bg-primary' },
+            other: { image: "S", color: 'bg-success' },
         },
         name: 'Zorich',
         status: 'Active',
@@ -22,8 +24,8 @@ const connections = [
     },
     {
         plugins: {
-            main: {image: "M", color: 'bg-warning'},
-            other: {image: "RE", color: 'bg-primary'},
+            main: { image: "M", color: 'bg-warning' },
+            other: { image: "RE", color: 'bg-primary' },
         },
         name: 'Selby Acoustics',
         status: 'Active',
@@ -32,8 +34,8 @@ const connections = [
     },
     {
         plugins: {
-            main: {image: "RE", color: 'bg-primary'},
-            other: {image: "S", color: 'bg-success'},
+            main: { image: "RE", color: 'bg-primary' },
+            other: { image: "S", color: 'bg-success' },
         },
         name: 'Selby Acoustics',
         status: 'Active',
@@ -42,8 +44,8 @@ const connections = [
     },
     {
         plugins: {
-            main: {image: "M", color: 'bg-primary'},
-            other: {image: "S", color: 'bg-success'},
+            main: { image: "M", color: 'bg-primary' },
+            other: { image: "S", color: 'bg-success' },
         },
         name: 'Workingonit - Lo fi',
         status: 'Active',
@@ -52,8 +54,8 @@ const connections = [
     },
     {
         plugins: {
-            main: {image: "M", color: 'bg-purple'},
-            other: {image: "RE", color: 'bg-primary'},
+            main: { image: "M", color: 'bg-purple' },
+            other: { image: "RE", color: 'bg-primary' },
         },
         name: 'RSPCA ACT',
         status: 'Active',
@@ -62,8 +64,8 @@ const connections = [
     },
     {
         plugins: {
-            main: {image: "M", color: 'bg-purple'},
-            other: {image: "S", color: 'bg-success'},
+            main: { image: "M", color: 'bg-purple' },
+            other: { image: "S", color: 'bg-success' },
         },
         name: 'Surepak Live',
         status: 'Active',
@@ -71,6 +73,18 @@ const connections = [
         updated_at: '4 days ago',
     },
 ];
+
+onMounted(() => {
+    const tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+    tooltipTriggerList.map(function (tooltipTriggerEl) {
+        return new bootstrap.Tooltip(tooltipTriggerEl);
+    });
+});
+
+const goToConnection = (connection) => {
+    window.location.href = '/connections/build';
+    return;
+}
 </script>
 
 <template>
@@ -96,7 +110,8 @@ const connections = [
                                     <span class="text-white icon-box-md">{{ connection.plugins.main.image }}</span>
                                 </div>
                                 <svg width="16" height="16" viewBox="0 0 16 16" fill="none" class="arrow-icon">
-                                    <path d="M6 3L11 8L6 13" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"></path>
+                                    <path d="M6 3L11 8L6 13" stroke="currentColor" stroke-width="2" fill="none"
+                                        stroke-linecap="round" stroke-linejoin="round"></path>
                                 </svg>
                                 <div :class="`icon-box ${connection.plugins.other.color}`">
                                     <span class="text-white icon-box-sm">{{ connection.plugins.other.image }}</span>
@@ -105,8 +120,12 @@ const connections = [
                         </td>
                         <td class="align-middle fw-medium">{{ connection.name }}</td>
                         <td class="align-middle">
-                            <div class="settings-box d-inline-block">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-cog w-6 h-6 text-white" aria-hidden="true">
+                            <div class="settings-box d-inline-block" data-bs-toggle="tooltip" title="Complete Setup"
+                                @click="goToConnection(connection)">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
+                                    fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                    stroke-linejoin="round" class="lucide lucide-cog w-6 h-6 text-white"
+                                    aria-hidden="true">
                                     <path d="M11 10.27 7 3.34"></path>
                                     <path d="m11 13.73-4 6.93"></path>
                                     <path d="M12 22v-2"></path>
