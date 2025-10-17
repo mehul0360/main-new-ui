@@ -1,5 +1,6 @@
 <script setup>
 import { ref } from 'vue';
+import InfoRed from '../../../Icons/InfoRed.vue';
 
 const importExistingCustomers = ref(false);
 const defaultCustomerType = ref('');
@@ -10,18 +11,10 @@ const sendWelcomeEmail = ref(false);
 <template>
     <div class="card sync-behavior-card position-relative overflow-hidden my-4">
         <div class="card-body p-4">
-            <div class="d-flex align-items-center gap-3 mb-4">
+            <div class="d-flex align-items-center gap-2 mb-4">
                 <h2 class="section-title mb-0">Sync Behavior Settings</h2>
-                <button type="button" class="info-btn-red" data-bs-toggle="tooltip"
-                    title="These settings control how customer data behaves during sync operations. Configure defaults for new customers, payment terms, and notification preferences based on your business requirements.">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
-                        stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
-                        class="info-icon-small">
-                        <circle cx="12" cy="12" r="10"></circle>
-                        <path d="M12 16v-4"></path>
-                        <path d="M12 8h.01"></path>
-                    </svg>
-                </button>
+                <info-red
+                    title="These settings control how customer data behaves during sync operations. Configure defaults for new customers, payment terms, and notification preferences based on your business requirements." />
             </div>
 
             <div class="d-flex flex-column" style="gap: 2rem;">
@@ -32,26 +25,20 @@ const sendWelcomeEmail = ref(false);
                         <div class="d-flex align-items-start gap-3" style="padding-top: 0.25rem;">
                             <input type="checkbox" v-model="importExistingCustomers" id="import_existing_customers"
                                 class="form-check-input checkbox-custom mt-1">
-                            <div class="d-flex flex-column gap-1 flex-fill">
+                            <div class="d-flex flex-column gap-2 flex-fill">
                                 <label for="import_existing_customers" class="checkbox-main-label cursor-pointer mb-0">
                                     Import existing Shopify customers to Retail Express
+
+                                    <span class="ms-2">
+                                        <info-red has-html
+                                            title="Critical for integration success:<br /><br /> When enabled, existing Shopify customers without matching Primary IDs in Retail Express will be imported during the first sync. This ensures complete customer record parity between systems from day one.<br /><br /> Important: This can create a large number of new customer records in Retail Express. Review your Shopify customer data first and ensure your Retail Express system can handle the import volume." />
+                                    </span>
                                 </label>
                                 <div class="checkbox-description">
                                     Import customers from Shopify that don't have a matching Primary ID in Retail
                                     Express
                                 </div>
                             </div>
-                            <button type="button" class="info-btn-red flex-shrink-0" style="margin-top: 0.125rem;"
-                                data-bs-html="true" data-bs-toggle="tooltip"
-                                title="Critical for integration success:<br /><br /> When enabled, existing Shopify customers without matching Primary IDs in Retail Express will be imported during the first sync. This ensures complete customer record parity between systems from day one.<br /><br /> Important: This can create a large number of new customer records in Retail Express. Review your Shopify customer data first and ensure your Retail Express system can handle the import volume.">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
-                                    fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                                    stroke-linejoin="round" class="info-icon-small">
-                                    <circle cx="12" cy="12" r="10"></circle>
-                                    <path d="M12 16v-4"></path>
-                                    <path d="M12 8h.01"></path>
-                                </svg>
-                            </button>
                         </div>
                     </div>
                 </div>

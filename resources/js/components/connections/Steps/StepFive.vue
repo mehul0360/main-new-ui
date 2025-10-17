@@ -5,6 +5,8 @@ import SyncBehaviourSettings from './Orders/SyncBehaviourSettings.vue';
 import PaymentMethodsMapping from './Orders/PaymentMethodsMapping.vue';
 import ShippingMethodsMapping from './Orders/ShippingMethodsMapping.vue';
 import ClickAndCollect from './Orders/ClickAndCollect.vue';
+import InfoRed from '../../Icons/InfoRed.vue';
+import SingleArrow from '../../Icons/SingleArrow.vue';
 
 const orderSyncEnabled = ref(true);
 
@@ -51,18 +53,10 @@ const mappings = [
                                 Set up field mappings and sync behaviors to ensure accurate order records.
                             </p>
 
-                            <div class="d-flex align-items-center justify-content-center gap-2">
+                            <div class="d-flex align-items-center justify-content-center">
                                 <span class="info-text">Need more information?</span>
-                                <button type="button" class="info-btn-red" data-bs-toggle="tooltip"
-                                    title="Learn more about order sync configuration, field mapping best practices, and troubleshooting common sync issues.">
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
-                                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                                        stroke-linejoin="round" class="info-icon-small">
-                                        <circle cx="12" cy="12" r="10"></circle>
-                                        <path d="M12 16v-4"></path>
-                                        <path d="M12 8h.01"></path>
-                                    </svg>
-                                </button>
+                                <info-red
+                                    title="Learn more about order sync configuration, field mapping best practices, and troubleshooting common sync issues." />
                             </div>
                         </div>
                     </div>
@@ -73,18 +67,10 @@ const mappings = [
         <div class="card order-sync-card position-relative overflow-hidden my-4">
             <div class="card-body p-4">
                 <div class="d-flex flex-column gap-4">
-                    <div class="d-flex align-items-center gap-3">
+                    <div class="d-flex align-items-center gap-1">
                         <h2 class="section-title mb-0">Order Sync Module</h2>
-                        <button type="button" class="info-btn-red" data-bs-toggle="tooltip"
-                            title="Control whether orders sync between Retail Express and Shopify. When disabled, no order data will be synchronized in either direction.">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
-                                fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                                stroke-linejoin="round" class="info-icon-small">
-                                <circle cx="12" cy="12" r="10"></circle>
-                                <path d="M12 16v-4"></path>
-                                <path d="M12 8h.01"></path>
-                            </svg>
-                        </button>
+                        <info-red
+                            title="Control whether orders sync between Retail Express and Shopify. When disabled, no order data will be synchronized in either direction." />
                     </div>
 
                     <div class="d-flex align-items-center justify-content-between gap-4 w-100">
@@ -145,12 +131,7 @@ const mappings = [
                             <div class="field-value">{{ mapping.rexField }}</div>
                         </div>
                         <div class="col-4 d-flex justify-content-center">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
-                                fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                                stroke-linejoin="round" class="arrow-icon-red">
-                                <path d="M5 12h14"></path>
-                                <path d="m12 5 7 7-7 7"></path>
-                            </svg>
+                            <single-arrow direction="right" color="red" />
                         </div>
                         <div class="col-4">
                             <div class="field-value">{{ mapping.shopifyField }}</div>
@@ -174,7 +155,7 @@ const mappings = [
 
 <style scoped>
 /* First Card Styles */
-.mapping-card {
+.order-mapping-card {
     background: #fff;
     border-radius: 14px;
     border: 1px solid #e5e7eb;

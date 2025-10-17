@@ -1,9 +1,10 @@
 <script setup>
 import { ref } from 'vue';
+import InfoRed from '../../../Icons/InfoRed.vue';
+import SingleArrow from '../../../Icons/SingleArrow.vue';
 
 const mappings = ref([
     { id: 1, retailStore: '', shopifyStore: '' },
-    { id: 2, retailStore: '', shopifyStore: '' },
 ]);
 
 const addMapping = () => {
@@ -24,22 +25,14 @@ const removeMapping = (id) => {
 <template>
     <div class="card shadow-sm my-4">
         <div class="card-body p-4">
-            <div class="d-flex align-items-center mb-1">
+            <div class="d-flex align-items-center mb-1 gap-2">
                 <h5 class="fw-semibold mt-1"
                     style="color: #101828; font-size: 20px; font-family: 'Poppins', sans-serif; line-height: 28px;">
                     Mandotory Order Mappings
                 </h5>
 
-                <button type="button" class="ms-3 info-btn-red" data-bs-toggle="tooltip"
-                    title="At least one location mapping is required to begin inventory synchronization. Multiple Retail Express stores can be mapped to a single Shopify location.">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
-                        stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
-                        class="info-icon-small">
-                        <circle cx="12" cy="12" r="10"></circle>
-                        <path d="M12 16v-4"></path>
-                        <path d="M12 8h.01"></path>
-                    </svg>
-                </button>
+                <info-red
+                    title="At least one location mapping is required to begin inventory synchronization. Multiple Retail Express stores can be mapped to a single Shopify location." />
             </div>
             <p class="text-muted mb-4"
                 style="font-size: 14px; font-family: 'Roboto', sans-serif; color: #4a5565; line-height: 20px;">
@@ -81,11 +74,7 @@ const removeMapping = (id) => {
                 </div>
 
                 <div class="col-1 text-center">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
-                        stroke="#F20F52" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                        <path d="M5 12h14"></path>
-                        <path d="m12 5 7 7-7 7"></path>
-                    </svg>
+                    <single-arrow direction="right" color="red" />
                 </div>
 
                 <div class="col-4">

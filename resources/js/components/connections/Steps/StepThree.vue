@@ -1,6 +1,9 @@
 <script setup>
 import { computed, onMounted, ref } from 'vue';
 import ProductMappingCard from './ProductMappingCard.vue';
+import InfoRed from '../../Icons/InfoRed.vue';
+import InfoBlue from '../../Icons/InfoBlue.vue';
+import SingleArrow from '../../Icons/SingleArrow.vue';
 
 const primarySystem = ref('retail-express');
 const retailExpressField = ref('Product ID');
@@ -51,16 +54,8 @@ const arrowDirection = computed(() => {
 
                             <div class="d-flex align-items-center justify-content-center gap-2">
                                 <span class="info-text">Need more information?</span>
-                                <button type="button" class="info-btn-red" data-bs-toggle="tooltip"
-                                    title="Learn more about product sync configuration, inventory management, and pricing strategies.">
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
-                                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                                        stroke-linejoin="round" class="info-icon-small">
-                                        <circle cx="12" cy="12" r="10"></circle>
-                                        <path d="M12 16v-4"></path>
-                                        <path d="M12 8h.01"></path>
-                                    </svg>
-                                </button>
+                                <info-red
+                                    title="Learn more about product sync configuration, inventory management, and pricing strategies." />
                             </div>
                         </div>
                     </div>
@@ -72,27 +67,17 @@ const arrowDirection = computed(() => {
             <div class="card-body p-4">
                 <div class="d-flex flex-column gap-4">
                     <!-- Section Title -->
-                    <div class="d-flex align-items-center gap-3">
+                    <div class="d-flex align-items-center gap-2">
                         <h2 class="section-title mb-0">Source of Truth for Product Creation</h2>
-                        <button type="button" class="info-btn-red" data-bs-toggle="tooltip"
-                            title="Select which system will be the primary source for product creation and data flow. This determines the direction of synchronization and field mapping below.">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
-                                fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                                stroke-linejoin="round" class="info-icon-small">
-                                <circle cx="12" cy="12" r="10"></circle>
-                                <path d="M12 16v-4"></path>
-                                <path d="M12 8h.01"></path>
-                            </svg>
-                        </button>
+                        <info-red
+                            title="Select which system will be the primary source for product creation and data flow. This determines the direction of synchronization and field mapping below." />
                     </div>
 
                     <!-- Section Description -->
-                    <div>
-                        <p class="section-description mb-0">
-                            Configure which system serves as the primary source for product data and controls the sync
-                            direction.
-                        </p>
-                    </div>
+                    <p class="section-description mb-0">
+                        Configure which system serves as the primary source for product data and controls the
+                        sync direction.
+                    </p>
 
                     <!-- Dropdown Section -->
                     <div class="d-flex flex-column gap-3">
@@ -111,19 +96,7 @@ const arrowDirection = computed(() => {
                                     <div class="system-sublabel">Source System</div>
                                 </div>
                                 <div class="col-4 d-flex justify-content-center">
-                                    <svg v-if="arrowDirection === 'right'" xmlns="http://www.w3.org/2000/svg" width="24"
-                                        height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                                        stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
-                                        class="arrow-icon">
-                                        <path d="M5 12h14"></path>
-                                        <path d="m12 5 7 7-7 7"></path>
-                                    </svg>
-                                    <svg v-else xmlns="http://www.w3.org/2000/svg" width="24" height="24"
-                                        viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-                                        stroke-linecap="round" stroke-linejoin="round" class="arrow-icon">
-                                        <path d="M19 12H5"></path>
-                                        <path d="m12 19-7-7 7-7"></path>
-                                    </svg>
+                                    <single-arrow :direction="arrowDirection" />
                                 </div>
                                 <div class="col-4 text-center">
                                     <div class="system-label">{{ targetSystem }}</div>
@@ -140,18 +113,9 @@ const arrowDirection = computed(() => {
             <div class="card-body p-4">
                 <div class="d-flex flex-column gap-4">
                     <!-- Section Title -->
-                    <div class="d-flex align-items-center gap-3">
+                    <div class="d-flex align-items-center gap-2">
                         <h2 class="section-title mb-0">Product Identification</h2>
-                        <button type="button" class="info-btn-red" data-bs-toggle="tooltip"
-                            title="Configure how products are identified and matched between systems">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
-                                fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                                stroke-linejoin="round" class="info-icon-small">
-                                <circle cx="12" cy="12" r="10"></circle>
-                                <path d="M12 16v-4"></path>
-                                <path d="M12 8h.01"></path>
-                            </svg>
-                        </button>
+                        <info-red title="Configure how products are identified and matched between systems" />
                     </div>
 
                     <!-- Section Description -->
@@ -190,18 +154,7 @@ const arrowDirection = computed(() => {
                             </div>
 
                             <div class="col-4 d-flex justify-content-center">
-                                <svg v-if="arrowDirection === 'right'" xmlns="http://www.w3.org/2000/svg" width="24"
-                                    height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-                                    stroke-linecap="round" stroke-linejoin="round" class="arrow-icon-red">
-                                    <path d="M5 12h14"></path>
-                                    <path d="m12 5 7 7-7 7"></path>
-                                </svg>
-                                <svg v-else xmlns="http://www.w3.org/2000/svg" width="24" height="24"
-                                    viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-                                    stroke-linecap="round" stroke-linejoin="round" class="arrow-icon-red">
-                                    <path d="M19 12H5"></path>
-                                    <path d="m12 19-7-7 7-7"></path>
-                                </svg>
+                                <single-arrow :direction="arrowDirection" color="red" />
                             </div>
                             <div class="col-4">
                                 <select v-if="primarySystem === 'retail-express'" v-model="shopifyField"
@@ -239,16 +192,9 @@ const arrowDirection = computed(() => {
                             <div class="d-flex flex-column gap-2 flex-fill">
                                 <div class="d-flex align-items-center gap-2">
                                     <div class="logic-title">✓ Export to Web Filter</div>
-                                    <button type="button" class="info-btn-blue" data-bs-toggle="tooltip"
-                                        title="Only products marked as 'Export to Web' in Retail Express will be included in the sync process.">
-                                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
-                                            viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-                                            stroke-linecap="round" stroke-linejoin="round" class="info-icon-tiny">
-                                            <circle cx="12" cy="12" r="10"></circle>
-                                            <path d="M12 16v-4"></path>
-                                            <path d="M12 8h.01"></path>
-                                        </svg>
-                                    </button>
+                                    <info-blue
+                                        title="Only products marked as 'Export to Web' in Retail Express will be included in the sync process."
+                                        placement="top" />
                                 </div>
                                 <div class="logic-description">
                                     Only products marked "Export to Web" are synced
@@ -263,19 +209,12 @@ const arrowDirection = computed(() => {
                             <div class="d-flex flex-column gap-2 flex-fill">
                                 <div class="d-flex align-items-center gap-2">
                                     <div class="logic-title">✓ Product Status &amp; Image Sync</div>
-                                    <button type="button" class="info-btn-blue" data-bs-toggle="tooltip"
-                                        title="Products created in Shopify default to Draft status. Product images automatically sync from Retail Express to Shopify.">
-                                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
-                                            viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-                                            stroke-linecap="round" stroke-linejoin="round" class="info-icon-tiny">
-                                            <circle cx="12" cy="12" r="10"></circle>
-                                            <path d="M12 16v-4"></path>
-                                            <path d="M12 8h.01"></path>
-                                        </svg>
-                                    </button>
+                                    <info-blue
+                                        title="Products created in Shopify default to Draft status. Product images automatically sync from Retail Express to Shopify."
+                                        placement="top" />
                                 </div>
                                 <div class="logic-description">
-                                    Shopify products default to Draft status, images sync Retail Express → Shopify
+                                    Shopify products default to Draft status, images sync Retail Express &rarr; Shopify
                                 </div>
                             </div>
                         </div>
@@ -287,16 +226,9 @@ const arrowDirection = computed(() => {
                             <div class="d-flex flex-column gap-2 flex-fill">
                                 <div class="d-flex align-items-center gap-2">
                                     <div class="logic-title">✓ Tax Status &amp; Stock Management</div>
-                                    <button type="button" class="info-btn-blue" data-bs-toggle="tooltip"
-                                        title="Tax status is managed from Retail Express. Stock values sync automatically, and products with 'prevent disabling' enabled remain available even with zero stock.">
-                                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
-                                            viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-                                            stroke-linecap="round" stroke-linejoin="round" class="info-icon-tiny">
-                                            <circle cx="12" cy="12" r="10"></circle>
-                                            <path d="M12 16v-4"></path>
-                                            <path d="M12 8h.01"></path>
-                                        </svg>
-                                    </button>
+                                    <info-blue
+                                        title="Tax status is managed from Retail Express. Stock values sync automatically, and products with 'prevent disabling' enabled remain available even with zero stock."
+                                        placement="top" />
                                 </div>
                                 <div class="logic-description">
                                     Taxable status managed from Retail Express, stock sync with backorder logic
@@ -311,16 +243,9 @@ const arrowDirection = computed(() => {
                             <div class="d-flex flex-column gap-2 flex-fill">
                                 <div class="d-flex align-items-center gap-2">
                                     <div class="logic-title">✓ Automatic Variant Sorting</div>
-                                    <button type="button" class="info-btn-blue" data-bs-toggle="tooltip"
-                                        title="Product variant options are automatically sorted alphanumerically. No custom sequence configuration is available.">
-                                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
-                                            viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-                                            stroke-linecap="round" stroke-linejoin="round" class="info-icon-tiny">
-                                            <circle cx="12" cy="12" r="10"></circle>
-                                            <path d="M12 16v-4"></path>
-                                            <path d="M12 8h.01"></path>
-                                        </svg>
-                                    </button>
+                                    <info-blue
+                                        title="Product variant options are automatically sorted alphanumerically. No custom sequence configuration is available."
+                                        placement="top" />
                                 </div>
                                 <div class="logic-description">
                                     Product attribute options sorted alphanumerically
@@ -337,18 +262,9 @@ const arrowDirection = computed(() => {
         <div class="card sync-behavior-card position-relative overflow-hidden my-4">
             <div class="card-body p-4">
                 <!-- Header Section -->
-                <div class="d-flex align-items-center gap-3 mb-4">
+                <div class="d-flex align-items-center gap-2 mb-4">
                     <h2 class="section-title mb-0">Product Sync Behavior Settings</h2>
-                    <button type="button" class="info-btn-red" data-bs-toggle="tooltip"
-                        title="Configure how products sync between systems">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
-                            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
-                            class="info-icon-small">
-                            <circle cx="12" cy="12" r="10"></circle>
-                            <path d="M12 16v-4"></path>
-                            <path d="M12 8h.01"></path>
-                        </svg>
-                    </button>
+                    <info-red title="Configure how products sync between systems" placement="top" />
                 </div>
 
                 <!-- Settings Fields -->
@@ -379,16 +295,8 @@ const arrowDirection = computed(() => {
                     <div class="d-flex flex-column gap-2">
                         <div class="d-flex align-items-center gap-2">
                             <label class="field-label mb-0">Back Orders/Continue Selling</label>
-                            <button type="button" class="info-btn-blue" data-bs-toggle="tooltip"
-                                title="Enable to allow selling products even when out of stock">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
-                                    fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                                    stroke-linejoin="round" class="info-icon-tiny">
-                                    <circle cx="12" cy="12" r="10"></circle>
-                                    <path d="M12 16v-4"></path>
-                                    <path d="M12 8h.01"></path>
-                                </svg>
-                            </button>
+                            <info-blue is-small title="Enable to allow selling products even when out of stock"
+                                placement="top" />
                         </div>
                         <select v-model="backOrders" class="form-select custom-select-md">
                             <option value="Enable">Enable</option>
@@ -414,7 +322,7 @@ const arrowDirection = computed(() => {
 
 <style scoped>
 /* First Card Styles */
-.mapping-card {
+.product-mapping-card {
     background: #fff;
     border-radius: 14px;
     border: 1px solid #e5e7eb;
@@ -458,32 +366,6 @@ const arrowDirection = computed(() => {
 .info-text {
     font-size: 14px;
     color: #4a5565;
-}
-
-.info-btn-red {
-    background-color: #F20F52;
-    border: none;
-    border-radius: 50%;
-    width: 20px;
-    height: 20px;
-    padding: 0;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    transition: background-color 0.2s;
-    cursor: pointer;
-    flex-shrink: 0;
-}
-
-.info-btn-red:hover {
-    background-color: #d40d47;
-}
-
-.info-icon-small {
-    width: 12px;
-    height: 12px;
-    stroke: white;
-    stroke-width: 2;
 }
 
 /* Source of Truth Card Styles */
@@ -664,32 +546,6 @@ const arrowDirection = computed(() => {
     font-size: 13px;
     line-height: 18px;
     color: #4a5565;
-}
-
-.info-btn-blue {
-    background-color: #155dfc;
-    border: none;
-    border-radius: 50%;
-    width: 16px;
-    height: 16px;
-    padding: 0;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    transition: background-color 0.2s;
-    cursor: pointer;
-    flex-shrink: 0;
-}
-
-.info-btn-blue:hover {
-    background-color: #1349d6;
-}
-
-.info-icon-tiny {
-    width: 10px;
-    height: 10px;
-    stroke: white;
-    stroke-width: 2;
 }
 
 .sync-behavior-card {

@@ -1,5 +1,6 @@
 <script setup>
 import { onMounted, ref } from 'vue';
+import InfoBlue from '../../Icons/InfoBlue.vue';
 
 const showConnectionSuccess = ref(false);
 const isLoading = ref(false);
@@ -45,15 +46,9 @@ const handleConnectionSubmit = (event) => {
                 <div class="mb-3">
                     <label for="domain" class="form-label d-flex align-items-center">
                         Retail Express Domain URL <span class="required">*</span>
-                        <button type="button" class="info-btn" data-bs-toggle="tooltip" data-bs-placement="right"
-                            title="Your Retail Express domain URL (e.g., https://yourstore.retailexpress.com.au)">
-                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
-                                stroke="currentColor" class="info-icon">
-                                <circle cx="12" cy="12" r="10"></circle>
-                                <path d="M12 16v-4"></path>
-                                <path d="M12 8h.01"></path>
-                            </svg>
-                        </button>
+                        <info-blue is-small
+                            title="Your Retail Express domain URL (e.g., https://yourstore.retailexpress.com.au)"
+                            tooltip-placement="right" />
                     </label>
                     <input type="url" class="form-control" id="domain"
                         placeholder="https://yourretailexpresssite.retailexpress.com.au">
@@ -62,15 +57,8 @@ const handleConnectionSubmit = (event) => {
                 <div class="mb-3">
                     <label for="username" class="form-label d-flex align-items-center">
                         Username <span class="required">*</span>
-                        <button type="button" class="info-btn" data-bs-toggle="tooltip" data-bs-placement="right"
-                            title="Your Retail Express username for API access">
-                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
-                                stroke="currentColor" class="info-icon">
-                                <circle cx="12" cy="12" r="10"></circle>
-                                <path d="M12 16v-4"></path>
-                                <path d="M12 8h.01"></path>
-                            </svg>
-                        </button>
+                        <info-blue is-small title="Your Retail Express username for API access"
+                            tooltip-placement="right" />
                     </label>
                     <input type="text" class="form-control" id="username" placeholder="Enter your username">
                 </div>
@@ -78,15 +66,8 @@ const handleConnectionSubmit = (event) => {
                 <div class="mb-3 col-md-6">
                     <label for="password" class="form-label d-flex align-items-center">
                         Password <span class="required">*</span>
-                        <button type="button" class="info-btn" data-bs-toggle="tooltip" data-bs-placement="right"
-                            title="Your Retail Express password for API authentication">
-                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
-                                stroke="currentColor" class="info-icon">
-                                <circle cx="12" cy="12" r="10"></circle>
-                                <path d="M12 16v-4"></path>
-                                <path d="M12 8h.01"></path>
-                            </svg>
-                        </button>
+                        <info-blue is-small title="Your Retail Express password for API authentication"
+                            tooltip-placement="right" />
                     </label>
                     <div class="input-group">
                         <input type="password" class="form-control" id="password" placeholder="Enter your password">
@@ -106,15 +87,8 @@ const handleConnectionSubmit = (event) => {
                 <div class="mb-3 col-md-6">
                     <label for="clientId" class="form-label d-flex align-items-center">
                         Client ID <span class="required">*</span>
-                        <button type="button" class="info-btn" data-bs-toggle="tooltip" data-bs-placement="right"
-                            title="Your API Client ID provided by Retail Express">
-                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
-                                stroke="currentColor" class="info-icon">
-                                <circle cx="12" cy="12" r="10"></circle>
-                                <path d="M12 16v-4"></path>
-                                <path d="M12 8h.01"></path>
-                            </svg>
-                        </button>
+                        <info-blue is-small title="Your API Client ID provided by Retail Express"
+                            tooltip-placement="right" />
                     </label>
                     <div class="input-group">
                         <input type="password" class="form-control" id="clientId" placeholder="Enter your Client ID">
@@ -134,15 +108,8 @@ const handleConnectionSubmit = (event) => {
                 <div class="mb-3">
                     <label for="channelId" class="form-label d-flex align-items-center">
                         Channel ID <span class="required">*</span>
-                        <button type="button" class="info-btn" data-bs-toggle="tooltip" data-bs-placement="right"
-                            title="The channel ID for your Retail Express integration">
-                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
-                                stroke="currentColor" class="info-icon">
-                                <circle cx="12" cy="12" r="10"></circle>
-                                <path d="M12 16v-4"></path>
-                                <path d="M12 8h.01"></path>
-                            </svg>
-                        </button>
+                        <info-blue is-small title="The channel ID for your Retail Express integration"
+                            tooltip-placement="right" />
                     </label>
                     <input type="number" class="form-control" id="channelId"
                         placeholder="Enter Channel ID (e.g. 1, 2, 3)">
@@ -151,15 +118,8 @@ const handleConnectionSubmit = (event) => {
                 <div class="mb-3 col-md-6">
                     <label for="primaryKey" class="form-label d-flex align-items-center">
                         Primary Key <span class="required">*</span>
-                        <button type="button" class="info-btn" data-bs-toggle="tooltip" data-bs-placement="right"
-                            title="Primary encryption key for secure API communication">
-                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
-                                stroke="currentColor" class="info-icon">
-                                <circle cx="12" cy="12" r="10"></circle>
-                                <path d="M12 16v-4"></path>
-                                <path d="M12 8h.01"></path>
-                            </svg>
-                        </button>
+                        <info-blue is-small title="Primary encryption key for secure API communication"
+                            tooltip-placement="right" />
                     </label>
                     <div class="input-group">
                         <input type="password" class="form-control" id="primaryKey"
@@ -180,15 +140,8 @@ const handleConnectionSubmit = (event) => {
                 <div class="mb-3 col-md-6">
                     <label for="secondaryKey" class="form-label d-flex align-items-center">
                         Secondary Key <span class="required">*</span>
-                        <button type="button" class="info-btn" data-bs-toggle="tooltip" data-bs-placement="right"
-                            title="Secondary encryption key for additional security">
-                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
-                                stroke="currentColor" class="info-icon">
-                                <circle cx="12" cy="12" r="10"></circle>
-                                <path d="M12 16v-4"></path>
-                                <path d="M12 8h.01"></path>
-                            </svg>
-                        </button>
+                        <info-blue is-small title="Secondary encryption key for additional security"
+                            tooltip-placement="right" />
                     </label>
                     <div class="input-group">
                         <input type="password" class="form-control" id="secondaryKey"
@@ -289,31 +242,8 @@ const handleConnectionSubmit = (event) => {
 
 .required {
     color: #F20F52;
-}
-
-.info-btn {
-    background-color: #155dfc;
-    border: none;
-    border-radius: 50%;
-    width: 16px;
-    height: 16px;
-    padding: 0;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    margin-left: 8px;
-    transition: background-color 0.2s;
-}
-
-.info-btn:hover {
-    background-color: #1348d4;
-}
-
-.info-icon {
-    width: 10px;
-    height: 10px;
-    stroke: white;
-    stroke-width: 2;
+    margin-left: .25rem;
+    margin-right: .5rem;
 }
 
 .form-control {

@@ -1,5 +1,7 @@
 <script setup>
 import { ref } from 'vue';
+import InfoRed from '../../../Icons/InfoRed.vue';
+import TwoWayArrow from '../../../Icons/TwoWayArrow.vue';
 
 const tierGroupSystem = ref('standard_shopify');
 const mappings = ref([
@@ -27,18 +29,10 @@ const removeMapping = (id) => {
     <div class="card tier-groups-card position-relative overflow-hidden">
         <div class="card-body p-4">
             <div class="d-flex flex-column gap-2 mb-4">
-                <div class="d-flex align-items-center gap-3">
+                <div class="d-flex align-items-center gap-2">
                     <h2 class="card-title mb-0">Tier Groups</h2>
-                    <button type="button" class="info-btn-red" data-bs-toggle="tooltip"
-                        title="Choose between Standard Shopify's native customer tier group functionality or the BSS Commerce custom app for advanced tier management. The BSS Commerce option requires the app to be installed in your Shopify store.">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
-                            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
-                            class="info-icon-small">
-                            <circle cx="12" cy="12" r="10"></circle>
-                            <path d="M12 16v-4"></path>
-                            <path d="M12 8h.01"></path>
-                        </svg>
-                    </button>
+                    <info-red
+                        title="Choose between Standard Shopify's native customer tier group functionality or the BSS Commerce custom app for advanced tier management. The BSS Commerce option requires the app to be installed in your Shopify store." />
                 </div>
                 <p class="card-description mb-0">
                     Map price groups from Retail Express to customer tier groups in Shopify.
@@ -49,17 +43,8 @@ const removeMapping = (id) => {
                 <div class="d-flex flex-column gap-3">
                     <div class="d-flex align-items-center gap-2">
                         <h3 class="subsection-title mb-0">Tier Group System</h3>
-                        <button type="button" class="info-btn-red info-btn-sm" data-bs-toggle="tooltip"
-                            data-bs-html="true"
-                            title="Standard Shopify:<br />Uses Shopify's native customer tier group feature for managing customer pricing levels and segmentation.<br /><br />BSS Commerce:<br />A third-party app that provides advanced tier management features. Requires installation from the Shopify App Store.">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
-                                fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                                stroke-linejoin="round" class="info-icon-tiny">
-                                <circle cx="12" cy="12" r="10"></circle>
-                                <path d="M12 16v-4"></path>
-                                <path d="M12 8h.01"></path>
-                            </svg>
-                        </button>
+                        <info-red is-small
+                            title="Standard Shopify:<br />Uses Shopify's native customer tier group feature for managing customer pricing levels and segmentation.<br /><br />BSS Commerce:<br />A third-party app that provides advanced tier management features. Requires installation from the Shopify App Store." />
                     </div>
                     <select v-model="tierGroupSystem" class="form-select custom-select-md">
                         <option value="standard_shopify" selected>Standard Shopify</option>
@@ -97,14 +82,7 @@ const removeMapping = (id) => {
                                 </select>
                             </div>
                             <div class="col-1 mapping-arrow-col d-flex justify-content-center">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
-                                    fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                                    stroke-linejoin="round" class="bidirectional-arrow">
-                                    <path d="M8 3 4 7l4 4"></path>
-                                    <path d="M4 7h16"></path>
-                                    <path d="m16 21 4-4-4-4"></path>
-                                    <path d="M20 17H4"></path>
-                                </svg>
+                                <two-way-arrow />
                             </div>
                             <div class="col-4">
                                 <select v-model="mapping.shopifyTier" class="form-select custom-select-sm">
@@ -187,44 +165,6 @@ const removeMapping = (id) => {
     color: #101828;
 }
 
-.info-btn-red {
-    background-color: #F20F52;
-    border: none;
-    border-radius: 50%;
-    width: 20px;
-    height: 20px;
-    padding: 0;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    transition: background-color 0.2s;
-    cursor: pointer;
-    flex-shrink: 0;
-}
-
-.info-btn-sm {
-    width: 16px;
-    height: 16px;
-}
-
-.info-btn-red:hover {
-    background-color: #d40d47;
-}
-
-.info-icon-small {
-    width: 12px;
-    height: 12px;
-    stroke: white;
-    stroke-width: 2;
-}
-
-.info-icon-tiny {
-    width: 10px;
-    height: 10px;
-    stroke: white;
-    stroke-width: 2;
-}
-
 .custom-select-md {
     max-width: 448px;
     height: 36px;
@@ -258,12 +198,6 @@ const removeMapping = (id) => {
 
 .mapping-header {
     border-bottom: 1px solid #e5e7eb !important;
-}
-
-.bidirectional-arrow {
-    width: 20px;
-    height: 20px;
-    color: #F20F52;
 }
 
 .btn-delete {

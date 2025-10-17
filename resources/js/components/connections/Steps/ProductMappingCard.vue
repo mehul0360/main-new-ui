@@ -1,5 +1,7 @@
 <script setup>
 import { ref, computed, onMounted } from 'vue';
+import InfoBlue from '../../Icons/InfoBlue.vue';
+import SingleArrow from '../../Icons/SingleArrow.vue';
 
 // Receive primarySystem as a prop from parent
 const props = defineProps({
@@ -117,12 +119,7 @@ const removeVariant = (attr) => {
                                 </div>
                             </div>
                             <div class="col-4 d-flex justify-content-center">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
-                                    fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                                    stroke-linejoin="round" class="arrow-icon-red">
-                                    <path d="M5 12h14"></path>
-                                    <path d="m12 5 7 7-7 7"></path>
-                                </svg>
+                                <single-arrow direction="right" color="red" />
                             </div>
                             <div class="col-4">
                                 <div class="d-flex flex-column gap-2">
@@ -157,12 +154,7 @@ const removeVariant = (attr) => {
                                 </div>
                             </div>
                             <div class="col-4 d-flex justify-content-center">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
-                                    fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                                    stroke-linejoin="round" class="arrow-icon-red">
-                                    <path d="M5 12h14"></path>
-                                    <path d="m12 5 7 7-7 7"></path>
-                                </svg>
+                                <single-arrow direction="right" color="red" />
                             </div>
                             <div class="col-4">
                                 <div class="d-flex flex-column gap-2">
@@ -188,12 +180,7 @@ const removeVariant = (attr) => {
                                 </div>
                             </div>
                             <div class="col-4 d-flex justify-content-center">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
-                                    fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                                    stroke-linejoin="round" class="arrow-icon-red">
-                                    <path d="M5 12h14"></path>
-                                    <path d="m12 5 7 7-7 7"></path>
-                                </svg>
+                                <single-arrow direction="right" color="red" />
                             </div>
                             <div class="col-4">
                                 <div class="d-flex flex-column gap-2">
@@ -219,12 +206,7 @@ const removeVariant = (attr) => {
                                 </div>
                             </div>
                             <div class="col-4 d-flex justify-content-center">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
-                                    fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                                    stroke-linejoin="round" class="arrow-icon-red">
-                                    <path d="M5 12h14"></path>
-                                    <path d="m12 5 7 7-7 7"></path>
-                                </svg>
+                                <single-arrow direction="right" color="red" />
                             </div>
                             <div class="col-4">
                                 <div class="d-flex flex-column gap-2">
@@ -246,12 +228,7 @@ const removeVariant = (attr) => {
                                 </div>
                             </div>
                             <div class="col-4 d-flex justify-content-center">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
-                                    fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                                    stroke-linejoin="round" class="arrow-icon-red">
-                                    <path d="M5 12h14"></path>
-                                    <path d="m12 5 7 7-7 7"></path>
-                                </svg>
+                                <single-arrow direction="right" color="red" />
                             </div>
                             <div class="col-4">
                                 <div class="d-flex flex-column gap-2">
@@ -273,12 +250,7 @@ const removeVariant = (attr) => {
                                 </div>
                             </div>
                             <div class="col-4 d-flex justify-content-center">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
-                                    fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                                    stroke-linejoin="round" class="arrow-icon-red">
-                                    <path d="M5 12h14"></path>
-                                    <path d="m12 5 7 7-7 7"></path>
-                                </svg>
+                                <single-arrow direction="right" color="red" />
                             </div>
                             <div class="col-4">
                                 <div class="d-flex flex-column gap-2">
@@ -300,12 +272,7 @@ const removeVariant = (attr) => {
                                 </div>
                             </div>
                             <div class="col-4 d-flex justify-content-center">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
-                                    fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                                    stroke-linejoin="round" class="arrow-icon-red">
-                                    <path d="M5 12h14"></path>
-                                    <path d="m12 5 7 7-7 7"></path>
-                                </svg>
+                                <single-arrow direction="right" color="red" />
                             </div>
                             <div class="col-4">
                                 <div class="d-flex flex-column gap-2">
@@ -327,12 +294,7 @@ const removeVariant = (attr) => {
                                 </div>
                             </div>
                             <div class="col-4 d-flex justify-content-center">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
-                                    fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                                    stroke-linejoin="round" class="arrow-icon-red">
-                                    <path d="M5 12h14"></path>
-                                    <path d="m12 5 7 7-7 7"></path>
-                                </svg>
+                                <single-arrow direction="right" color="red" />
                             </div>
                             <div class="col-4">
                                 <div class="d-flex flex-column gap-2">
@@ -354,12 +316,7 @@ const removeVariant = (attr) => {
                                 </div>
                             </div>
                             <div class="col-4 d-flex justify-content-center">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
-                                    fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                                    stroke-linejoin="round" class="arrow-icon-red">
-                                    <path d="M5 12h14"></path>
-                                    <path d="m12 5 7 7-7 7"></path>
-                                </svg>
+                                <single-arrow direction="right" color="red" />
                             </div>
                             <div class="col-4">
                                 <div class="d-flex flex-column gap-2">
@@ -381,12 +338,7 @@ const removeVariant = (attr) => {
                                 </div>
                             </div>
                             <div class="col-4 d-flex justify-content-center">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
-                                    fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                                    stroke-linejoin="round" class="arrow-icon-red">
-                                    <path d="M5 12h14"></path>
-                                    <path d="m12 5 7 7-7 7"></path>
-                                </svg>
+                                <single-arrow direction="right" color="red" />
                             </div>
                             <div class="col-4">
                                 <div class="d-flex flex-column gap-2">
@@ -413,16 +365,7 @@ const removeVariant = (attr) => {
                             <div class="d-flex flex-column gap-2" style="max-width: 28rem;">
                                 <div class="d-flex align-items-center gap-2">
                                     <div class="field-label">Product Grouping Field</div>
-                                    <button type="button" class="info-btn-blue" data-bs-toggle="tooltip"
-                                        title="Select the field used to group related products">
-                                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
-                                            viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-                                            stroke-linecap="round" stroke-linejoin="round" class="info-icon-tiny">
-                                            <circle cx="12" cy="12" r="10"></circle>
-                                            <path d="M12 16v-4"></path>
-                                            <path d="M12 8h.01"></path>
-                                        </svg>
-                                    </button>
+                                    <info-blue title="Select the field used to group related products" />
                                 </div>
                                 <select v-model="productGroupingField" class="form-select custom-select-sm">
                                     <option value="Custom1">Custom1</option>
@@ -519,12 +462,7 @@ const removeVariant = (attr) => {
                                 </div>
                             </div>
                             <div class="col-4 d-flex justify-content-center">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
-                                    fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                                    stroke-linejoin="round" class="arrow-icon-red">
-                                    <path d="M5 12h14"></path>
-                                    <path d="m12 5 7 7-7 7"></path>
-                                </svg>
+                                <single-arrow direction="right" color="red" />
                             </div>
                             <div class="col-4">
                                 <div class="field-label">{{ targetSystemLabel }} Price</div>
@@ -556,12 +494,7 @@ const removeVariant = (attr) => {
                                 </div>
                             </div>
                             <div class="col-4 d-flex justify-content-center">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
-                                    fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                                    stroke-linejoin="round" class="arrow-icon-red">
-                                    <path d="M5 12h14"></path>
-                                    <path d="m12 5 7 7-7 7"></path>
-                                </svg>
+                                <single-arrow direction="right" color="red" />
                             </div>
                             <div class="col-4">
                                 <div class="field-label">{{ targetSystemLabel }} Compare At Price</div>
@@ -617,12 +550,7 @@ const removeVariant = (attr) => {
                                 </div>
                             </div>
                             <div class="col-4 d-flex justify-content-center" style="margin-top: 0.5rem;">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
-                                    fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                                    stroke-linejoin="round" class="arrow-icon-red">
-                                    <path d="M5 12h14"></path>
-                                    <path d="m12 5 7 7-7 7"></path>
-                                </svg>
+                                <single-arrow direction="right" color="red" />
                             </div>
                             <div class="col-4">
                                 <div class="field-label">{{ targetSystemLabel }} Cost Per Item</div>
@@ -739,12 +667,6 @@ const removeVariant = (attr) => {
     border-color: #155dfc;
     box-shadow: 0 0 0 3px rgba(21, 93, 252, 0.1);
     outline: none;
-}
-
-.arrow-icon-red {
-    width: 20px;
-    height: 20px;
-    color: #F20F52;
 }
 
 .badge-mandatory {

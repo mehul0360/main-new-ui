@@ -2,6 +2,7 @@
 import { onMounted } from 'vue';
 import MandatoryMapping from './StoresInventory/MandatoryMapping.vue';
 import BufferQuantityConfig from './StoresInventory/BufferQuantityConfig.vue';
+import InfoRed from '../../Icons/InfoRed.vue';
 
 onMounted(() => {
     const tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
@@ -13,7 +14,7 @@ onMounted(() => {
 
 <template>
     <div>
-        <div class="card order-mapping-card position-relative overflow-hidden">
+        <div class="card store-inventory-mapping-card position-relative overflow-hidden">
             <div class="card-body p-4">
                 <div class="header-container position-relative">
                     <div class="d-flex flex-column align-items-center justify-content-start">
@@ -31,18 +32,10 @@ onMounted(() => {
                                 systems.
                             </p>
 
-                            <div class="d-flex align-items-center justify-content-center gap-2">
+                            <div class="d-flex align-items-center justify-content-center">
                                 <span class="info-text">Need more information?</span>
-                                <button type="button" class="info-btn-red" data-bs-toggle="tooltip"
-                                    title="Learn more about store mapping, inventory sync configuration, and buffer quantity management best practices.">
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
-                                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                                        stroke-linejoin="round" class="info-icon-small">
-                                        <circle cx="12" cy="12" r="10"></circle>
-                                        <path d="M12 16v-4"></path>
-                                        <path d="M12 8h.01"></path>
-                                    </svg>
-                                </button>
+                                <info-red
+                                    title="Learn more about store mapping, inventory sync configuration, and buffer quantity management best practices." />
                             </div>
                         </div>
                     </div>
@@ -57,7 +50,7 @@ onMounted(() => {
 </template>
 
 <style scoped>
-.mapping-card {
+.store-inventory-mapping-card {
     background: #fff;
     border-radius: 14px;
     border: 1px solid #e5e7eb;
