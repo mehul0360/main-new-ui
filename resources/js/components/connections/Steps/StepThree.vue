@@ -1,18 +1,19 @@
 <script setup>
 import { computed, onMounted, ref } from 'vue';
-import ProductMappingCard from './ProductMappingCard.vue';
+import MappingCard from './Products/MappingCard.vue';
 import InfoRed from '../../Icons/InfoRed.vue';
 import InfoBlue from '../../Icons/InfoBlue.vue';
 import SingleArrow from '../../Icons/SingleArrow.vue';
+import MandatoryLogic from './Products/MandatoryLogic.vue';
 
 const primarySystem = ref('retail-express');
 const retailExpressField = ref('Product ID');
 const shopifyField = ref('Barcode');
 
-const createState = ref('Draft/Inactive');
-const inactiveAction = ref('Mark as draft');
-const backOrders = ref('Enable');
-const weightUnit = ref('Kilograms (kg)');
+const createState = ref('draft_inactive');
+const inactiveAction = ref('mark_as_draft');
+const backOrders = ref('enable');
+const weightUnit = ref('kilograms_kg');
 
 onMounted(() => {
     const tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
@@ -39,12 +40,10 @@ const arrowDirection = computed(() => {
         <div class="card product-mapping-card position-relative overflow-hidden">
             <div class="card-body p-4">
                 <div class="header-container position-relative">
-                    <!-- Main Heading -->
                     <div class="d-flex flex-column align-items-center justify-content-start">
                         <h1 class="product-title text-center mb-0">Product Data Mapping</h1>
                     </div>
 
-                    <!-- Description Container -->
                     <div class="description-container mx-auto text-center mt-3">
                         <div class="description-text">
                             <p class="mb-0">Configure how product data syncs between Retail Express and Shopify.</p>
@@ -66,20 +65,17 @@ const arrowDirection = computed(() => {
         <div class="card source-card position-relative overflow-hidden mt-4">
             <div class="card-body p-4">
                 <div class="d-flex flex-column gap-4">
-                    <!-- Section Title -->
                     <div class="d-flex align-items-center gap-2">
                         <h2 class="section-title mb-0">Source of Truth for Product Creation</h2>
                         <info-red
                             title="Select which system will be the primary source for product creation and data flow. This determines the direction of synchronization and field mapping below." />
                     </div>
 
-                    <!-- Section Description -->
                     <p class="section-description mb-0">
                         Configure which system serves as the primary source for product data and controls the
                         sync direction.
                     </p>
 
-                    <!-- Dropdown Section -->
                     <div class="d-flex flex-column gap-3">
                         <label class="dropdown-label mb-0">Primary Source System</label>
 
@@ -88,7 +84,6 @@ const arrowDirection = computed(() => {
                             <option value="shopify">Shopify</option>
                         </select>
 
-                        <!-- Sync Flow Visualization -->
                         <div class="sync-flow-container">
                             <div class="row g-0 align-items-center">
                                 <div class="col-4 text-center">
@@ -112,22 +107,18 @@ const arrowDirection = computed(() => {
         <div class="card identification-card position-relative overflow-hidden mt-4">
             <div class="card-body p-4">
                 <div class="d-flex flex-column gap-4">
-                    <!-- Section Title -->
                     <div class="d-flex align-items-center gap-2">
                         <h2 class="section-title mb-0">Product Identification</h2>
                         <info-red title="Configure how products are identified and matched between systems" />
                     </div>
 
-                    <!-- Section Description -->
                     <div>
                         <p class="section-description mb-0">
                             Configure how products are identified and matched between systems.
                         </p>
                     </div>
 
-                    <!-- Mapping Section -->
                     <div class="d-flex flex-column gap-3">
-                        <!-- Header Row -->
                         <div class="row g-3 align-items-center py-2 border-bottom">
                             <div class="col-4">
                                 <div class="field-header">{{ sourceSystem }} Field</div>
@@ -138,7 +129,6 @@ const arrowDirection = computed(() => {
                             </div>
                         </div>
 
-                        <!-- Mapping Row -->
                         <div class="row g-3 align-items-center mapping-row">
                             <div class="col-4">
                                 <select v-if="primarySystem === 'retail-express'" v-model="retailExpressField"
@@ -174,124 +164,35 @@ const arrowDirection = computed(() => {
             </div>
         </div>
 
-        <div class="card mandatory-card position-relative overflow-hidden my-4">
-            <div class="card-body p-4">
-                <!-- Header Section -->
-                <div class="d-flex flex-column gap-2 mb-4">
-                    <h2 class="card-title mb-0">Mandatory / Baked-in Logic</h2>
-                    <p class="card-description mb-0">
-                        These behaviors are built into the system and work automatically without user configuration.
-                    </p>
-                </div>
+        <mandatory-logic />
 
-                <!-- Logic Items -->
-                <div class="d-flex flex-column gap-3">
-                    <!-- Export to Web Filter -->
-                    <div class="logic-item logic-item-green">
-                        <div class="d-flex align-items-start gap-3">
-                            <div class="d-flex flex-column gap-2 flex-fill">
-                                <div class="d-flex align-items-center gap-2">
-                                    <div class="logic-title">✓ Export to Web Filter</div>
-                                    <info-blue
-                                        title="Only products marked as 'Export to Web' in Retail Express will be included in the sync process."
-                                        placement="top" />
-                                </div>
-                                <div class="logic-description">
-                                    Only products marked "Export to Web" are synced
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Product Status & Image Sync -->
-                    <div class="logic-item logic-item-purple">
-                        <div class="d-flex align-items-start gap-3">
-                            <div class="d-flex flex-column gap-2 flex-fill">
-                                <div class="d-flex align-items-center gap-2">
-                                    <div class="logic-title">✓ Product Status &amp; Image Sync</div>
-                                    <info-blue
-                                        title="Products created in Shopify default to Draft status. Product images automatically sync from Retail Express to Shopify."
-                                        placement="top" />
-                                </div>
-                                <div class="logic-description">
-                                    Shopify products default to Draft status, images sync Retail Express &rarr; Shopify
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Tax Status & Stock Management -->
-                    <div class="logic-item logic-item-orange">
-                        <div class="d-flex align-items-start gap-3">
-                            <div class="d-flex flex-column gap-2 flex-fill">
-                                <div class="d-flex align-items-center gap-2">
-                                    <div class="logic-title">✓ Tax Status &amp; Stock Management</div>
-                                    <info-blue
-                                        title="Tax status is managed from Retail Express. Stock values sync automatically, and products with 'prevent disabling' enabled remain available even with zero stock."
-                                        placement="top" />
-                                </div>
-                                <div class="logic-description">
-                                    Taxable status managed from Retail Express, stock sync with backorder logic
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Automatic Variant Sorting -->
-                    <div class="logic-item logic-item-gray">
-                        <div class="d-flex align-items-start gap-3">
-                            <div class="d-flex flex-column gap-2 flex-fill">
-                                <div class="d-flex align-items-center gap-2">
-                                    <div class="logic-title">✓ Automatic Variant Sorting</div>
-                                    <info-blue
-                                        title="Product variant options are automatically sorted alphanumerically. No custom sequence configuration is available."
-                                        placement="top" />
-                                </div>
-                                <div class="logic-description">
-                                    Product attribute options sorted alphanumerically
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <ProductMappingCard :primary-system="primarySystem" />
+        <mapping-card :primary-system="primarySystem" />
 
         <div class="card sync-behavior-card position-relative overflow-hidden my-4">
             <div class="card-body p-4">
-                <!-- Header Section -->
                 <div class="d-flex align-items-center gap-2 mb-4">
                     <h2 class="section-title mb-0">Product Sync Behavior Settings</h2>
                     <info-red title="Configure how products sync between systems" placement="top" />
                 </div>
 
-                <!-- Settings Fields -->
                 <div class="d-flex flex-column" style="gap: 1.5rem;">
-
-                    <!-- Create State in Shopify -->
                     <div class="d-flex flex-column gap-2">
                         <label class="field-label">Create State in Shopify</label>
                         <select v-model="createState" class="form-select custom-select-md">
-                            <option value="Draft/Inactive">Draft/Inactive</option>
-                            <option value="Active">Active</option>
-                            <option value="Archived">Archived</option>
+                            <option value="draft_inactive">Draft/Inactive</option>
+                            <option value="publish_active">Publish/Active</option>
                         </select>
                     </div>
 
-                    <!-- Action for Inactive REX Products -->
                     <div class="d-flex flex-column gap-2">
                         <label class="field-label">Action for Inactive REX Products</label>
                         <select v-model="inactiveAction" class="form-select custom-select-md">
-                            <option value="Mark as draft">Mark as draft</option>
-                            <option value="Archive">Archive</option>
-                            <option value="Do nothing">Do nothing</option>
-                            <option value="Delete">Delete</option>
+                            <option value="delete_product">Delete The Product</option>
+                            <option value="mark_as_draft">Mark as draft</option>
+                            <option value="do_not_update">Do not update</option>
                         </select>
                     </div>
 
-                    <!-- Back Orders/Continue Selling -->
                     <div class="d-flex flex-column gap-2">
                         <div class="d-flex align-items-center gap-2">
                             <label class="field-label mb-0">Back Orders/Continue Selling</label>
@@ -299,19 +200,18 @@ const arrowDirection = computed(() => {
                                 placement="top" />
                         </div>
                         <select v-model="backOrders" class="form-select custom-select-md">
-                            <option value="Enable">Enable</option>
-                            <option value="Disable">Disable</option>
+                            <option value="enable">Enable</option>
+                            <option value="disable">Disable</option>
                         </select>
                     </div>
 
-                    <!-- Product Weight Unit -->
                     <div class="d-flex flex-column gap-2">
                         <label class="field-label">Product Weight Unit</label>
                         <select v-model="weightUnit" class="form-select custom-select-md">
-                            <option value="Kilograms (kg)">Kilograms (kg)</option>
-                            <option value="Grams (g)">Grams (g)</option>
-                            <option value="Pounds (lb)">Pounds (lb)</option>
-                            <option value="Ounces (oz)">Ounces (oz)</option>
+                            <option value="kilograms_kg">Kilograms (kg)</option>
+                            <option value="grams_g">Grams (g)</option>
+                            <option value="pounds_lb">Pounds (lb)</option>
+                            <option value="ounces_oz">Ounces (oz)</option>
                         </select>
                     </div>
                 </div>
@@ -322,7 +222,8 @@ const arrowDirection = computed(() => {
 
 <style scoped>
 /* First Card Styles */
-.product-mapping-card {
+.product-mapping-card,
+.sync-behavior-card {
     background: #fff;
     border-radius: 14px;
     border: 1px solid #e5e7eb;
@@ -442,12 +343,6 @@ const arrowDirection = computed(() => {
     margin-top: 0.25rem;
 }
 
-.arrow-icon {
-    width: 24px;
-    height: 24px;
-    color: #155dfc;
-}
-
 /* Product Identification Card Styles */
 .identification-card {
     background: #fff;
@@ -471,88 +366,6 @@ const arrowDirection = computed(() => {
     background-color: #f9fafb;
     border-radius: 8px;
     padding: 0.5rem 1rem;
-}
-
-.arrow-icon-red {
-    width: 20px;
-    height: 20px;
-    color: #F20F52;
-}
-
-.mandatory-card {
-    background: #fff;
-    border-radius: 14px;
-    border: 1px solid #e5e7eb;
-    box-shadow: 0px 1px 3px 0px rgba(0, 0, 0, 0.1), 0px 1px 2px -1px rgba(0, 0, 0, 0.1);
-}
-
-.card-body {
-    padding: 33px !important;
-}
-
-.card-title {
-    font-family: 'Poppins', sans-serif;
-    font-weight: 600;
-    font-size: 20px;
-    line-height: 28px;
-    color: #101828;
-}
-
-.card-description {
-    font-family: 'Roboto', sans-serif;
-    font-weight: 400;
-    font-size: 14px;
-    line-height: 20px;
-    color: #4a5565;
-}
-
-.logic-item {
-    padding: 1rem;
-    border-radius: 8px;
-    border: 1px solid;
-}
-
-.logic-item-green {
-    background-color: #f0fdf4;
-    border-color: #bbf7d0;
-}
-
-.logic-item-purple {
-    background-color: #faf5ff;
-    border-color: #e9d5ff;
-}
-
-.logic-item-orange {
-    background-color: #fff7ed;
-    border-color: #fed7aa;
-}
-
-.logic-item-gray {
-    background-color: #f9fafb;
-    border-color: #e5e7eb;
-}
-
-.logic-title {
-    font-family: 'Roboto', sans-serif;
-    font-weight: 500;
-    font-size: 14px;
-    line-height: 20px;
-    color: #101828;
-}
-
-.logic-description {
-    font-family: 'Roboto', sans-serif;
-    font-weight: 400;
-    font-size: 13px;
-    line-height: 18px;
-    color: #4a5565;
-}
-
-.sync-behavior-card {
-    background: #fff;
-    border-radius: 14px;
-    border: 1px solid #e5e7eb;
-    box-shadow: 0px 1px 3px 0px rgba(0, 0, 0, 0.1), 0px 1px 2px -1px rgba(0, 0, 0, 0.1);
 }
 
 .section-title {

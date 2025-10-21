@@ -1,9 +1,8 @@
 <script setup>
 import { ref, computed, onMounted } from 'vue';
-import InfoBlue from '../../Icons/InfoBlue.vue';
-import SingleArrow from '../../Icons/SingleArrow.vue';
+import InfoBlue from '../../../Icons/InfoBlue.vue';
+import SingleArrow from '../../../Icons/SingleArrow.vue';
 
-// Receive primarySystem as a prop from parent
 const props = defineProps({
     primarySystem: {
         type: String,
@@ -12,36 +11,33 @@ const props = defineProps({
     }
 });
 
-// Sync options for descriptions
 const shortDescSync = ref('create_only');
 const longDescSync = ref('create_only');
 
-// Shopify field mappings
-const shopifyTitleField = ref('Product Title');
-const shopifyDescriptionField = ref('Product Description');
-const shopifySKUField = ref('SKU');
-const shopifyProductTypeField = ref('Product Type');
-const shopifyWeightField = ref('Weight');
-const shopifyLengthField = ref('Length');
-const shopifyWidthField = ref('Width');
-const shopifyHeightField = ref('Height');
-const shopifyVendorField = ref('Vendor');
-const shopifyBarcodeField = ref('Barcode');
+const shopifyTitleField = ref('product_title');
+const shopifyDescriptionField = ref('product_description');
+const shopifySKUField = ref('sku');
+const shopifyProductTypeField = ref('product_type');
+const shopifyWeightField = ref('weight');
+const shopifyLengthField = ref('length');
+const shopifyWidthField = ref('width');
+const shopifyHeightField = ref('height');
+const shopifyVendorField = ref('vendor');
+const shopifyBarcodeField = ref('barcode');
 
 // Variant and grouping
 const productGroupingField = ref('Custom1');
 const variantAttributes = ref([]);
 
-// Pricing
 const pricingMode = ref('fixed');
 const fixedPriceSync = ref('create_only');
 const fixedMSRPSync = ref('create_only');
-const retailExpressCost = ref('Cost of Goods Sold (Ex Tax)');
+const retailExpressCost = ref('cogs_excl_tax');
 const syncCostPerOutlet = ref(false);
 const selectedOutlet = ref('');
 
-const retailExpressPrice = ref('RRP (Inc Tax)');
-const retailExpressMSRP = ref('RRP (Inc Tax)');
+const retailExpressPrice = ref('rrp_incl_tax');
+const retailExpressMSRP = ref('rrp_incl_tax');
 
 onMounted(() => {
     const tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
@@ -80,7 +76,6 @@ const removeVariant = (attr) => {
 <template>
     <div class="card product-mapping-card position-relative overflow-hidden">
         <div class="card-body p-4">
-            <!-- Header Section -->
             <div class="d-flex flex-column gap-2 mb-4">
                 <h2 class="card-title mb-0">Product Mapping</h2>
                 <p class="card-description mb-0">
@@ -88,17 +83,13 @@ const removeVariant = (attr) => {
                 </p>
             </div>
 
-            <!-- Mapping Sections -->
             <div class="d-flex flex-column" style="gap: 2rem;">
-
-                <!-- Master Product Data Section -->
                 <div class="d-flex flex-column gap-3">
                     <div class="d-flex align-items-center gap-2">
                         <h3 class="section-heading mb-0">Master Product Data</h3>
                     </div>
 
                     <div class="d-flex flex-column" style="gap: 1.5rem;">
-                        <!-- Short Description Mapping -->
                         <div class="row g-3 align-items-center mapping-row-gray">
                             <div class="col-4">
                                 <div class="d-flex flex-column gap-2">
@@ -125,15 +116,14 @@ const removeVariant = (attr) => {
                                 <div class="d-flex flex-column gap-2">
                                     <div class="field-label">{{ targetSystemLabel }} Title</div>
                                     <select v-model="shopifyTitleField" class="form-select custom-select-sm">
-                                        <option value="Product Title">Product Title</option>
-                                        <option value="Product Name">Product Name</option>
-                                        <option value="Display Name">Display Name</option>
+                                        <option value="product_title">Product Title</option>
+                                        <option value="handle">Handle</option>
+                                        <option value="seo">SEO</option>
                                     </select>
                                 </div>
                             </div>
                         </div>
 
-                        <!-- Long Description Mapping -->
                         <div class="row g-3 align-items-center mapping-row-gray">
                             <div class="col-4">
                                 <div class="d-flex flex-column gap-2">
@@ -160,15 +150,13 @@ const removeVariant = (attr) => {
                                 <div class="d-flex flex-column gap-2">
                                     <div class="field-label">{{ targetSystemLabel }} Description</div>
                                     <select v-model="shopifyDescriptionField" class="form-select custom-select-sm">
-                                        <option value="Product Description">Product Description</option>
-                                        <option value="Description">Description</option>
-                                        <option value="Body HTML">Body HTML</option>
+                                        <option value="product_description">Product Description</option>
+                                        <option value="summary">Summary</option>
                                     </select>
                                 </div>
                             </div>
                         </div>
 
-                        <!-- SKU Mapping (Mandatory) -->
                         <div class="row g-3 align-items-center mapping-row-blue">
                             <div class="col-4">
                                 <div class="d-flex flex-column gap-2">
@@ -189,15 +177,13 @@ const removeVariant = (attr) => {
                                         <span class="badge-mandatory">Mandatory</span>
                                     </div>
                                     <select v-model="shopifySKUField" class="form-select custom-select-sm">
-                                        <option value="SKU">SKU</option>
-                                        <option value="Product SKU">Product SKU</option>
-                                        <option value="Variant SKU">Variant SKU</option>
+                                        <option value="sku">SKU</option>
+                                        <option value="product_id">Product ID</option>
                                     </select>
                                 </div>
                             </div>
                         </div>
 
-                        <!-- Product Type Mapping -->
                         <div class="row g-3 align-items-center mapping-row-gray">
                             <div class="col-4">
                                 <div class="d-flex flex-column gap-2">
@@ -212,14 +198,14 @@ const removeVariant = (attr) => {
                                 <div class="d-flex flex-column gap-2">
                                     <div class="field-label">{{ targetSystemLabel }} Product Type</div>
                                     <select v-model="shopifyProductTypeField" class="form-select custom-select-sm">
-                                        <option value="Product Type">Product Type</option>
-                                        <option value="Category">Category</option>
+                                        <option value="product_type">Product Type</option>
+                                        <option value="category">Category</option>
+                                        <option value="vendor">Vendor</option>
                                     </select>
                                 </div>
                             </div>
                         </div>
 
-                        <!-- Weight Mapping -->
                         <div class="row g-3 align-items-center mapping-row-gray">
                             <div class="col-4">
                                 <div class="d-flex flex-column gap-2">
@@ -234,14 +220,13 @@ const removeVariant = (attr) => {
                                 <div class="d-flex flex-column gap-2">
                                     <div class="field-label">{{ targetSystemLabel }} Weight</div>
                                     <select v-model="shopifyWeightField" class="form-select custom-select-sm">
-                                        <option value="Weight">Weight</option>
-                                        <option value="Product Weight">Product Weight</option>
+                                        <option value="weight">Weight</option>
+                                        <option value="grams">Grams</option>
                                     </select>
                                 </div>
                             </div>
                         </div>
 
-                        <!-- Length Mapping -->
                         <div class="row g-3 align-items-center mapping-row-gray">
                             <div class="col-4">
                                 <div class="d-flex flex-column gap-2">
@@ -256,14 +241,13 @@ const removeVariant = (attr) => {
                                 <div class="d-flex flex-column gap-2">
                                     <div class="field-label">{{ targetSystemLabel }} Length</div>
                                     <select v-model="shopifyLengthField" class="form-select custom-select-sm">
-                                        <option value="Length">Length</option>
-                                        <option value="Product Length">Product Length</option>
+                                        <option value="length">Length</option>
+                                        <option value="dimension_length">Dimension Length</option>
                                     </select>
                                 </div>
                             </div>
                         </div>
 
-                        <!-- Breadth/Width Mapping -->
                         <div class="row g-3 align-items-center mapping-row-gray">
                             <div class="col-4">
                                 <div class="d-flex flex-column gap-2">
@@ -278,14 +262,13 @@ const removeVariant = (attr) => {
                                 <div class="d-flex flex-column gap-2">
                                     <div class="field-label">{{ targetSystemLabel }} Width</div>
                                     <select v-model="shopifyWidthField" class="form-select custom-select-sm">
-                                        <option value="Width">Width</option>
-                                        <option value="Product Width">Product Width</option>
+                                        <option value="width">Width</option>
+                                        <option value="dimension_width">Dimension Width</option>
                                     </select>
                                 </div>
                             </div>
                         </div>
 
-                        <!-- Depth/Height Mapping -->
                         <div class="row g-3 align-items-center mapping-row-gray">
                             <div class="col-4">
                                 <div class="d-flex flex-column gap-2">
@@ -300,14 +283,13 @@ const removeVariant = (attr) => {
                                 <div class="d-flex flex-column gap-2">
                                     <div class="field-label">{{ targetSystemLabel }} Height</div>
                                     <select v-model="shopifyHeightField" class="form-select custom-select-sm">
-                                        <option value="Height">Height</option>
-                                        <option value="Product Height">Product Height</option>
+                                        <option value="height">Height</option>
+                                        <option value="dimension_height">Dimension Height</option>
                                     </select>
                                 </div>
                             </div>
                         </div>
 
-                        <!-- Supplier/Vendor Mapping -->
                         <div class="row g-3 align-items-center mapping-row-gray">
                             <div class="col-4">
                                 <div class="d-flex flex-column gap-2">
@@ -322,14 +304,14 @@ const removeVariant = (attr) => {
                                 <div class="d-flex flex-column gap-2">
                                     <div class="field-label">{{ targetSystemLabel }} Vendor</div>
                                     <select v-model="shopifyVendorField" class="form-select custom-select-sm">
-                                        <option value="Vendor">Vendor</option>
-                                        <option value="Supplier">Supplier</option>
+                                        <option value="vendor">Vendor</option>
+                                        <option value="supplier">Supplier</option>
+                                        <option value="manufacturer">Manufacturer</option>
                                     </select>
                                 </div>
                             </div>
                         </div>
 
-                        <!-- Supplier SKU 2/Barcode Mapping -->
                         <div class="row g-3 align-items-center mapping-row-gray">
                             <div class="col-4">
                                 <div class="d-flex flex-column gap-2">
@@ -344,8 +326,9 @@ const removeVariant = (attr) => {
                                 <div class="d-flex flex-column gap-2">
                                     <div class="field-label">{{ targetSystemLabel }} Barcode</div>
                                     <select v-model="shopifyBarcodeField" class="form-select custom-select-sm">
-                                        <option value="Barcode">Barcode</option>
-                                        <option value="Product Barcode">Product Barcode</option>
+                                        <option value="barcode">Barcode</option>
+                                        <option value="variant_barcode">Variant Barcode</option>
+                                        <option value="sku">SKU</option>
                                     </select>
                                 </div>
                             </div>
@@ -353,14 +336,12 @@ const removeVariant = (attr) => {
                     </div>
                 </div>
 
-                <!-- Variant & Grouping Fields Section -->
                 <div class="d-flex flex-column gap-3">
                     <div class="d-flex align-items-center gap-2">
                         <h3 class="section-heading mb-0">Variant & Grouping Fields</h3>
                     </div>
 
                     <div class="d-flex flex-column" style="gap: 1.5rem;">
-                        <!-- Product Grouping Field -->
                         <div class="mapping-row-gray" style="padding: 1rem;">
                             <div class="d-flex flex-column gap-2" style="max-width: 28rem;">
                                 <div class="d-flex align-items-center gap-2">
@@ -368,15 +349,14 @@ const removeVariant = (attr) => {
                                     <info-blue title="Select the field used to group related products" />
                                 </div>
                                 <select v-model="productGroupingField" class="form-select custom-select-sm">
+                                    <option value="manufacturer_sku">Manufacturer SKU</option>
                                     <option value="Custom1">Custom1</option>
                                     <option value="Custom2">Custom2</option>
                                     <option value="Custom3">Custom3</option>
-                                    <option value="Category">Category</option>
                                 </select>
                             </div>
                         </div>
 
-                        <!-- Variant Attribute Mapping -->
                         <div class="variant-mapping-container">
                             <div class="d-flex align-items-center gap-2 mb-3">
                                 <div class="field-label">Variant Attribute Mapping</div>
@@ -415,13 +395,11 @@ const removeVariant = (attr) => {
                     </div>
                 </div>
 
-                <!-- Pricing Fields Section -->
                 <div class="d-flex flex-column gap-3">
                     <div class="d-flex align-items-center gap-2">
                         <h3 class="section-heading mb-0">Pricing Fields</h3>
                     </div>
 
-                    <!-- Pricing Configuration Toggle -->
                     <div class="d-flex flex-column gap-2 mb-2">
                         <div class="field-label">Pricing Configuration</div>
                         <div class="btn-group-toggle">
@@ -437,15 +415,15 @@ const removeVariant = (attr) => {
                     </div>
 
                     <div class="d-flex flex-column" style="gap: 1.5rem;">
-                        <!-- Price Mapping (Green) -->
                         <div v-if="pricingMode === 'fixed'" class="row g-3 align-items-center mapping-row-green">
                             <div class="col-4">
                                 <div class="d-flex flex-column gap-2">
                                     <div class="field-label">{{ sourceSystemLabel }} Price</div>
                                     <select v-model="retailExpressPrice" class="form-select custom-select-sm">
-                                        <option value="RRP (Inc Tax)">RRP (Inc Tax)</option>
-                                        <option value="RRP (Ex Tax)">RRP (Ex Tax)</option>
-                                        <option value="Standard Price">Standard Price</option>
+                                        <option value="rrp_incl_tax">RRP (Inc Tax)</option>
+                                        <option value="pos_price">POS Price</option>
+                                        <option value="web_price">Web Price</option>
+                                        <option value="promo_price_incl_tax">Promo Price (Inc tax)</option>
                                     </select>
                                     <div class="d-flex gap-3">
                                         <label class="d-flex align-items-center gap-2">
@@ -469,15 +447,14 @@ const removeVariant = (attr) => {
                             </div>
                         </div>
 
-                        <!-- MSRP / Compare At Price Mapping -->
                         <div v-if="pricingMode === 'fixed'" class="row g-3 align-items-center mapping-row-gray">
                             <div class="col-4">
                                 <div class="d-flex flex-column gap-2">
                                     <div class="field-label">{{ sourceSystemLabel }} MSRP</div>
                                     <select v-model="retailExpressMSRP" class="form-select custom-select-sm">
-                                        <option value="RRP (Inc Tax)">RRP (Inc Tax)</option>
-                                        <option value="RRP (Ex Tax)">RRP (Ex Tax)</option>
-                                        <option value="MSRP">MSRP</option>
+                                        <option value="rrp_incl_tax">RRP (Inc Tax)</option>
+                                        <option value="msrp_field">MSRP Field</option>
+                                        <option value="compare_at_price">Compare At Price</option>
                                     </select>
                                     <div class="d-flex gap-3">
                                         <label class="d-flex align-items-center gap-2">
@@ -524,15 +501,14 @@ const removeVariant = (attr) => {
                             </div>
                         </div>
 
-                        <!-- Cost Mapping -->
                         <div class="row g-3 align-items-start mapping-row-gray">
                             <div class="col-4">
                                 <div class="d-flex flex-column gap-3">
                                     <div class="field-label">{{ sourceSystemLabel }} Cost</div>
                                     <select v-model="retailExpressCost" class="form-select custom-select-sm">
-                                        <option value="Cost of Goods Sold (Ex Tax)">Cost of Goods Sold (Ex Tax)</option>
-                                        <option value="Cost (Inc Tax)">Cost (Inc Tax)</option>
-                                        <option value="Average Cost">Average Cost</option>
+                                        <option value="cogs_excl_tax">Cost of Goods Sold (Ex Tax)</option>
+                                        <option value="direct_cost">Direct Cost</option>
+                                        <option value="avg_cost">Average Cost</option>
                                     </select>
                                     <div class="d-flex flex-column gap-2">
                                         <label class="d-flex align-items-center gap-2">
@@ -544,7 +520,6 @@ const removeVariant = (attr) => {
                                             <option value="">Select Outlet</option>
                                             <option value="outlet1">Outlet 1</option>
                                             <option value="outlet2">Outlet 2</option>
-                                            <option value="outlet3">Outlet 3</option>
                                         </select>
                                     </div>
                                 </div>
@@ -558,7 +533,6 @@ const removeVariant = (attr) => {
                         </div>
                     </div>
                 </div>
-
             </div>
         </div>
     </div>
@@ -699,32 +673,6 @@ const removeVariant = (attr) => {
     font-size: 13px;
     color: #101828;
     margin: 0;
-}
-
-.info-btn-blue {
-    background-color: #155dfc;
-    border: none;
-    border-radius: 50%;
-    width: 16px;
-    height: 16px;
-    padding: 0;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    transition: background-color 0.2s;
-    cursor: pointer;
-    flex-shrink: 0;
-}
-
-.info-btn-blue:hover {
-    background-color: #1349d6;
-}
-
-.info-icon-tiny {
-    width: 10px;
-    height: 10px;
-    stroke: white;
-    stroke-width: 2;
 }
 
 .variant-mapping-container {
