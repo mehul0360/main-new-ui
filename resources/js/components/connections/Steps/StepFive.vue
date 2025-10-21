@@ -1,7 +1,7 @@
 <script setup>
 import { computed, onMounted, ref } from 'vue';
-import AdditionalMapping from './Orders/AdditionalMapping.vue';
-import SyncBehaviourSettings from './Orders/SyncBehaviourSettings.vue';
+import AdditionalMapping from './Orders/OrderAdditionalMapping.vue';
+import SyncBehaviourSettings from './Orders/OrderSyncBehaviourSettings.vue';
 import PaymentMethodsMapping from './Orders/PaymentMethodsMapping.vue';
 import ShippingMethodsMapping from './Orders/ShippingMethodsMapping.vue';
 import ClickAndCollect from './Orders/ClickAndCollect.vue';

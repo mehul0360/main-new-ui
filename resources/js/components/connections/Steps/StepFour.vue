@@ -1,7 +1,7 @@
 <script setup>
 import { onMounted, ref } from 'vue';
-import AdditionalMappings from './Customers/AdditionalMapping.vue';
-import SyncBehaviourSettings from './Customers/SyncBehaviourSettings.vue';
+import AdditionalMappings from './Customers/CustomerAdditionalMapping.vue';
+import SyncBehaviourSettings from './Customers/CustomerSyncBehaviourSettings.vue';
 import TierGroups from './Customers/TierGroups.vue';
 import InfoRed from '../../Icons/InfoRed.vue';
 import InfoBlue from '../../Icons/InfoBlue.vue';
