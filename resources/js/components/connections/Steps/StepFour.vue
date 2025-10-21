@@ -43,7 +43,7 @@ onMounted(() => {
             </div>
         </div>
 
-        <div class="card source-card position-relative overflow-hidden mt-4">
+        <div class="card primary-field-card position-relative overflow-hidden mt-4">
             <div class="card-body p-4">
                 <div class="d-flex align-items-center">
                     <h2 class="section-title mb-0">Primary ID Field</h2>
@@ -190,7 +190,8 @@ onMounted(() => {
 
 <style scoped>
 /* First Card Styles */
-.customer-mapping-card {
+.customer-mapping-card,
+.primary-field-card {
     background: #fff;
     border-radius: 14px;
     border: 1px solid #e5e7eb;
