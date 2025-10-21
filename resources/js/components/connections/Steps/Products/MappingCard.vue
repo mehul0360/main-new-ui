@@ -25,7 +25,6 @@ const shopifyHeightField = ref('height');
 const shopifyVendorField = ref('vendor');
 const shopifyBarcodeField = ref('barcode');
 
-// Variant and grouping
 const productGroupingField = ref('Custom1');
 const variantAttributes = ref([]);
 
@@ -736,7 +735,6 @@ const removeVariant = (attr) => {
     box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
 }
 
-/* Hierarchy Info Box */
 .hierarchy-info-box {
     width: 100%;
     padding: 1rem;

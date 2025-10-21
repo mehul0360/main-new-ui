@@ -26,7 +26,6 @@ const handleConnectionSubmit = (event) => {
     isLoading.value = true;
     showConnectionSuccess.value = false;
 
-    // Simulate connection delay
     setTimeout(() => {
         isLoading.value = false;
         showConnectionSuccess.value = true;
@@ -321,7 +320,6 @@ const handleConnectionSubmit = (event) => {
     margin-top: 24px;
 }
 
-/* Alert Custom Width */
 .alert-custom {
     width: 28rem;
     border-radius: 8px;
@@ -341,7 +339,6 @@ const handleConnectionSubmit = (event) => {
     border-width: 2px;
 }
 
-/* Success Alert Styling */
 .alert-success {
     background-color: #f0fdf4;
     border-color: #bbf7d0;

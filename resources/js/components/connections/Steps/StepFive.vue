@@ -76,7 +76,6 @@ const mappings = [
                     <div class="d-flex align-items-center justify-content-between gap-4 w-100">
                         <div class="d-flex flex-column gap-2 flex-fill">
                             <div class="d-flex align-items-center gap-3">
-                                <!-- Custom Toggle Switch -->
                                 <label class="toggle-switch" for="order-sync-toggle">
                                     <input type="checkbox" id="order-sync-toggle" v-model="orderSyncEnabled"
                                         class="toggle-input">
@@ -154,7 +153,6 @@ const mappings = [
 </template>
 
 <style scoped>
-/* First Card Styles */
 .order-mapping-card {
     background: #fff;
     border-radius: 14px;
@@ -201,34 +199,6 @@ const mappings = [
     color: #4a5565;
 }
 
-.info-btn-red {
-    margin-left: .5rem;
-    background-color: #F20F52;
-    border: none;
-    border-radius: 50%;
-    width: 20px;
-    height: 20px;
-    padding: 0;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    transition: background-color 0.2s;
-    cursor: pointer;
-    flex-shrink: 0;
-}
-
-.info-btn-red:hover {
-    background-color: #d40d47;
-}
-
-.info-icon-small {
-    width: 12px;
-    height: 12px;
-    stroke: white;
-    stroke-width: 2;
-}
-
-/* Order Sync Card Styles below */
 .order-sync-card {
     background: #fff;
     border-radius: 14px;
@@ -344,7 +314,6 @@ const mappings = [
     font-weight: 600;
 }
 
-/* Mandatory Mapping Card Styles Below */
 .mandatory-mappings-card {
     background: #fff;
     border-radius: 14px;
@@ -391,11 +360,5 @@ const mappings = [
     font-weight: 400;
     font-size: 14px;
     color: #101828;
-}
-
-.arrow-icon-red {
-    width: 20px;
-    height: 20px;
-    color: #F20F52;
 }
 </style>

@@ -27,7 +27,6 @@ const removeMapping = (id) => {
 <template>
     <div class="card shadow-sm">
         <div class="card-body p-4">
-            <!-- Header -->
             <div class="mb-4">
                 <h5 class="fw-semibold mb-2"
                     style="color: #101828; font-size: 20px; font-family: 'Poppins', sans-serif; line-height: 28px;">
@@ -39,7 +38,6 @@ const removeMapping = (id) => {
                 </p>
             </div>
 
-            <!-- Table Header -->
             <div class="row g-4 py-2 border-bottom mb-3" style="border-color: #e5e7eb;">
                 <div class="col-4">
                     <strong
@@ -57,7 +55,6 @@ const removeMapping = (id) => {
                 <div class="col-1"></div>
             </div>
 
-            <!-- Mapping Rows -->
             <div v-for="mapping in mappings" :key="mapping.id" class="row g-4 align-items-center mb-3">
                 <div class="col-4">
                     <div class="position-relative">
@@ -128,7 +125,6 @@ const removeMapping = (id) => {
                 </div>
             </div>
 
-            <!-- Add Mapping Button -->
             <button @click="addMapping" type="button" class="btn btn-add-mapping mt-2 d-inline-flex align-items-center"
                 style="border: 1px solid #F20F52; color: #F20F52; background-color: white; font-size: 14px; font-family: 'Roboto', sans-serif; font-weight: 500; height: 36px; padding: 8px 16px; gap: 8px; border-radius: 6px;">
                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
@@ -143,7 +139,6 @@ const removeMapping = (id) => {
 </template>
 
 <style scoped>
-/* Card Shadow */
 .card {
     background: #fff;
     border-radius: 14px;
@@ -151,7 +146,6 @@ const removeMapping = (id) => {
     box-shadow: 0px 1px 3px 0px rgba(0, 0, 0, 0.1), 0px 1px 2px -1px rgba(0, 0, 0, 0.1);
 }
 
-/* Custom Select Styling */
 .custom-select {
     border: 1px solid #d1d5db;
     background-color: #ffffff;
@@ -169,7 +163,6 @@ const removeMapping = (id) => {
     background-color: #f9fafb;
 }
 
-/* Delete Button Hover Effect */
 .btn-delete {
     transition: all 0.15s ease;
 }
@@ -187,7 +180,6 @@ const removeMapping = (id) => {
     outline: none;
 }
 
-/* Add Mapping Button Hover Effect */
 .btn-add-mapping {
     transition: all 0.15s ease;
 }
@@ -207,7 +199,6 @@ const removeMapping = (id) => {
     stroke: white;
 }
 
-/* Border Bottom Color */
 .border-bottom {
     border-color: #e5e7eb !important;
 }

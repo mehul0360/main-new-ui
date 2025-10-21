@@ -221,7 +221,6 @@ const arrowDirection = computed(() => {
 </template>
 
 <style scoped>
-/* First Card Styles */
 .product-mapping-card,
 .sync-behavior-card {
     background: #fff;
@@ -269,7 +268,6 @@ const arrowDirection = computed(() => {
     color: #4a5565;
 }
 
-/* Source of Truth Card Styles */
 .source-card {
     background: #fff;
     border-radius: 14px;
@@ -320,7 +318,6 @@ const arrowDirection = computed(() => {
     outline: none;
 }
 
-/* Sync Flow Container with Gradient */
 .sync-flow-container {
     width: 100%;
     padding: 1.5rem;
@@ -343,7 +340,6 @@ const arrowDirection = computed(() => {
     margin-top: 0.25rem;
 }
 
-/* Product Identification Card Styles */
 .identification-card {
     background: #fff;
     border-radius: 14px;
@@ -403,7 +399,6 @@ const arrowDirection = computed(() => {
     outline: none;
 }
 
-/* Responsive adjustments */
 @media (max-width: 768px) {
     .product-title {
         font-size: 24px;

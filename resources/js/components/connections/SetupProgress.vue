@@ -160,10 +160,8 @@ const StoreIcon = ({ stroke = '#4A5565' }) => h('svg', {
     h('path', { d: 'M15 8.33333H5V18.3333H15V8.33333Z', stroke, 'stroke-width': '1.66667', 'stroke-linecap': 'round', 'stroke-linejoin': 'round' })
 ]);
 
-// Current step (1-indexed)
 const currentStep = ref(0);
 
-// Steps configuration
 const steps = ref([
     {
         label: ['Connect to', 'Shopify'],
@@ -220,7 +218,6 @@ const goToConnectionsListingPage = () => {
     return;
 };
 
-// Navigation functions
 const goNext = () => {
     if (currentStep.value < steps.value.length) {
         window.scrollTo({ top: 0, left: 0, behavior: 'smooth' });
@@ -254,7 +251,6 @@ const showStepIfCompleted = (index) => {
     }
 }
 
-// Style helper functions
 const getStepWrapperClass = (index) => {
     if (index < currentStep.value || steps.value[index].isCompleted) return 'completed';
     if (index === currentStep.value || steps.value[index].isCompleted) return 'active';

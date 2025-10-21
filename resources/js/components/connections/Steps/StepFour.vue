@@ -89,7 +89,6 @@ onMounted(() => {
                         </div>
                     </div>
 
-                    <!-- Address Information Sync -->
                     <div class="logic-item logic-item-purple">
                         <div class="d-flex align-items-start gap-3">
                             <div class="checkmark-circle checkmark-purple">
@@ -111,7 +110,6 @@ onMounted(() => {
                         </div>
                     </div>
 
-                    <!-- Marketing Consent Management -->
                     <div class="logic-item logic-item-orange">
                         <div class="d-flex align-items-start gap-3">
                             <div class="checkmark-circle checkmark-orange">
@@ -133,7 +131,6 @@ onMounted(() => {
                         </div>
                     </div>
 
-                    <!-- Customer ID Cross-Reference -->
                     <div class="logic-item logic-item-gray">
                         <div class="d-flex align-items-start gap-3">
                             <div class="checkmark-circle checkmark-gray">
@@ -155,7 +152,6 @@ onMounted(() => {
                         </div>
                     </div>
 
-                    <!-- Export to Web Filter -->
                     <div class="logic-item logic-item-blue">
                         <div class="d-flex align-items-start gap-3">
                             <div class="checkmark-circle checkmark-blue">
@@ -189,7 +185,6 @@ onMounted(() => {
 </template>
 
 <style scoped>
-/* First Card Styles */
 .customer-mapping-card,
 .primary-field-card {
     background: #fff;
@@ -235,33 +230,6 @@ onMounted(() => {
 .info-text {
     font-size: 14px;
     color: #4a5565;
-}
-
-.info-btn-red {
-    margin-left: .5rem;
-    background-color: #F20F52;
-    border: none;
-    border-radius: 50%;
-    width: 20px;
-    height: 20px;
-    padding: 0;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    transition: background-color 0.2s;
-    cursor: pointer;
-    flex-shrink: 0;
-}
-
-.info-btn-red:hover {
-    background-color: #d40d47;
-}
-
-.info-icon-small {
-    width: 12px;
-    height: 12px;
-    stroke: white;
-    stroke-width: 2;
 }
 
 .section-title {
@@ -391,31 +359,5 @@ onMounted(() => {
     font-family: 'Roboto', sans-serif;
     font-size: 14px;
     color: #4a5565;
-}
-
-.info-btn-blue {
-    background-color: #155dfc;
-    border: none;
-    border-radius: 50%;
-    width: 20px;
-    height: 20px;
-    padding: 0;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    transition: background-color 0.2s;
-    cursor: pointer;
-    flex-shrink: 0;
-}
-
-.info-btn-blue:hover {
-    background-color: #1348d4;
-}
-
-.info-icon-small {
-    width: 12px;
-    height: 12px;
-    stroke: white;
-    stroke-width: 2;
 }
 </style>

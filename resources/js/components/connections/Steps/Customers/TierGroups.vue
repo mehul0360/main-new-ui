@@ -60,17 +60,13 @@ const removeMapping = (id) => {
                         <div class="col-4">
                             <div class="field-header">Retail Express Price Group</div>
                         </div>
-                        <div class="col-1 mapping-arrow-col">
-                            <!-- Empty for arrow column -->
-                        </div>
+                        <div class="col-1 mapping-arrow-col"></div>
                         <div class="col-4">
                             <div class="field-header">Shopify Tier</div>
                         </div>
-                        <div class="col-1 mapping-delete-col">
-                        </div>
+                        <div class="col-1 mapping-delete-col"></div>
                     </div>
 
-                    <!-- Mapping Rows -->
                     <div class="d-flex flex-column gap-3">
                         <div v-for="mapping in mappings" :key="mapping.id" class="row g-3 align-items-center">
                             <div class="col-4">
@@ -105,7 +101,6 @@ const removeMapping = (id) => {
                         </div>
                     </div>
 
-                    <!-- Add Button -->
                     <button type="button" class="btn btn-add-mapping" @click="addMapping">
                         <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
                             stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
@@ -116,7 +111,6 @@ const removeMapping = (id) => {
                         Add Price Group Mapping
                     </button>
                 </div>
-
             </div>
         </div>
     </div>

@@ -165,31 +165,6 @@ const sendWelcomeEmail = ref(false);
     cursor: pointer;
 }
 
-.info-btn-red {
-    background-color: #F20F52;
-    border: none;
-    border-radius: 50%;
-    width: 20px;
-    height: 20px;
-    padding: 0;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    transition: background-color 0.2s;
-    cursor: pointer;
-}
-
-.info-btn-red:hover {
-    background-color: #d40d47;
-}
-
-.info-icon-small {
-    width: 12px;
-    height: 12px;
-    stroke: white;
-    stroke-width: 2;
-}
-
 /* Responsive adjustments */
 @media (max-width: 768px) {
     .section-title {

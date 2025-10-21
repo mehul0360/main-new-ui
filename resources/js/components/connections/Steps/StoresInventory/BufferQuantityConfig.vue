@@ -66,7 +66,6 @@ const removeMapping = (id) => {
                 combinations.
             </p>
 
-            <!-- Table Header -->
             <div class="row g-4 py-2 border-bottom mb-3" style="border-color: #e5e7eb;">
                 <div class="col-3">
                     <strong
@@ -175,30 +174,6 @@ const removeMapping = (id) => {
     padding: 33px !important;
 }
 
-.info-btn-red {
-    background-color: #F20F52;
-    border: none;
-    border-radius: 50%;
-    width: 20px;
-    height: 20px;
-    padding: 0;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    transition: background-color 0.2s;
-    cursor: pointer;
-}
-
-.info-btn-red:hover {
-    background-color: #d40d47;
-}
-
-.info-icon-small {
-    width: 12px;
-    height: 12px;
-    stroke: white;
-    stroke-width: 2;
-}
 
 .custom-select {
     border: 1px solid #d1d5db;
