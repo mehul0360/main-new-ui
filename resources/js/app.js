@@ -1,8 +1,13 @@
 import './bootstrap';
 import { createApp } from 'vue';
+import { createPinia } from 'pinia'
+import piniaPluginPersistedstate from 'pinia-plugin-persistedstate'
 
 // Import Bootstrap CSS
 import 'bootstrap/dist/css/bootstrap.min.css';
+
+const pinia = createPinia();
+pinia.use(piniaPluginPersistedstate);
 
 const app = createApp({});
 
@@ -27,4 +32,5 @@ Object.entries(components).forEach(([path, module]) => {
     app.component(componentName, module.default);
 });
 
+app.use(pinia);
 app.mount('#app');
