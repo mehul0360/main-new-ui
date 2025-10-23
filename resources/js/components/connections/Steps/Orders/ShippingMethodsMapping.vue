@@ -1,11 +1,24 @@
 <script setup>
-import { ref } from 'vue';
-import TwoWayArrow from '../../../Icons/TwoWayArrow.vue';
+import { ref, onMounted } from 'vue';
+import { useStepFiveStore } from '@/stores/connection-steps/stepfive';
+import TwoWayArrow from '@/components/Icons/TwoWayArrow.vue';
+
+const stepFiveStore = useStepFiveStore();
 
 const mappings = ref([
     { id: 1, retailShippingMethod: '', shopifyShippingMethod: '' },
     { id: 2, retailShippingMethod: '', shopifyShippingMethod: '' },
 ]);
+
+onMounted(() => {
+    // Load saved data from store
+    if (stepFiveStore.isSaved) {
+        const savedData = stepFiveStore.getPayload();
+        if (savedData.shippingMethodMappings && savedData.shippingMethodMappings.length > 0) {
+            mappings.value = savedData.shippingMethodMappings;
+        }
+    }
+});
 
 const addMapping = () => {
     mappings.value.push({
@@ -20,6 +33,16 @@ const removeMapping = (id) => {
         mappings.value = mappings.value.filter(m => m.id !== id);
     }
 };
+
+const getFormData = () => {
+    return {
+        shippingMethodMappings: mappings.value
+    };
+};
+
+defineExpose({
+    getFormData
+});
 </script>
 
 <template>

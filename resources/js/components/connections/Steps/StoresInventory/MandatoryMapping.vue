@@ -1,11 +1,24 @@
 <script setup>
-import { ref } from 'vue';
+import { ref, onMounted } from 'vue';
+import { useStepSixStore } from '@/stores/connection-steps/stepsix';
 import InfoRed from '../../../Icons/InfoRed.vue';
 import SingleArrow from '../../../Icons/SingleArrow.vue';
+
+const stepSixStore = useStepSixStore();
 
 const mappings = ref([
     { id: 1, retailStore: '', shopifyStore: '' },
 ]);
+
+onMounted(() => {
+    // Load saved data from store
+    if (stepSixStore.isSaved) {
+        const savedData = stepSixStore.getPayload();
+        if (savedData.storeMappings && savedData.storeMappings.length > 0) {
+            mappings.value = savedData.storeMappings;
+        }
+    }
+});
 
 const addMapping = () => {
     mappings.value.push({
@@ -20,6 +33,16 @@ const removeMapping = (id) => {
         mappings.value = mappings.value.filter(m => m.id !== id);
     }
 };
+
+const getFormData = () => {
+    return {
+        storeMappings: mappings.value
+    };
+};
+
+defineExpose({
+    getFormData
+});
 </script>
 
 <template>
@@ -28,7 +51,7 @@ const removeMapping = (id) => {
             <div class="d-flex align-items-center mb-1 gap-2">
                 <h5 class="fw-semibold mt-1"
                     style="color: #101828; font-size: 20px; font-family: 'Poppins', sans-serif; line-height: 28px;">
-                    Mandotory Order Mappings
+                    Mandatory Store Mappings
                 </h5>
 
                 <info-red

@@ -1,7 +1,9 @@
 <script setup>
-import { ref, computed, onMounted } from 'vue';
-import InfoBlue from '../../../Icons/InfoBlue.vue';
-import SingleArrow from '../../../Icons/SingleArrow.vue';
+import { ref, computed, onMounted, defineExpose } from 'vue';
+import { storeToRefs } from 'pinia';
+import { useStepThreeStore } from '@/stores/connection-steps/stepthree';
+import InfoBlue from '@/components/Icons/InfoBlue.vue';
+import SingleArrow from '@/components/Icons/SingleArrow.vue';
 
 const props = defineProps({
     primarySystem: {
@@ -11,19 +13,22 @@ const props = defineProps({
     }
 });
 
+const stepThreeStore = useStepThreeStore();
+const { payload, isSaved } = storeToRefs(stepThreeStore);
+
 const shortDescSync = ref('create_only');
 const longDescSync = ref('create_only');
 
-const shopifyTitleField = ref('product_title');
-const shopifyDescriptionField = ref('product_description');
-const shopifySKUField = ref('sku');
-const shopifyProductTypeField = ref('product_type');
-const shopifyWeightField = ref('weight');
-const shopifyLengthField = ref('length');
-const shopifyWidthField = ref('width');
-const shopifyHeightField = ref('height');
-const shopifyVendorField = ref('vendor');
-const shopifyBarcodeField = ref('barcode');
+const titleField = ref('product_title');
+const descriptionField = ref('product_description');
+const skuField = ref('sku');
+const productTypeField = ref('product_type');
+const weightField = ref('weight');
+const lengthField = ref('length');
+const widthField = ref('width');
+const heightField = ref('height');
+const vendorField = ref('vendor');
+const barcodeField = ref('barcode');
 
 const productGroupingField = ref('Custom1');
 const variantAttributes = ref([]);
@@ -31,18 +36,47 @@ const variantAttributes = ref([]);
 const pricingMode = ref('fixed');
 const fixedPriceSync = ref('create_only');
 const fixedMSRPSync = ref('create_only');
-const retailExpressCost = ref('cogs_excl_tax');
+const typCost = ref('cogs_excl_tax');
 const syncCostPerOutlet = ref(false);
 const selectedOutlet = ref('');
 
 const retailExpressPrice = ref('rrp_incl_tax');
 const retailExpressMSRP = ref('rrp_incl_tax');
 
+const loadStoredData = () => {
+    if (isSaved.value && payload.value) {
+        shortDescSync.value = payload.value.shortDescSync || 'create_only';
+        longDescSync.value = payload.value.longDescSync || 'create_only';
+        titleField.value = payload.value.titleField || 'product_title';
+        descriptionField.value = payload.value.descriptionField || 'product_description';
+        skuField.value = payload.value.skuField || 'sku';
+        productTypeField.value = payload.value.productTypeField || 'product_type';
+        weightField.value = payload.value.weightField || 'weight';
+        lengthField.value = payload.value.lengthField || 'length';
+        widthField.value = payload.value.widthField || 'width';
+        heightField.value = payload.value.heightField || 'height';
+        vendorField.value = payload.value.vendorField || 'vendor';
+        barcodeField.value = payload.value.barcodeField || 'barcode';
+        productGroupingField.value = payload.value.productGroupingField || 'Custom1';
+        variantAttributes.value = payload.value.variantAttributes || [];
+        pricingMode.value = payload.value.pricingMode || 'fixed';
+        fixedPriceSync.value = payload.value.fixedPriceSync || 'create_only';
+        fixedMSRPSync.value = payload.value.fixedMSRPSync || 'create_only';
+        typCost.value = payload.value.typCost || 'cogs_excl_tax';
+        syncCostPerOutlet.value = payload.value.syncCostPerOutlet || false;
+        selectedOutlet.value = payload.value.selectedOutlet || '';
+        retailExpressPrice.value = payload.value.retailExpressPrice || 'rrp_incl_tax';
+        retailExpressMSRP.value = payload.value.retailExpressMSRP || 'rrp_incl_tax';
+    }
+};
+
 onMounted(() => {
     const tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
     tooltipTriggerList.map(function (tooltipTriggerEl) {
         return new bootstrap.Tooltip(tooltipTriggerEl);
     });
+
+    loadStoredData();
 });
 
 const sourceSystemLabel = computed(() => {
@@ -70,6 +104,37 @@ const removeVariant = (attr) => {
     const index = variantAttributes.value.indexOf(attr);
     variantAttributes.value.splice(index, 1);
 }
+
+const getFormData = () => {
+    return {
+        shortDescSync: shortDescSync.value,
+        longDescSync: longDescSync.value,
+        titleField: titleField.value,
+        descriptionField: descriptionField.value,
+        skuField: skuField.value,
+        productTypeField: productTypeField.value,
+        weightField: weightField.value,
+        lengthField: lengthField.value,
+        widthField: widthField.value,
+        heightField: heightField.value,
+        vendorField: vendorField.value,
+        barcodeField: barcodeField.value,
+        productGroupingField: productGroupingField.value,
+        variantAttributes: variantAttributes.value,
+        pricingMode: pricingMode.value,
+        fixedPriceSync: pricingMode.value === 'fixed' ? fixedPriceSync.value : '',
+        fixedMSRPSync: pricingMode.value === 'fixed' ? fixedMSRPSync.value : '',
+        typCost: typCost.value,
+        syncCostPerOutlet: syncCostPerOutlet.value,
+        selectedOutlet: selectedOutlet.value,
+        retailExpressPrice: retailExpressPrice.value,
+        retailExpressMSRP: retailExpressMSRP.value
+    };
+};
+
+defineExpose({
+    getFormData
+});
 </script>
 
 <template>
@@ -114,7 +179,7 @@ const removeVariant = (attr) => {
                             <div class="col-4">
                                 <div class="d-flex flex-column gap-2">
                                     <div class="field-label">{{ targetSystemLabel }} Title</div>
-                                    <select v-model="shopifyTitleField" class="form-select custom-select-sm">
+                                    <select v-model="titleField" class="form-select custom-select-sm">
                                         <option value="product_title">Product Title</option>
                                         <option value="handle">Handle</option>
                                         <option value="seo">SEO</option>
@@ -148,7 +213,7 @@ const removeVariant = (attr) => {
                             <div class="col-4">
                                 <div class="d-flex flex-column gap-2">
                                     <div class="field-label">{{ targetSystemLabel }} Description</div>
-                                    <select v-model="shopifyDescriptionField" class="form-select custom-select-sm">
+                                    <select v-model="descriptionField" class="form-select custom-select-sm">
                                         <option value="product_description">Product Description</option>
                                         <option value="summary">Summary</option>
                                     </select>
@@ -175,7 +240,7 @@ const removeVariant = (attr) => {
                                         <div class="field-label">{{ targetSystemLabel }} SKU</div>
                                         <span class="badge-mandatory">Mandatory</span>
                                     </div>
-                                    <select v-model="shopifySKUField" class="form-select custom-select-sm">
+                                    <select v-model="skuField" class="form-select custom-select-sm">
                                         <option value="sku">SKU</option>
                                         <option value="product_id">Product ID</option>
                                     </select>
@@ -196,7 +261,7 @@ const removeVariant = (attr) => {
                             <div class="col-4">
                                 <div class="d-flex flex-column gap-2">
                                     <div class="field-label">{{ targetSystemLabel }} Product Type</div>
-                                    <select v-model="shopifyProductTypeField" class="form-select custom-select-sm">
+                                    <select v-model="productTypeField" class="form-select custom-select-sm">
                                         <option value="product_type">Product Type</option>
                                         <option value="category">Category</option>
                                         <option value="vendor">Vendor</option>
@@ -218,7 +283,7 @@ const removeVariant = (attr) => {
                             <div class="col-4">
                                 <div class="d-flex flex-column gap-2">
                                     <div class="field-label">{{ targetSystemLabel }} Weight</div>
-                                    <select v-model="shopifyWeightField" class="form-select custom-select-sm">
+                                    <select v-model="weightField" class="form-select custom-select-sm">
                                         <option value="weight">Weight</option>
                                         <option value="grams">Grams</option>
                                     </select>
@@ -239,7 +304,7 @@ const removeVariant = (attr) => {
                             <div class="col-4">
                                 <div class="d-flex flex-column gap-2">
                                     <div class="field-label">{{ targetSystemLabel }} Length</div>
-                                    <select v-model="shopifyLengthField" class="form-select custom-select-sm">
+                                    <select v-model="lengthField" class="form-select custom-select-sm">
                                         <option value="length">Length</option>
                                         <option value="dimension_length">Dimension Length</option>
                                     </select>
@@ -260,7 +325,7 @@ const removeVariant = (attr) => {
                             <div class="col-4">
                                 <div class="d-flex flex-column gap-2">
                                     <div class="field-label">{{ targetSystemLabel }} Width</div>
-                                    <select v-model="shopifyWidthField" class="form-select custom-select-sm">
+                                    <select v-model="widthField" class="form-select custom-select-sm">
                                         <option value="width">Width</option>
                                         <option value="dimension_width">Dimension Width</option>
                                     </select>
@@ -281,7 +346,7 @@ const removeVariant = (attr) => {
                             <div class="col-4">
                                 <div class="d-flex flex-column gap-2">
                                     <div class="field-label">{{ targetSystemLabel }} Height</div>
-                                    <select v-model="shopifyHeightField" class="form-select custom-select-sm">
+                                    <select v-model="heightField" class="form-select custom-select-sm">
                                         <option value="height">Height</option>
                                         <option value="dimension_height">Dimension Height</option>
                                     </select>
@@ -302,7 +367,7 @@ const removeVariant = (attr) => {
                             <div class="col-4">
                                 <div class="d-flex flex-column gap-2">
                                     <div class="field-label">{{ targetSystemLabel }} Vendor</div>
-                                    <select v-model="shopifyVendorField" class="form-select custom-select-sm">
+                                    <select v-model="vendorField" class="form-select custom-select-sm">
                                         <option value="vendor">Vendor</option>
                                         <option value="supplier">Supplier</option>
                                         <option value="manufacturer">Manufacturer</option>
@@ -324,7 +389,7 @@ const removeVariant = (attr) => {
                             <div class="col-4">
                                 <div class="d-flex flex-column gap-2">
                                     <div class="field-label">{{ targetSystemLabel }} Barcode</div>
-                                    <select v-model="shopifyBarcodeField" class="form-select custom-select-sm">
+                                    <select v-model="barcodeField" class="form-select custom-select-sm">
                                         <option value="barcode">Barcode</option>
                                         <option value="variant_barcode">Variant Barcode</option>
                                         <option value="sku">SKU</option>
@@ -504,7 +569,7 @@ const removeVariant = (attr) => {
                             <div class="col-4">
                                 <div class="d-flex flex-column gap-3">
                                     <div class="field-label">{{ sourceSystemLabel }} Cost</div>
-                                    <select v-model="retailExpressCost" class="form-select custom-select-sm">
+                                    <select v-model="typCost" class="form-select custom-select-sm">
                                         <option value="cogs_excl_tax">Cost of Goods Sold (Ex Tax)</option>
                                         <option value="direct_cost">Direct Cost</option>
                                         <option value="avg_cost">Average Cost</option>
@@ -538,6 +603,7 @@ const removeVariant = (attr) => {
 </template>
 
 <style scoped>
+/* All styles remain the same - copying from original */
 .product-mapping-card {
     background: #fff;
     border-radius: 14px;
@@ -792,7 +858,6 @@ const removeVariant = (attr) => {
     color: #9333ea;
 }
 
-/* Responsive adjustments */
 @media (max-width: 768px) {
     .col-4 {
         width: 100%;

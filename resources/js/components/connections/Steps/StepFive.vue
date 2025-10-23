@@ -1,20 +1,34 @@
 <script setup>
 import { computed, onMounted, ref } from 'vue';
+import { useStepFiveStore } from '@/stores/connection-steps/stepfive';
 import AdditionalMapping from './Orders/OrderAdditionalMapping.vue';
 import SyncBehaviourSettings from './Orders/OrderSyncBehaviourSettings.vue';
 import PaymentMethodsMapping from './Orders/PaymentMethodsMapping.vue';
 import ShippingMethodsMapping from './Orders/ShippingMethodsMapping.vue';
 import ClickAndCollect from './Orders/ClickAndCollect.vue';
-import InfoRed from '../../Icons/InfoRed.vue';
-import SingleArrow from '../../Icons/SingleArrow.vue';
+import InfoRed from '@/components/Icons/InfoRed.vue';
+import SingleArrow from '@/components/Icons/SingleArrow.vue';
+
+const stepFiveStore = useStepFiveStore();
 
 const orderSyncEnabled = ref(true);
+
+const additionalMappingRef = ref(null);
+const syncBehaviourRef = ref(null);
+const paymentMethodsRef = ref(null);
+const shippingMethodsRef = ref(null);
+const clickCollectRef = ref(null);
 
 onMounted(() => {
     const tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
     tooltipTriggerList.map(function (tooltipTriggerEl) {
         return new bootstrap.Tooltip(tooltipTriggerEl);
     });
+
+    if (stepFiveStore.isSaved) {
+        const savedData = stepFiveStore.getPayload();
+        orderSyncEnabled.value = savedData.orderSyncEnabled;
+    }
 });
 
 const syncStatusText = computed(() => {
@@ -35,6 +49,32 @@ const mappings = [
     { rexField: 'Payment Status', shopifyField: 'Payment Status' },
     { rexField: 'Total Amount', shopifyField: 'Total Amount' }
 ];
+
+const validateForm = () => {
+    return true;
+};
+
+const getFormData = () => {
+    const additionalMappingData = additionalMappingRef.value?.getFormData() || { additionalMappings: [] };
+    const syncBehaviourData = syncBehaviourRef.value?.getFormData() || {};
+    const paymentMethodsData = paymentMethodsRef.value?.getFormData() || { paymentMethodMappings: [] };
+    const shippingMethodsData = shippingMethodsRef.value?.getFormData() || { shippingMethodMappings: [] };
+    const clickCollectData = clickCollectRef.value?.getFormData() || {};
+
+    return {
+        orderSyncEnabled: orderSyncEnabled.value,
+        ...additionalMappingData,
+        ...syncBehaviourData,
+        ...paymentMethodsData,
+        ...shippingMethodsData,
+        ...clickCollectData
+    };
+};
+
+defineExpose({
+    validateForm,
+    getFormData
+});
 </script>
 
 <template>
@@ -140,15 +180,15 @@ const mappings = [
             </div>
         </div>
 
-        <additional-mapping />
+        <additional-mapping ref="additionalMappingRef" />
 
-        <sync-behaviour-settings />
+        <sync-behaviour-settings ref="syncBehaviourRef" />
 
-        <payment-methods-mapping />
+        <payment-methods-mapping ref="paymentMethodsRef" />
 
-        <shipping-methods-mapping />
+        <shipping-methods-mapping ref="shippingMethodsRef" />
 
-        <click-and-collect />
+        <click-and-collect ref="clickCollectRef" />
     </div>
 </template>
 

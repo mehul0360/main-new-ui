@@ -1,15 +1,23 @@
 <script setup>
-import { onMounted, ref } from 'vue';
-import InfoBlue from '../../Icons/InfoBlue.vue';
+import { onMounted, ref, defineExpose, watch } from 'vue';
+import { storeToRefs } from 'pinia';
+import { useStepTwoStore } from '@/stores/connection-steps/steptwo';
+import InfoBlue from '@/components/Icons/InfoBlue.vue';
 
 const showConnectionSuccess = ref(false);
 const isLoading = ref(false);
+const hasFormChanged = ref(false);
+
+const stepTwoStore = useStepTwoStore();
+const { payload, isSaved } = storeToRefs(stepTwoStore);
 
 onMounted(() => {
     const tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
     tooltipTriggerList.map(function (tooltipTriggerEl) {
         return new bootstrap.Tooltip(tooltipTriggerEl);
     });
+
+    fetchStoredData();
 });
 
 const togglePasswordVisibility = (fieldId) => {
@@ -29,8 +37,89 @@ const handleConnectionSubmit = (event) => {
     setTimeout(() => {
         isLoading.value = false;
         showConnectionSuccess.value = true;
+
+        hasFormChanged.value = false;
+
+        originalFormData.value = { ...formData.value };
     }, 2500);
 }
+
+const originalFormData = ref({
+    domain: '',
+    username: '',
+    password: '',
+    clientId: '',
+    channelId: '',
+    primaryKey: '',
+    secondaryKey: ''
+});
+
+const formData = ref({
+    domain: '',
+    username: '',
+    password: '',
+    clientId: '',
+    channelId: '',
+    primaryKey: '',
+    secondaryKey: ''
+});
+
+const getFormData = () => {
+    return {
+        domain: formData.value.domain,
+        username: formData.value.username,
+        password: formData.value.password,
+        clientId: formData.value.clientId,
+        channelId: formData.value.channelId,
+        primaryKey: formData.value.primaryKey,
+        secondaryKey: formData.value.secondaryKey,
+        isConnected: showConnectionSuccess.value
+    };
+}
+
+const validateForm = () => {
+    const data = formData.value;
+    return data.domain &&
+        data.username &&
+        data.password &&
+        data.clientId &&
+        data.channelId &&
+        data.primaryKey &&
+        data.secondaryKey &&
+        showConnectionSuccess.value;
+}
+
+const fetchStoredData = () => {
+    if (isSaved.value && payload.value) {
+        formData.value = { ...payload.value };
+
+        originalFormData.value = { ...formData.value };
+
+        if (payload.value.isConnected) {
+            showConnectionSuccess.value = true;
+        }
+    } else {
+        originalFormData.value = { ...formData.value };
+    }
+};
+
+watch(formData, (newValue) => {
+    const changed = Object.keys(newValue).some(key => {
+        return newValue[key] !== originalFormData.value[key];
+    });
+
+    if (changed) {
+        hasFormChanged.value = true;
+        showConnectionSuccess.value = false;
+    } else {
+        hasFormChanged.value = false;
+    }
+}, { deep: true });
+
+defineExpose({
+    getFormData,
+    validateForm
+});
 </script>
 
 <template>
@@ -49,7 +138,7 @@ const handleConnectionSubmit = (event) => {
                             title="Your Retail Express domain URL (e.g., https://yourstore.retailexpress.com.au)"
                             tooltip-placement="right" />
                     </label>
-                    <input type="url" class="form-control" id="domain"
+                    <input type="url" class="form-control" id="domain" v-model="formData.domain"
                         placeholder="https://yourretailexpresssite.retailexpress.com.au">
                 </div>
 
@@ -59,7 +148,8 @@ const handleConnectionSubmit = (event) => {
                         <info-blue is-small title="Your Retail Express username for API access"
                             tooltip-placement="right" />
                     </label>
-                    <input type="text" class="form-control" id="username" placeholder="Enter your username">
+                    <input type="text" class="form-control" id="username" v-model="formData.username"
+                        placeholder="Enter your username">
                 </div>
 
                 <div class="mb-3 col-md-6">
@@ -69,7 +159,8 @@ const handleConnectionSubmit = (event) => {
                             tooltip-placement="right" />
                     </label>
                     <div class="input-group">
-                        <input type="password" class="form-control" id="password" placeholder="Enter your password">
+                        <input type="password" class="form-control" id="password" v-model="formData.password"
+                            placeholder="Enter your password">
                         <button type="button" class="password-toggle"
                             @click.prevent="togglePasswordVisibility('password')">
                             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
@@ -90,7 +181,8 @@ const handleConnectionSubmit = (event) => {
                             tooltip-placement="right" />
                     </label>
                     <div class="input-group">
-                        <input type="password" class="form-control" id="clientId" placeholder="Enter your Client ID">
+                        <input type="password" class="form-control" id="clientId" v-model="formData.clientId"
+                            placeholder="Enter your Client ID">
                         <button type="button" class="password-toggle"
                             @click.prevent="togglePasswordVisibility('clientId')">
                             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
@@ -110,7 +202,7 @@ const handleConnectionSubmit = (event) => {
                         <info-blue is-small title="The channel ID for your Retail Express integration"
                             tooltip-placement="right" />
                     </label>
-                    <input type="number" class="form-control" id="channelId"
+                    <input type="number" class="form-control" id="channelId" v-model="formData.channelId"
                         placeholder="Enter Channel ID (e.g. 1, 2, 3)">
                 </div>
 
@@ -121,7 +213,7 @@ const handleConnectionSubmit = (event) => {
                             tooltip-placement="right" />
                     </label>
                     <div class="input-group">
-                        <input type="password" class="form-control" id="primaryKey"
+                        <input type="password" class="form-control" id="primaryKey" v-model="formData.primaryKey"
                             placeholder="Enter your Primary Key">
                         <button type="button" class="password-toggle"
                             @click.prevent="togglePasswordVisibility('primaryKey')">
@@ -143,7 +235,7 @@ const handleConnectionSubmit = (event) => {
                             tooltip-placement="right" />
                     </label>
                     <div class="input-group">
-                        <input type="password" class="form-control" id="secondaryKey"
+                        <input type="password" class="form-control" id="secondaryKey" v-model="formData.secondaryKey"
                             placeholder="Enter your Secondary Key">
                         <button type="button" class="password-toggle"
                             @click.prevent="togglePasswordVisibility('secondaryKey')">
@@ -158,7 +250,7 @@ const handleConnectionSubmit = (event) => {
                     </div>
                 </div>
 
-                <div v-if="!showConnectionSuccess" class="btn-container text-center">
+                <div v-if="!showConnectionSuccess || hasFormChanged" class="btn-container text-center">
                     <button class="connect-btn" @click.prevent="handleConnectionSubmit" :disabled="isLoading">
                         <svg v-if="!isLoading" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
                             stroke="currentColor" stroke-width="2" class="wifi-icon">
@@ -178,7 +270,8 @@ const handleConnectionSubmit = (event) => {
                     </button>
                 </div>
 
-                <div v-if="showConnectionSuccess" class="btn-container d-flex justify-content-center">
+                <div v-if="showConnectionSuccess && !hasFormChanged"
+                    class="btn-container d-flex justify-content-center">
                     <div class="alert alert-success d-flex align-items-center gap-3 mb-4 alert-custom" role="alert">
                         <div class="success-icon-wrapper">
                             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
@@ -250,6 +343,7 @@ const handleConnectionSubmit = (event) => {
     font-size: 14px;
     background-color: #f9fafb;
     border: 1px solid #d1d5db;
+    border-radius: .375rem !important;
     transition: border-color 0.2s, box-shadow 0.2s;
 }
 

@@ -1,6 +1,9 @@
 <script setup>
 import { ref, onMounted } from 'vue';
-import InfoRed from '../../../Icons/InfoRed.vue';
+import { useStepFiveStore } from '@/stores/connection-steps/stepfive';
+import InfoRed from '@/components/Icons/InfoRed.vue';
+
+const stepFiveStore = useStepFiveStore();
 
 const trackingInfoSetting = ref('yes_from_retail_express_shipment_tab');
 const salesLocationSetting = ref('use_location_from_shopify_order');
@@ -13,6 +16,30 @@ onMounted(() => {
     tooltipTriggerList.map(function (tooltipTriggerEl) {
         return new bootstrap.Tooltip(tooltipTriggerEl);
     });
+
+    if (stepFiveStore.isSaved) {
+        const savedData = stepFiveStore.getPayload();
+
+        trackingInfoSetting.value = savedData.trackingInfoSetting || 'yes_from_retail_express_shipment_tab';
+        salesLocationSetting.value = savedData.salesLocationSetting || 'use_location_from_shopify_order';
+        fulfillmentLocationSetting.value = savedData.fulfillmentLocationSetting || 'use_shopify';
+        defaultSalesperson.value = savedData.defaultSalesperson || '';
+        updateCustomerData.value = savedData.updateCustomerData || 'yes';
+    }
+});
+
+const getFormData = () => {
+    return {
+        trackingInfoSetting: trackingInfoSetting.value,
+        salesLocationSetting: salesLocationSetting.value,
+        fulfillmentLocationSetting: fulfillmentLocationSetting.value,
+        defaultSalesperson: defaultSalesperson.value,
+        updateCustomerData: updateCustomerData.value
+    };
+};
+
+defineExpose({
+    getFormData
 });
 </script>
 

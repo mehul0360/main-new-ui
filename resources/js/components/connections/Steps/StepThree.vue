@@ -1,25 +1,46 @@
 <script setup>
-import { computed, onMounted, ref } from 'vue';
-import MappingCard from './Products/MappingCard.vue';
-import InfoRed from '../../Icons/InfoRed.vue';
-import InfoBlue from '../../Icons/InfoBlue.vue';
-import SingleArrow from '../../Icons/SingleArrow.vue';
-import MandatoryLogic from './Products/MandatoryLogic.vue';
+import { computed, onMounted, ref, defineExpose } from 'vue';
+import { storeToRefs } from 'pinia';
+import { useStepThreeStore } from '@/stores/connection-steps/stepthree';
+import MappingCard from '@/components/connections/Steps/Products/MappingCard.vue';
+import MandatoryLogic from '@/components/connections/Steps/Products/MandatoryLogic.vue';
+import InfoRed from '@/components/Icons/InfoRed.vue';
+import InfoBlue from '@/components/Icons/InfoBlue.vue';
+import SingleArrow from '@/components/Icons/SingleArrow.vue';
+
+const stepThreeStore = useStepThreeStore();
+const { payload, isSaved } = storeToRefs(stepThreeStore);
 
 const primarySystem = ref('retail-express');
-const retailExpressField = ref('Product ID');
-const shopifyField = ref('Barcode');
+const retailExpressField = ref('product_id');
+const shopifyField = ref('barcode');
 
 const createState = ref('draft_inactive');
 const inactiveAction = ref('mark_as_draft');
 const backOrders = ref('enable');
 const weightUnit = ref('kilograms_kg');
 
+const mappingCardRef = ref(null);
+
+const fetchStoredData = () => {
+    if (isSaved.value && payload.value) {
+        primarySystem.value = payload.value.primarySystem || 'retail-express';
+        retailExpressField.value = payload.value.retailExpressField || 'product_id';
+        shopifyField.value = payload.value.shopifyField || 'barcode';
+        createState.value = payload.value.createState || 'draft_inactive';
+        inactiveAction.value = payload.value.inactiveAction || 'mark_as_draft';
+        backOrders.value = payload.value.backOrders || 'enable';
+        weightUnit.value = payload.value.weightUnit || 'kilograms_kg';
+    }
+};
+
 onMounted(() => {
     const tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
     tooltipTriggerList.map(function (tooltipTriggerEl) {
         return new bootstrap.Tooltip(tooltipTriggerEl);
     });
+
+    fetchStoredData();
 });
 
 const sourceSystem = computed(() => {
@@ -32,6 +53,30 @@ const targetSystem = computed(() => {
 
 const arrowDirection = computed(() => {
     return primarySystem.value === 'retail-express' ? 'right' : 'left';
+});
+
+const getFormData = () => {
+    const mappingData = mappingCardRef.value ? mappingCardRef.value.getFormData() : {};
+
+    return {
+        primarySystem: primarySystem.value,
+        retailExpressField: retailExpressField.value,
+        shopifyField: shopifyField.value,
+        createState: createState.value,
+        inactiveAction: inactiveAction.value,
+        backOrders: backOrders.value,
+        weightUnit: weightUnit.value,
+        ...mappingData
+    };
+};
+
+const validateForm = () => {
+    return true;
+};
+
+defineExpose({
+    getFormData,
+    validateForm
 });
 </script>
 
@@ -133,13 +178,13 @@ const arrowDirection = computed(() => {
                             <div class="col-4">
                                 <select v-if="primarySystem === 'retail-express'" v-model="retailExpressField"
                                     class="form-select custom-select">
-                                    <option value="Product ID" selected>Product ID</option>
-                                    <option value="SKU">SKU</option>
-                                    <option value="Suppier SKU">Supplier SKU</option>
+                                    <option value="product_id" selected>Product ID</option>
+                                    <option value="sku">SKU</option>
+                                    <option value="supplier_sku">Supplier SKU</option>
                                 </select>
                                 <select v-else v-model="shopifyField" class="form-select custom-select">
-                                    <option value="Barcode" selected>Barcode</option>
-                                    <option value="SKU">SKU</option>
+                                    <option value="barcode" selected>Barcode</option>
+                                    <option value="sku">SKU</option>
                                 </select>
                             </div>
 
@@ -149,13 +194,13 @@ const arrowDirection = computed(() => {
                             <div class="col-4">
                                 <select v-if="primarySystem === 'retail-express'" v-model="shopifyField"
                                     class="form-select custom-select">
-                                    <option value="Barcode" selected>Barcode</option>
-                                    <option value="SKU">SKU</option>
+                                    <option value="barcode" selected>Barcode</option>
+                                    <option value="sku">SKU</option>
                                 </select>
                                 <select v-else v-model="retailExpressField" class="form-select custom-select">
-                                    <option value="Product ID" selected>Product ID</option>
-                                    <option value="SKU">SKU</option>
-                                    <option value="Supplier SKU">Supplier SKU</option>
+                                    <option value="product_id" selected>Product ID</option>
+                                    <option value="sku">SKU</option>
+                                    <option value="supplier_sku">Supplier SKU</option>
                                 </select>
                             </div>
                         </div>
@@ -166,7 +211,7 @@ const arrowDirection = computed(() => {
 
         <mandatory-logic />
 
-        <mapping-card :primary-system="primarySystem" />
+        <mapping-card ref="mappingCardRef" :primary-system="primarySystem" />
 
         <div class="card sync-behavior-card position-relative overflow-hidden my-4">
             <div class="card-body p-4">

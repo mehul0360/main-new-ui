@@ -1,6 +1,9 @@
 <script setup>
-import { ref } from 'vue';
+import { ref, onMounted } from 'vue';
+import { useStepSixStore } from '@/stores/connection-steps/stepsix';
 import InfoRed from '../../../Icons/InfoRed.vue';
+
+const stepSixStore = useStepSixStore();
 
 const mappings = ref([
     { id: 1, shopifyStore: '', product_type: '', brand: '', buffer_quantity: 0 },
@@ -31,6 +34,16 @@ const brands = ref([
     { id: 5, name: 'Brand E' },
 ]);
 
+onMounted(() => {
+    // Load saved data from store
+    if (stepSixStore.isSaved) {
+        const savedData = stepSixStore.getPayload();
+        if (savedData.bufferQuantityMappings && savedData.bufferQuantityMappings.length > 0) {
+            mappings.value = savedData.bufferQuantityMappings;
+        }
+    }
+});
+
 const addMapping = () => {
     mappings.value.push({
         id: Date.now(),
@@ -46,6 +59,16 @@ const removeMapping = (id) => {
         mappings.value = mappings.value.filter(m => m.id !== id);
     }
 };
+
+const getFormData = () => {
+    return {
+        bufferQuantityMappings: mappings.value
+    };
+};
+
+defineExpose({
+    getFormData
+});
 </script>
 
 <template>

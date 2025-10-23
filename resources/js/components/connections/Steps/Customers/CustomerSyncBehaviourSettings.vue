@@ -1,11 +1,50 @@
 <script setup>
-import { ref } from 'vue';
-import InfoRed from '../../../Icons/InfoRed.vue';
+import { ref, onMounted, defineExpose } from 'vue';
+import { storeToRefs } from 'pinia';
+import { useStepFourStore } from '@/stores/connection-steps/stepfour';
+import InfoRed from '@/components/Icons/InfoRed.vue';
+
+// Initialize store
+const stepFourStore = useStepFourStore();
+const { payload, isSaved } = storeToRefs(stepFourStore);
 
 const importExistingCustomers = ref(false);
 const defaultCustomerType = ref('');
 const defaultPaymentTerms = ref('');
 const sendWelcomeEmail = ref(false);
+
+// Load stored data
+const loadStoredData = () => {
+    if (isSaved.value && payload.value) {
+        console.log('Loading CustomerSyncBehaviourSettings data from store');
+
+        importExistingCustomers.value = payload.value.importExistingCustomers || false;
+        defaultCustomerType.value = payload.value.defaultCustomerType || '';
+        defaultPaymentTerms.value = payload.value.defaultPaymentTerms || '';
+        sendWelcomeEmail.value = payload.value.sendWelcomeEmail || false;
+
+        console.log('✓ CustomerSyncBehaviourSettings data loaded');
+    }
+};
+
+onMounted(() => {
+    loadStoredData();
+});
+
+// Method to get form data
+const getFormData = () => {
+    return {
+        importExistingCustomers: importExistingCustomers.value,
+        defaultCustomerType: defaultCustomerType.value,
+        defaultPaymentTerms: defaultPaymentTerms.value,
+        sendWelcomeEmail: sendWelcomeEmail.value
+    };
+};
+
+// Expose methods to parent
+defineExpose({
+    getFormData
+});
 </script>
 
 <template>
@@ -165,7 +204,6 @@ const sendWelcomeEmail = ref(false);
     cursor: pointer;
 }
 
-/* Responsive adjustments */
 @media (max-width: 768px) {
     .section-title {
         font-size: 18px;

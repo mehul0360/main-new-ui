@@ -1,18 +1,72 @@
 <script setup>
-import { onMounted, ref } from 'vue';
+import { onMounted, ref, defineExpose } from 'vue';
+import { storeToRefs } from 'pinia';
+import { useStepFourStore } from '@/stores/connection-steps/stepfour';
 import AdditionalMappings from './Customers/CustomerAdditionalMapping.vue';
 import SyncBehaviourSettings from './Customers/CustomerSyncBehaviourSettings.vue';
 import TierGroups from './Customers/TierGroups.vue';
 import InfoRed from '../../Icons/InfoRed.vue';
 import InfoBlue from '../../Icons/InfoBlue.vue';
 
+// Initialize store
+const stepFourStore = useStepFourStore();
+const { payload, isSaved } = storeToRefs(stepFourStore);
+
+// Component state
 const primaryId = ref('email');
+
+// Refs for child components
+const tierGroupsRef = ref(null);
+const syncBehaviourRef = ref(null);
+const additionalMappingsRef = ref(null);
+
+// Load stored data
+const loadStoredData = () => {
+    if (isSaved.value && payload.value) {
+        console.log('Loading Step 4 data from store:', payload.value);
+
+        primaryId.value = payload.value.primaryId || 'email';
+
+        console.log('✓ Step 4 data loaded successfully');
+    } else {
+        console.log('ℹ No Step 4 data found - using defaults');
+    }
+};
 
 onMounted(() => {
     const tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
     tooltipTriggerList.map(function (tooltipTriggerEl) {
         return new bootstrap.Tooltip(tooltipTriggerEl);
     });
+
+    // Load stored data
+    loadStoredData();
+});
+
+// Method to collect all form data from child components
+const getFormData = () => {
+    const tierGroupsData = tierGroupsRef.value ? tierGroupsRef.value.getFormData() : {};
+    const syncBehaviourData = syncBehaviourRef.value ? syncBehaviourRef.value.getFormData() : {};
+    const additionalMappingsData = additionalMappingsRef.value ? additionalMappingsRef.value.getFormData() : {};
+
+    return {
+        primaryId: primaryId.value,
+        ...tierGroupsData,
+        ...syncBehaviourData,
+        ...additionalMappingsData
+    };
+};
+
+// Validate form (optional - can add validation logic)
+const validateForm = () => {
+    // Add any validation logic if needed
+    return true;
+};
+
+// Expose methods to parent
+defineExpose({
+    getFormData,
+    validateForm
 });
 </script>
 
@@ -176,11 +230,11 @@ onMounted(() => {
             </div>
         </div>
 
-        <additional-mappings />
+        <additional-mappings ref="additionalMappingsRef" />
 
-        <sync-behaviour-settings />
+        <sync-behaviour-settings ref="syncBehaviourRef" />
 
-        <tier-groups />
+        <tier-groups ref="tierGroupsRef" />
     </div>
 </template>
 

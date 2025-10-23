@@ -1,7 +1,13 @@
 <script setup>
-import { ref } from 'vue';
-import InfoRed from '../../../Icons/InfoRed.vue';
-import TwoWayArrow from '../../../Icons/TwoWayArrow.vue';
+import { ref, onMounted, defineExpose } from 'vue';
+import { storeToRefs } from 'pinia';
+import { useStepFourStore } from '@/stores/connection-steps/stepfour';
+import InfoRed from '@/components/Icons/InfoRed.vue';
+import TwoWayArrow from '@/components/Icons/TwoWayArrow.vue';
+
+// Initialize store
+const stepFourStore = useStepFourStore();
+const { payload, isSaved } = storeToRefs(stepFourStore);
 
 const tierGroupSystem = ref('standard_shopify');
 const mappings = ref([
@@ -11,6 +17,28 @@ const mappings = ref([
 ]);
 
 let nextId = 4;
+
+// Load stored data
+const loadStoredData = () => {
+    if (isSaved.value && payload.value) {
+        console.log('Loading TierGroups data from store');
+
+        tierGroupSystem.value = payload.value.tierGroupSystem || 'standard_shopify';
+
+        if (payload.value.tierGroupMappings && payload.value.tierGroupMappings.length > 0) {
+            mappings.value = JSON.parse(JSON.stringify(payload.value.tierGroupMappings));
+            // Update nextId to avoid conflicts
+            const maxId = Math.max(...mappings.value.map(m => m.id));
+            nextId = maxId + 1;
+        }
+
+        console.log('✓ TierGroups data loaded');
+    }
+};
+
+onMounted(() => {
+    loadStoredData();
+});
 
 const addMapping = () => {
     mappings.value.push({
@@ -23,6 +51,19 @@ const addMapping = () => {
 const removeMapping = (id) => {
     mappings.value = mappings.value.filter(m => m.id !== id);
 };
+
+// Method to get form data
+const getFormData = () => {
+    return {
+        tierGroupSystem: tierGroupSystem.value,
+        tierGroupMappings: JSON.parse(JSON.stringify(mappings.value))
+    };
+};
+
+// Expose methods to parent
+defineExpose({
+    getFormData
+});
 </script>
 
 <template>
@@ -248,7 +289,6 @@ const removeMapping = (id) => {
     height: 16px;
 }
 
-/* Responsive adjustments */
 @media (max-width: 768px) {
     .card-title {
         font-size: 18px;

@@ -1,6 +1,9 @@
 <script setup>
-import { ref } from 'vue';
-import InfoRed from '../../../Icons/InfoRed.vue';
+import { ref, onMounted } from 'vue';
+import { useStepFiveStore } from '@/stores/connection-steps/stepfive';
+import InfoRed from '@/components/Icons/InfoRed.vue';
+
+const stepFiveStore = useStepFiveStore();
 
 const enableClickCollect = ref(false);
 const restrictAvailability = ref('all_products');
@@ -8,17 +11,38 @@ const enableMinStock = ref(false);
 const minStockThreshold = ref('');
 const searchRadius = ref('');
 const customTag = ref('');
+
+onMounted(() => {
+    if (stepFiveStore.isSaved) {
+        const savedData = stepFiveStore.getPayload();
+        enableClickCollect.value = savedData.enableClickCollect || false;
+        restrictAvailability.value = savedData.restrictAvailability || 'all_products';
+        enableMinStock.value = savedData.enableMinStock || false;
+        minStockThreshold.value = savedData.minStockThreshold || '';
+        searchRadius.value = savedData.searchRadius || '';
+        customTag.value = savedData.customTag || '';
+    }
+});
+
+const getFormData = () => {
+    return {
+        enableClickCollect: enableClickCollect.value,
+        restrictAvailability: restrictAvailability.value,
+        enableMinStock: enableMinStock.value,
+        minStockThreshold: minStockThreshold.value,
+        searchRadius: searchRadius.value,
+        customTag: customTag.value
+    };
+};
+
+defineExpose({
+    getFormData
+});
 </script>
 
 <template>
     <div class="card click-collect-card position-relative overflow-hidden">
         <div class="card-body p-4">
-            <div class="d-flex align-items-center gap-2 mb-4">
-                <h2 class="section-title mb-0">Click & Collect</h2>
-                <info-red
-                    title="Configure Click & Collect settings for orders that customers collect from your store locations. Set up pickup notifications, inventory allocation, and store assignment rules." />
-            </div>
-
             <div class="d-flex flex-column" style="gap: 2rem;">
                 <div class="d-flex flex-column gap-3">
                     <h3 class="subsection-title mb-0">Enable Click & Collect</h3>

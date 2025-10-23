@@ -1,14 +1,51 @@
 <script setup>
-import { onMounted } from 'vue';
+import { onMounted, ref } from 'vue';
+import { useStepSixStore } from '@/stores/connection-steps/stepsix';
 import MandatoryMapping from './StoresInventory/MandatoryMapping.vue';
 import BufferQuantityConfig from './StoresInventory/BufferQuantityConfig.vue';
 import InfoRed from '../../Icons/InfoRed.vue';
+
+const stepSixStore = useStepSixStore();
+
+const mandatoryMappingRef = ref(null);
+const bufferQuantityRef = ref(null);
 
 onMounted(() => {
     const tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
     tooltipTriggerList.map(function (tooltipTriggerEl) {
         return new bootstrap.Tooltip(tooltipTriggerEl);
     });
+});
+
+const validateForm = () => {
+    // Validate that at least one store mapping exists and is filled
+    const mandatoryData = mandatoryMappingRef.value?.getFormData();
+
+    if (!mandatoryData || !mandatoryData.storeMappings || mandatoryData.storeMappings.length === 0) {
+        return false;
+    }
+
+    // Check if at least one mapping has both fields filled
+    const hasValidMapping = mandatoryData.storeMappings.some(
+        mapping => mapping.retailStore && mapping.shopifyStore
+    );
+
+    return hasValidMapping;
+};
+
+const getFormData = () => {
+    const mandatoryData = mandatoryMappingRef.value?.getFormData() || { storeMappings: [] };
+    const bufferQuantityData = bufferQuantityRef.value?.getFormData() || { bufferQuantityMappings: [] };
+
+    return {
+        ...mandatoryData,
+        ...bufferQuantityData
+    };
+};
+
+defineExpose({
+    validateForm,
+    getFormData
 });
 </script>
 
@@ -43,9 +80,9 @@ onMounted(() => {
             </div>
         </div>
 
-        <mandatory-mapping />
+        <mandatory-mapping ref="mandatoryMappingRef" />
 
-        <buffer-quantity-config />
+        <buffer-quantity-config ref="bufferQuantityRef" />
     </div>
 </template>
 
