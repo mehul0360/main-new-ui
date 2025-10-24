@@ -1,5 +1,5 @@
 <script setup>
-import { ref, computed } from 'vue';
+import { ref, computed, onMounted, shallowRef } from 'vue';
 import { StepOne, StepTwo, StepThree, StepFour, StepFive, StepSix } from '@/components/connections/Steps';
 import { useStepTwoStore, useStepThreeStore, useStepFourStore, useStepFiveStore, useStepSixStore } from '@/stores/connection-steps';
 import { ShopifyIcon, LinkIcon, PackageIcon, UsersIcon, CartIcon, StoreIcon } from '@/components/Icons';
@@ -22,7 +22,7 @@ const stores = {
     5: useStepSixStore()
 };
 
-const steps = ref([
+const steps = shallowRef([
     {
         label: ['Connect to', 'Shopify'],
         icon: ShopifyIcon,
@@ -148,26 +148,44 @@ const showStepIfCompleted = (index) => {
 };
 
 const getStepWrapperClass = (index) => {
-    if (index < currentStep.value || steps.value[index].isCompleted) return 'completed';
     if (index === currentStep.value) return 'active';
+    if (index < currentStep.value || steps.value[index].isCompleted) return 'completed';
     return 'disabled';
 };
 
 const getStepCircleClass = (index) => {
-    if (index < currentStep.value || steps.value[index].isCompleted) return 'completed';
     if (index === currentStep.value) return 'active';
+    if (index < currentStep.value || steps.value[index].isCompleted) return 'completed';
     return 'inactive';
 };
 
 const getStepLabelClass = (index) => {
-    if (index < currentStep.value || steps.value[index].isCompleted) return 'completed';
     if (index === currentStep.value) return 'active';
+    if (index < currentStep.value || steps.value[index].isCompleted) return 'completed';
     return 'inactive';
 };
 
 const getIconColor = (index) => {
     return (index <= currentStep.value || steps.value[index].isCompleted) ? 'white' : '#4A5565';
 };
+
+onMounted(() => {
+    const updatedSteps = [...steps.value];
+    Object.keys(stores).forEach(stepIndex => {
+        const store = stores[stepIndex];
+        if (store.isSaved) {
+            updatedSteps[parseInt(stepIndex)].isCompleted = true;
+        }
+    });
+    steps.value = updatedSteps;
+
+    const firstIncompleteIndex = steps.value.findIndex(step => !step.isCompleted);
+    if (firstIncompleteIndex !== -1) {
+        currentStep.value = firstIncompleteIndex;
+    } else {
+        currentStep.value = steps.value.length - 1;
+    }
+});
 </script>
 
 <template>
