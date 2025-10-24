@@ -1,161 +1,143 @@
 <script setup>
-import { ref } from 'vue';
+import { ref, computed } from 'vue';
 import { StepOne, StepTwo, StepThree, StepFour, StepFive, StepSix } from '@/components/connections/Steps';
 import { useStepTwoStore, useStepThreeStore, useStepFourStore, useStepFiveStore, useStepSixStore } from '@/stores/connection-steps';
 import { ShopifyIcon, LinkIcon, PackageIcon, UsersIcon, CartIcon, StoreIcon } from '@/components/Icons';
 
 const currentStep = ref(0);
 
+const stepRefs = {
+    1: ref(null),
+    2: ref(null),
+    3: ref(null),
+    4: ref(null),
+    5: ref(null)
+};
+
+const stores = {
+    1: useStepTwoStore(),
+    2: useStepThreeStore(),
+    3: useStepFourStore(),
+    4: useStepFiveStore(),
+    5: useStepSixStore()
+};
+
 const steps = ref([
     {
         label: ['Connect to', 'Shopify'],
         icon: ShopifyIcon,
         title: 'Connect to Shopify',
-        isCompleted: false,
-        component: StepOne
+        component: StepOne,
+        isCompleted: false
     },
     {
         label: ['Connect', 'Retail Express'],
         icon: LinkIcon,
         title: 'Connect Retail Express',
-        isCompleted: false,
-        component: StepTwo
+        component: StepTwo,
+        errorMessage: 'Please complete all fields and establish a connection before proceeding.',
+        isCompleted: false
     },
     {
         label: ['Products'],
         icon: PackageIcon,
         title: 'Products',
-        isCompleted: false,
-        component: StepThree
+        component: StepThree,
+        errorMessage: 'Please complete the product mapping configuration before proceeding.',
+        isCompleted: false
     },
     {
         label: ['Customers'],
         icon: UsersIcon,
         title: 'Customers',
-        isCompleted: false,
-        component: StepFour
+        component: StepFour,
+        errorMessage: 'Please complete the customer configuration before proceeding.',
+        isCompleted: false
     },
     {
         label: ['Orders'],
         icon: CartIcon,
         title: 'Orders',
-        isCompleted: false,
-        component: StepFive
+        component: StepFive,
+        errorMessage: 'Please complete the order configuration before proceeding.',
+        isCompleted: false
     },
     {
         label: ['Stores &', 'Inventory'],
         icon: StoreIcon,
         title: 'Stores & Inventory',
-        isCompleted: false,
-        component: StepSix
+        component: StepSix,
+        errorMessage: 'Please complete at least one store mapping before proceeding.',
+        isCompleted: false
     }
 ]);
 
-const stepTwoStore = useStepTwoStore();
-const stepThreeStore = useStepThreeStore();
-const stepFourStore = useStepFourStore();
-const stepFiveStore = useStepFiveStore();
-const stepSixStore = useStepSixStore();
+const totalSteps = computed(() => steps.value.length);
+const isLastStep = computed(() => currentStep.value === totalSteps.value - 1);
+const isFirstStep = computed(() => currentStep.value === 0);
+const currentStepConfig = computed(() => steps.value[currentStep.value]);
+const previousStepTitle = computed(() =>
+    currentStep.value > 0 ? steps.value[currentStep.value - 1].title : ''
+);
+const nextStepTitle = computed(() =>
+    currentStep.value < totalSteps.value - 1 ? steps.value[currentStep.value + 1].title : ''
+);
 
-const stepTwoRef = ref(null);
-const stepThreeRef = ref(null);
-const stepFourRef = ref(null);
-const stepFiveRef = ref(null);
-const stepSixRef = ref(null);
-
-const stepConfigs = {
-    1: {
-        ref: stepTwoRef,
-        store: stepTwoStore,
-        name: 'Step 2',
-        errorMessage: 'Please complete all fields and establish a connection before proceeding.'
-    },
-    2: {
-        ref: stepThreeRef,
-        store: stepThreeStore,
-        name: 'Step 3',
-        errorMessage: 'Please complete the product mapping configuration before proceeding.'
-    },
-    3: {
-        ref: stepFourRef,
-        store: stepFourStore,
-        name: 'Step 4',
-        errorMessage: 'Please complete the customer configuration before proceeding.'
-    },
-    4: {
-        ref: stepFiveRef,
-        store: stepFiveStore,
-        name: 'Step 5',
-        errorMessage: 'Please complete the order configuration before proceeding.'
-    },
-    5: {
-        ref: stepSixRef,
-        store: stepSixStore,
-        name: 'Step 6',
-        errorMessage: 'Please complete at least one store mapping before proceeding.'
-    }
+const scrollToTop = () => {
+    window.scrollTo({ top: 0, left: 0, behavior: 'smooth' });
 };
 
-const goToConnectionsListingPage = async () => {
-    if (currentStep.value === 5) {
-        const stepSix = stepSixRef.value;
-        if (stepSix) {
-            const isValid = stepSix.validateForm();
-            if (!isValid) {
-                alert('Please complete at least one store mapping before finishing setup.');
-                return;
-            }
-
-            const formData = stepSix.getFormData();
-            await stepSixStore.saveInStorage(formData);
-        }
-    }
-
+const navigateToConnections = () => {
     window.location.href = '/connections';
 };
 
-const goNext = async () => {
-    if (currentStep.value >= steps.value.length) {
-        return;
+const validateAndSaveStep = async (stepIndex) => {
+    if (stepIndex === 0) return true;
+
+    const stepRef = stepRefs[stepIndex].value;
+    if (!stepRef) return true;
+
+    const isValid = stepRef.validateForm();
+    if (!isValid) {
+        alert(steps.value[stepIndex].errorMessage);
+        return false;
     }
 
-    const config = stepConfigs[currentStep.value];
-    if (config) {
-        const stepRef = config.ref.value;
-        if (!stepRef) {
-            return;
-        }
+    const formData = stepRef.getFormData();
+    await stores[stepIndex].saveInStorage(formData);
+    return true;
+};
 
-        const isValid = stepRef.validateForm();
-        if (!isValid) {
-            alert(config.errorMessage);
-            return;
-        }
-
-        const formData = stepRef.getFormData();
-        await config.store.saveInStorage(formData);
-    }
-
-    window.scrollTo({ top: 0, left: 0, behavior: 'smooth' });
-    steps.value[currentStep.value].isCompleted = true;
-
+const changeStep = (newStep) => {
+    scrollToTop();
     setTimeout(() => {
-        currentStep.value++;
+        currentStep.value = newStep;
     }, 200);
 };
 
+const goNext = async () => {
+    if (currentStep.value >= totalSteps.value) return;
+
+    const isValid = await validateAndSaveStep(currentStep.value);
+    if (!isValid) return;
+
+    steps.value[currentStep.value].isCompleted = true;
+    changeStep(currentStep.value + 1);
+};
+
 const goBack = () => {
-    if (currentStep.value === 0) {
-        window.location.href = '/connections';
+    if (isFirstStep.value) {
+        navigateToConnections();
         return;
     }
 
-    if (currentStep.value > 0) {
-        window.scrollTo({ top: 0, left: 0, behavior: 'smooth' });
+    changeStep(currentStep.value - 1);
+};
 
-        setTimeout(() => {
-            currentStep.value--;
-        }, 200);
+const goToConnectionsListingPage = async () => {
+    const isValid = await validateAndSaveStep(currentStep.value);
+    if (isValid) {
+        navigateToConnections();
     }
 };
 
@@ -163,11 +145,11 @@ const showStepIfCompleted = (index) => {
     if (currentStep.value > index || steps.value[index].isCompleted) {
         currentStep.value = index;
     }
-}
+};
 
 const getStepWrapperClass = (index) => {
     if (index < currentStep.value || steps.value[index].isCompleted) return 'completed';
-    if (index === currentStep.value || steps.value[index].isCompleted) return 'active';
+    if (index === currentStep.value) return 'active';
     return 'disabled';
 };
 
@@ -184,8 +166,7 @@ const getStepLabelClass = (index) => {
 };
 
 const getIconColor = (index) => {
-    if (index <= currentStep.value || steps.value[index].isCompleted) return 'white';
-    return '#4A5565';
+    return (index <= currentStep.value || steps.value[index].isCompleted) ? 'white' : '#4A5565';
 };
 </script>
 
@@ -193,7 +174,7 @@ const getIconColor = (index) => {
     <div class="progress-card p-4 mb-4">
         <div class="d-flex justify-content-between align-items-center mb-4 pb-4">
             <div class="section-header">Setup Progress</div>
-            <div class="step-counter">Step {{ currentStep + 1 }} of {{ steps.length }}</div>
+            <div class="step-counter">Step {{ currentStep + 1 }} of {{ totalSteps }}</div>
         </div>
 
         <div class="position-relative">
@@ -213,22 +194,20 @@ const getIconColor = (index) => {
         </div>
     </div>
 
-    <step-one v-if="currentStep === 0"></step-one>
-    <step-two v-if="currentStep === 1" ref="stepTwoRef"></step-two>
-    <step-three v-if="currentStep === 2" ref="stepThreeRef"></step-three>
-    <step-four v-if="currentStep === 3" ref="stepFourRef"></step-four>
-    <step-five v-if="currentStep === 4" ref="stepFiveRef"></step-five>
-    <step-six v-if="currentStep === 5" ref="stepSixRef"></step-six>
+    <component :is="currentStepConfig.component"
+        :ref="el => { if (currentStep > 0) stepRefs[currentStep].value = el }" />
 
     <div class="d-flex justify-content-between align-items-center gap-3 mt-4">
-        <button class="btn-back" @click.prevent="goBack()">
-            <span v-if="currentStep === 0">Back to Connections Page</span>
-            <span v-if="currentStep > 0">Back to {{ steps[currentStep - 1].title }}</span>
+        <button class="btn-back" @click.prevent="goBack">
+            <span v-if="isFirstStep">Back to Connections Page</span>
+            <span v-else>Back to {{ previousStepTitle }}</span>
         </button>
-        <button class="btn-continue" @click="goNext" v-if="currentStep <= 4">
-            Continue to {{ steps[currentStep + 1].title }}
+
+        <button v-if="!isLastStep" class="btn-continue" @click="goNext">
+            Continue to {{ nextStepTitle }}
         </button>
-        <button class="btn-finish" @click="goToConnectionsListingPage" v-if="currentStep === 5">
+
+        <button v-else class="btn-finish" @click="goToConnectionsListingPage">
             Complete Setup
         </button>
     </div>
