@@ -69,7 +69,7 @@ defineExpose({
                                 systems.
                             </p>
 
-                            <div class="d-flex align-items-center justify-content-center">
+                            <div class="d-flex align-items-center justify-content-center gap-2">
                                 <span class="info-text">Need more information?</span>
                                 <info-red
                                     title="Learn more about store mapping, inventory sync configuration, and buffer quantity management best practices." />

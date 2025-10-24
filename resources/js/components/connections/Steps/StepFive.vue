@@ -93,7 +93,7 @@ defineExpose({
                                 Set up field mappings and sync behaviors to ensure accurate order records.
                             </p>
 
-                            <div class="d-flex align-items-center justify-content-center">
+                            <div class="d-flex align-items-center justify-content-center gap-2">
                                 <span class="info-text">Need more information?</span>
                                 <info-red
                                     title="Learn more about order sync configuration, field mapping best practices, and troubleshooting common sync issues." />
