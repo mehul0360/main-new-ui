@@ -11,7 +11,6 @@ const steps = ref([
         label: ['Connect to', 'Shopify'],
         icon: ShopifyIcon,
         title: 'Connect to Shopify',
-        description: 'Link your Shopify store to sync products, orders, and customer data.',
         isCompleted: false,
         component: StepOne
     },
@@ -19,7 +18,6 @@ const steps = ref([
         label: ['Connect', 'Retail Express'],
         icon: LinkIcon,
         title: 'Connect Retail Express',
-        description: 'Integrate with Retail Express to manage your retail operations seamlessly.',
         isCompleted: false,
         component: StepTwo
     },
@@ -27,7 +25,6 @@ const steps = ref([
         label: ['Products'],
         icon: PackageIcon,
         title: 'Products',
-        description: 'Import and configure your product catalog for both online and retail channels.',
         isCompleted: false,
         component: StepThree
     },
@@ -35,7 +32,6 @@ const steps = ref([
         label: ['Customers'],
         icon: UsersIcon,
         title: 'Customers',
-        description: 'Sync customer information and create unified customer profiles across channels.',
         isCompleted: false,
         component: StepFour
     },
@@ -43,7 +39,6 @@ const steps = ref([
         label: ['Orders'],
         icon: CartIcon,
         title: 'Orders',
-        description: 'Configure order management and fulfillment settings for your business.',
         isCompleted: false,
         component: StepFive
     },
@@ -51,7 +46,6 @@ const steps = ref([
         label: ['Stores &', 'Inventory'],
         icon: StoreIcon,
         title: 'Stores & Inventory',
-        description: 'Set up your store locations and inventory management preferences.',
         isCompleted: false,
         component: StepSix
     }

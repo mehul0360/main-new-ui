@@ -3,10 +3,8 @@ import { defineStore } from "pinia";
 
 export const useStepFourStore = defineStore('stepFour', () => {
     const payload = ref({
-        // Primary ID Field (from StepFour.vue parent)
         primaryId: 'email',
 
-        // Tier Groups (from TierGroups.vue)
         tierGroupSystem: 'standard_shopify',
         tierGroupMappings: [
             { id: 1, priceGroup: '', shopifyTier: '' },
@@ -14,13 +12,11 @@ export const useStepFourStore = defineStore('stepFour', () => {
             { id: 3, priceGroup: '', shopifyTier: '' }
         ],
 
-        // Customer Sync Behavior Settings (from CustomerSyncBehaviourSettings.vue)
         importExistingCustomers: false,
         defaultCustomerType: '',
         defaultPaymentTerms: '',
         sendWelcomeEmail: false,
 
-        // Customer Additional Mapping (from CustomerAdditionalMapping.vue)
         additionalMappings: [
             { id: 1, retailField: '', shopifyField: '' },
             { id: 2, retailField: '', shopifyField: '' },
@@ -39,8 +35,6 @@ export const useStepFourStore = defineStore('stepFour', () => {
             savedAt: new Date().toISOString()
         };
         isSaved.value = true;
-
-        console.log('Step 4 data saved to Pinia store:', payload.value);
     }
 
     function clearStorage() {

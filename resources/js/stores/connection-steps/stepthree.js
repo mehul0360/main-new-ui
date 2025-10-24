@@ -3,20 +3,16 @@ import { defineStore } from "pinia";
 
 export const useStepThreeStore = defineStore('stepThree', () => {
     const payload = ref({
-        // Source of Truth
         primarySystem: 'retail-express',
 
-        // Product Identification
         retailExpressField: 'product_id',
         shopifyField: 'barcode',
 
-        // Product Sync Behavior
         createState: 'draft_inactive',
         inactiveAction: 'mark_as_draft',
         backOrders: 'enable',
         weightUnit: 'kilograms_kg',
 
-        // Master Product Data
         shortDescSync: 'create_only',
         longDescSync: 'create_only',
         titleField: 'product_title',
@@ -30,11 +26,9 @@ export const useStepThreeStore = defineStore('stepThree', () => {
         vendorField: 'vendor',
         barcodeField: 'barcode',
 
-        // Variant & Grouping
         productGroupingField: 'Custom1',
         variantAttributes: [],
 
-        // Pricing Fields
         pricingMode: 'fixed',
         fixedPriceSync: 'create_only',
         fixedMSRPSync: 'create_only',
@@ -55,8 +49,6 @@ export const useStepThreeStore = defineStore('stepThree', () => {
             savedAt: new Date().toISOString()
         };
         isSaved.value = true;
-
-        console.log('Step 3 data saved to Pinia store:', payload.value);
     }
 
     function clearStorage() {
