@@ -1,16 +1,7 @@
 <script setup>
-import { ref, h } from 'vue';
-import StepOne from '@/components/connections/Steps/StepOne.vue';
-import StepTwo from '@/components/connections/Steps/StepTwo.vue';
-import StepThree from '@/components/connections/Steps/StepThree.vue';
-import StepFour from '@/components/connections/Steps/StepFour.vue';
-import StepFive from '@/components/connections/Steps/StepFive.vue';
-import StepSix from '@/components/connections/Steps/StepSix.vue';
-import { useStepTwoStore } from '@/stores/connection-steps/steptwo';
-import { useStepThreeStore } from '@/stores/connection-steps/stepthree';
-import { useStepFourStore } from '@/stores/connection-steps/stepfour';
-import { useStepFiveStore } from '@/stores/connection-steps/stepfive';
-import { useStepSixStore } from '@/stores/connection-steps/stepsix';
+import { ref } from 'vue';
+import { StepOne, StepTwo, StepThree, StepFour, StepFive, StepSix } from '@/components/connections/Steps';
+import { useStepTwoStore, useStepThreeStore, useStepFourStore, useStepFiveStore, useStepSixStore } from '@/stores/connection-steps';
 import { ShopifyIcon, LinkIcon, PackageIcon, UsersIcon, CartIcon, StoreIcon } from '@/components/Icons';
 
 const currentStep = ref(0);
