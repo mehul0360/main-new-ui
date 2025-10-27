@@ -11,7 +11,6 @@ const mappings = ref([
 ]);
 
 onMounted(() => {
-    // Load saved data from store
     if (stepFiveStore.isSaved) {
         const savedData = stepFiveStore.getPayload();
         if (savedData.shippingMethodMappings && savedData.shippingMethodMappings.length > 0) {

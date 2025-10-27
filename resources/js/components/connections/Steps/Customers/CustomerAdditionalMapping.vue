@@ -4,7 +4,6 @@ import { storeToRefs } from 'pinia';
 import { useStepFourStore } from '@/stores/connection-steps/stepfour';
 import TwoWayArrow from '@/components/Icons/TwoWayArrow.vue';
 
-// Initialize store
 const stepFourStore = useStepFourStore();
 const { payload, isSaved } = storeToRefs(stepFourStore);
 
@@ -15,21 +14,16 @@ const mappings = ref([
     { id: 4, retailField: '', shopifyField: '' }
 ]);
 
-// Load stored data
-const loadStoredData = () => {
+const fetchStoredData = () => {
     if (isSaved.value && payload.value && payload.value.additionalMappings) {
-        console.log('Loading CustomerAdditionalMapping data from store');
-
         if (payload.value.additionalMappings.length > 0) {
             mappings.value = JSON.parse(JSON.stringify(payload.value.additionalMappings));
         }
-
-        console.log('✓ CustomerAdditionalMapping data loaded');
     }
 };
 
 onMounted(() => {
-    loadStoredData();
+    fetchStoredData();
 });
 
 const addMapping = () => {
@@ -46,14 +40,12 @@ const removeMapping = (id) => {
     }
 };
 
-// Method to get form data
 const getFormData = () => {
     return {
         additionalMappings: JSON.parse(JSON.stringify(mappings.value))
     };
 };
 
-// Expose methods to parent
 defineExpose({
     getFormData
 });

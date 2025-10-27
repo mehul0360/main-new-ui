@@ -2,34 +2,26 @@
 import { onMounted, ref, defineExpose } from 'vue';
 import { storeToRefs } from 'pinia';
 import { useStepFourStore } from '@/stores/connection-steps/stepfour';
-import AdditionalMappings from './Customers/CustomerAdditionalMapping.vue';
-import SyncBehaviourSettings from './Customers/CustomerSyncBehaviourSettings.vue';
-import TierGroups from './Customers/TierGroups.vue';
-import InfoRed from '../../Icons/InfoRed.vue';
-import InfoBlue from '../../Icons/InfoBlue.vue';
+import AdditionalMappings from '@/components/connections/Steps/Customers/CustomerAdditionalMapping.vue';
+import SyncBehaviourSettings from '@/components/connections/Steps/Customers/CustomerSyncBehaviourSettings.vue';
+import TierGroups from '@/components/connections/Steps/Customers/TierGroups.vue';
+import InfoRed from '@/components/Icons/InfoRed.vue';
+import InfoBlue from '@/components/Icons/InfoBlue.vue';
 
-// Initialize store
 const stepFourStore = useStepFourStore();
 const { payload, isSaved } = storeToRefs(stepFourStore);
 
-// Component state
 const primaryId = ref('email');
 
-// Refs for child components
 const tierGroupsRef = ref(null);
 const syncBehaviourRef = ref(null);
 const additionalMappingsRef = ref(null);
 
-// Load stored data
-const loadStoredData = () => {
+const fetchStoredData = () => {
     if (isSaved.value && payload.value) {
-        console.log('Loading Step 4 data from store:', payload.value);
-
         primaryId.value = payload.value.primaryId || 'email';
-
-        console.log('✓ Step 4 data loaded successfully');
     } else {
-        console.log('ℹ No Step 4 data found - using defaults');
+        console.log('No Step 4 data found - using defaults');
     }
 };
 
@@ -39,11 +31,9 @@ onMounted(() => {
         return new bootstrap.Tooltip(tooltipTriggerEl);
     });
 
-    // Load stored data
-    loadStoredData();
+    fetchStoredData();
 });
 
-// Method to collect all form data from child components
 const getFormData = () => {
     const tierGroupsData = tierGroupsRef.value ? tierGroupsRef.value.getFormData() : {};
     const syncBehaviourData = syncBehaviourRef.value ? syncBehaviourRef.value.getFormData() : {};
@@ -57,13 +47,10 @@ const getFormData = () => {
     };
 };
 
-// Validate form (optional - can add validation logic)
 const validateForm = () => {
-    // Add any validation logic if needed
     return true;
 };
 
-// Expose methods to parent
 defineExpose({
     getFormData,
     validateForm
@@ -99,7 +86,7 @@ defineExpose({
 
         <div class="card primary-field-card position-relative overflow-hidden mt-4">
             <div class="card-body p-4">
-                <div class="d-flex align-items-center">
+                <div class="d-flex align-items-center gap-2">
                     <h2 class="section-title mb-0">Primary ID Field</h2>
                     <info-red title="Used to match customers between systems. Must match Shopify configuration." />
                 </div>

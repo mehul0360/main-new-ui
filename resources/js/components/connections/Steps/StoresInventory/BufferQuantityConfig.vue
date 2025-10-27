@@ -1,7 +1,7 @@
 <script setup>
 import { ref, onMounted } from 'vue';
 import { useStepSixStore } from '@/stores/connection-steps/stepsix';
-import InfoRed from '../../../Icons/InfoRed.vue';
+import InfoRed from '@/components/Icons/InfoRed.vue';
 
 const stepSixStore = useStepSixStore();
 
@@ -35,7 +35,6 @@ const brands = ref([
 ]);
 
 onMounted(() => {
-    // Load saved data from store
     if (stepSixStore.isSaved) {
         const savedData = stepSixStore.getPayload();
         if (savedData.bufferQuantityMappings && savedData.bufferQuantityMappings.length > 0) {
@@ -196,7 +195,6 @@ defineExpose({
 .card-body {
     padding: 33px !important;
 }
-
 
 .custom-select {
     border: 1px solid #d1d5db;

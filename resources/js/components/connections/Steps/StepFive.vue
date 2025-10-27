@@ -1,11 +1,11 @@
 <script setup>
 import { computed, onMounted, ref } from 'vue';
 import { useStepFiveStore } from '@/stores/connection-steps/stepfive';
-import AdditionalMapping from './Orders/OrderAdditionalMapping.vue';
-import SyncBehaviourSettings from './Orders/OrderSyncBehaviourSettings.vue';
-import PaymentMethodsMapping from './Orders/PaymentMethodsMapping.vue';
-import ShippingMethodsMapping from './Orders/ShippingMethodsMapping.vue';
-import ClickAndCollect from './Orders/ClickAndCollect.vue';
+import AdditionalMapping from '@/components/connections/Steps/Orders/OrderAdditionalMapping.vue';
+import SyncBehaviourSettings from '@/components/connections/Steps/Orders/OrderSyncBehaviourSettings.vue';
+import PaymentMethodsMapping from '@/components/connections/Steps/Orders/PaymentMethodsMapping.vue';
+import ShippingMethodsMapping from '@/components/connections/Steps/Orders/ShippingMethodsMapping.vue';
+import ClickAndCollect from '@/components/connections/Steps/Orders/ClickAndCollect.vue';
 import InfoRed from '@/components/Icons/InfoRed.vue';
 import SingleArrow from '@/components/Icons/SingleArrow.vue';
 

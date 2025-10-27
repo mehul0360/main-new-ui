@@ -4,7 +4,6 @@ import { storeToRefs } from 'pinia';
 import { useStepFourStore } from '@/stores/connection-steps/stepfour';
 import InfoRed from '@/components/Icons/InfoRed.vue';
 
-// Initialize store
 const stepFourStore = useStepFourStore();
 const { payload, isSaved } = storeToRefs(stepFourStore);
 
@@ -13,25 +12,19 @@ const defaultCustomerType = ref('');
 const defaultPaymentTerms = ref('');
 const sendWelcomeEmail = ref(false);
 
-// Load stored data
-const loadStoredData = () => {
+const fetchStoredData = () => {
     if (isSaved.value && payload.value) {
-        console.log('Loading CustomerSyncBehaviourSettings data from store');
-
         importExistingCustomers.value = payload.value.importExistingCustomers || false;
         defaultCustomerType.value = payload.value.defaultCustomerType || '';
         defaultPaymentTerms.value = payload.value.defaultPaymentTerms || '';
         sendWelcomeEmail.value = payload.value.sendWelcomeEmail || false;
-
-        console.log('✓ CustomerSyncBehaviourSettings data loaded');
     }
 };
 
 onMounted(() => {
-    loadStoredData();
+    fetchStoredData();
 });
 
-// Method to get form data
 const getFormData = () => {
     return {
         importExistingCustomers: importExistingCustomers.value,
@@ -41,7 +34,6 @@ const getFormData = () => {
     };
 };
 
-// Expose methods to parent
 defineExpose({
     getFormData
 });

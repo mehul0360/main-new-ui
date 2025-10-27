@@ -1,9 +1,9 @@
 <script setup>
 import { onMounted, ref } from 'vue';
 import { useStepSixStore } from '@/stores/connection-steps/stepsix';
-import MandatoryMapping from './StoresInventory/MandatoryMapping.vue';
-import BufferQuantityConfig from './StoresInventory/BufferQuantityConfig.vue';
-import InfoRed from '../../Icons/InfoRed.vue';
+import MandatoryMapping from '@/components/connections/Steps/StoresInventory/MandatoryMapping.vue';
+import BufferQuantityConfig from '@/components/connections/Steps/StoresInventory/BufferQuantityConfig.vue';
+import InfoRed from '@/components/Icons/InfoRed.vue';
 
 const stepSixStore = useStepSixStore();
 

@@ -1,8 +1,8 @@
 <script setup>
 import { ref, onMounted } from 'vue';
 import { useStepSixStore } from '@/stores/connection-steps/stepsix';
-import InfoRed from '../../../Icons/InfoRed.vue';
-import SingleArrow from '../../../Icons/SingleArrow.vue';
+import InfoRed from '@/components/Icons/InfoRed.vue';
+import SingleArrow from '@/components/Icons/SingleArrow.vue';
 
 const stepSixStore = useStepSixStore();
 
@@ -11,7 +11,6 @@ const mappings = ref([
 ]);
 
 onMounted(() => {
-    // Load saved data from store
     if (stepSixStore.isSaved) {
         const savedData = stepSixStore.getPayload();
         if (savedData.storeMappings && savedData.storeMappings.length > 0) {
