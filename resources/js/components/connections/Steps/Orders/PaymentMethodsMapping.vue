@@ -1,28 +1,47 @@
 <script setup>
-import { ref, onMounted } from 'vue';
+import { ref, onMounted, watch } from 'vue';
+import { storeToRefs } from 'pinia';
+import AutoSaveIndicator from '@/components/AutoSaveIndicator.vue';
 import { useStepFiveStore } from '@/stores/connection-steps/stepfive';
 import TwoWayArrow from '@/components/Icons/TwoWayArrow.vue';
 
-const stepFiveStore = useStepFiveStore();
-
-const mappings = ref([
-    { id: 1, retailPaymentMethod: '', shopifyPaymentMethod: '' },
-    { id: 2, retailPaymentMethod: '', shopifyPaymentMethod: '' },
-    { id: 3, retailPaymentMethod: '', shopifyPaymentMethod: '' },
-    { id: 4, retailPaymentMethod: '', shopifyPaymentMethod: '' }
-]);
-
-onMounted(() => {
-    if (stepFiveStore.isSaved) {
-        const savedData = stepFiveStore.getPayload();
-        if (savedData.paymentMethodMappings && savedData.paymentMethodMappings.length > 0) {
-            mappings.value = savedData.paymentMethodMappings;
-        }
-    }
+const props = defineProps({
+    isSaving: { type: Boolean, default: false },
+    lastSavedAt: { type: Date, default: null },
+    saveError: { type: Error, default: null },
+    displayDuration: { type: Number, default: 3000 }
 });
 
+const emit = defineEmits(['data-changed']);
+
+const stepFiveStore = useStepFiveStore();
+const { payload, isSaved } = storeToRefs(stepFiveStore);
+
+const paymentMethodsData = ref({
+    data: [
+        { id: 1, retailPaymentMethod: '', shopifyPaymentMethod: '' },
+        { id: 2, retailPaymentMethod: '', shopifyPaymentMethod: '' },
+        { id: 3, retailPaymentMethod: '', shopifyPaymentMethod: '' },
+        { id: 4, retailPaymentMethod: '', shopifyPaymentMethod: '' }
+    ]
+});
+
+onMounted(() => {
+    fetchStoredData();
+});
+
+const fetchStoredData = () => {
+    if (isSaved.value && payload.value) {
+        if (payload.value.paymentMethods && payload.value.paymentMethods.data) {
+            paymentMethodsData.value = JSON.parse(
+                JSON.stringify(payload.value.paymentMethods)
+            );
+        }
+    }
+};
+
 const addMapping = () => {
-    mappings.value.push({
+    paymentMethodsData.value.data.push({
         id: Date.now(),
         retailPaymentMethod: '',
         shopifyPaymentMethod: ''
@@ -30,16 +49,24 @@ const addMapping = () => {
 };
 
 const removeMapping = (id) => {
-    if (mappings.value.length > 1) {
-        mappings.value = mappings.value.filter(m => m.id !== id);
+    if (paymentMethodsData.value.data.length > 1) {
+        paymentMethodsData.value.data = paymentMethodsData.value.data.filter(m => m.id !== id);
     }
 };
 
 const getFormData = () => {
     return {
-        paymentMethodMappings: mappings.value
+        data: JSON.parse(JSON.stringify(paymentMethodsData.value.data))
     };
 };
+
+watch(
+    paymentMethodsData,
+    () => {
+        emit('data-changed', getFormData());
+    },
+    { deep: true }
+);
 
 defineExpose({
     getFormData
@@ -50,15 +77,23 @@ defineExpose({
     <div class="card shadow-sm my-4">
         <div class="card-body p-4">
             <div class="mb-4">
-                <h5 class="fw-semibold mb-2"
-                    style="color: #101828; font-size: 20px; font-family: 'Poppins', sans-serif; line-height: 28px;">
-                    Payment Methods Mapping
-                </h5>
-                <p class="text-muted mb-0"
-                    style="font-size: 14px; font-family: 'Roboto', sans-serif; color: #4a5565; line-height: 20px;">
-                    Map payment methods between Retail Express and Shopify to ensure consistent payment processing
-                    across platforms.
-                </p>
+                <div class="d-flex justify-content-between">
+                    <div>
+                        <h5 class="fw-semibold mb-2"
+                            style="color: #101828; font-size: 20px; font-family: 'Poppins', sans-serif; line-height: 28px;">
+                            Payment Methods Mapping
+                        </h5>
+                        <p class="text-muted mb-0"
+                            style="font-size: 14px; font-family: 'Roboto', sans-serif; color: #4a5565; line-height: 20px;">
+                            Map payment methods between Retail Express and Shopify to ensure consistent payment
+                            processing
+                            across platforms.
+                        </p>
+                    </div>
+
+                    <AutoSaveIndicator :is-saving="isSaving" :last-saved-at="lastSavedAt" :save-error="saveError"
+                        :display-duration="1500" />
+                </div>
             </div>
 
             <div class="row g-4 py-2 border-bottom mb-3" style="border-color: #e5e7eb;">
@@ -78,10 +113,12 @@ defineExpose({
                 <div class="col-1"></div>
             </div>
 
-            <div v-for="mapping in mappings" :key="mapping.id" class="row g-4 align-items-center mb-3">
+            <div v-for="(mapping, index) in paymentMethodsData.data" :key="mapping.id"
+                class="row g-4 align-items-center mb-3">
                 <div class="col-4">
                     <div class="position-relative">
-                        <select v-model="mapping.retailPaymentMethod" class="form-select custom-select"
+                        <select v-model="paymentMethodsData.data[index].retailPaymentMethod"
+                            class="form-select custom-select"
                             style="font-size: 14px; height: 36px; font-family: 'Roboto', sans-serif;">
                             <option value="">Select method</option>
                             <option value="after_pay">AfterPay</option>
@@ -100,8 +137,8 @@ defineExpose({
 
                 <div class="col-4">
                     <div class="position-relative">
-                        <input type="text" v-model="mapping.shopifyPaymentMethod" class="form-control custom-input-md"
-                            placeholder="Enter Shopify Payment Method" />
+                        <input type="text" v-model="paymentMethodsData.data[index].shopifyPaymentMethod"
+                            class="form-control custom-input-md" placeholder="Enter Shopify Payment Method" />
                     </div>
                 </div>
 

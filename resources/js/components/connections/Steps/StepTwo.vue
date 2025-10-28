@@ -2,7 +2,9 @@
 import { onMounted, ref, defineExpose, watch } from 'vue';
 import { storeToRefs } from 'pinia';
 import { useStepTwoStore } from '@/stores/connection-steps/steptwo';
+import { useAutoSave } from '@/composables/useAutoSave';
 import InfoBlue from '@/components/Icons/InfoBlue.vue';
+import AutoSaveIndicator from '@/components/AutoSaveIndicator.vue';
 
 const showConnectionSuccess = ref(false);
 const isLoading = ref(false);
@@ -10,39 +12,6 @@ const hasFormChanged = ref(false);
 
 const stepTwoStore = useStepTwoStore();
 const { payload, isSaved } = storeToRefs(stepTwoStore);
-
-onMounted(() => {
-    const tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
-    tooltipTriggerList.map(function (tooltipTriggerEl) {
-        return new bootstrap.Tooltip(tooltipTriggerEl);
-    });
-
-    fetchStoredData();
-});
-
-const togglePasswordVisibility = (fieldId) => {
-    const field = document.getElementById(fieldId);
-    if (field.type === 'password') {
-        field.type = 'text';
-    } else {
-        field.type = 'password';
-    }
-}
-
-const handleConnectionSubmit = (event) => {
-    event.preventDefault();
-    isLoading.value = true;
-    showConnectionSuccess.value = false;
-
-    setTimeout(() => {
-        isLoading.value = false;
-        showConnectionSuccess.value = true;
-
-        hasFormChanged.value = false;
-
-        originalFormData.value = { ...formData.value };
-    }, 2500);
-}
 
 const originalFormData = ref({
     domain: '',
@@ -63,6 +32,48 @@ const formData = ref({
     primaryKey: '',
     secondaryKey: ''
 });
+
+const { isSaving, lastSavedAt, saveError, saveNow } = useAutoSave(
+    formData,
+    stepTwoStore.saveInStorage,
+    {
+        debounceDelay: 800,
+        includeInSave: () => ({ isConnected: showConnectionSuccess.value })
+    }
+);
+
+onMounted(() => {
+    const tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+    tooltipTriggerList.map(function (tooltipTriggerEl) {
+        return new bootstrap.Tooltip(tooltipTriggerEl);
+    });
+
+    fetchStoredData();
+});
+
+const togglePasswordVisibility = (fieldId) => {
+    const field = document.getElementById(fieldId);
+    if (field.type === 'password') {
+        field.type = 'text';
+    } else {
+        field.type = 'password';
+    }
+}
+
+const handleConnectionSubmit = async (event) => {
+    event.preventDefault();
+    isLoading.value = true;
+    showConnectionSuccess.value = false;
+
+    setTimeout(async () => {
+        isLoading.value = false;
+        showConnectionSuccess.value = true;
+        hasFormChanged.value = false;
+        originalFormData.value = { ...formData.value };
+
+        await saveNow();
+    }, 2500);
+}
 
 const getFormData = () => {
     return {
@@ -125,9 +136,14 @@ defineExpose({
 <template>
     <div class="card step-two-card">
         <div class="form-container">
-            <div class="mb-4">
-                <h1 class="form-title">Connect to Retail Express</h1>
-                <p class="form-subtitle">Enter your Retail Express credentials to establish a secure connection.</p>
+            <div class="mb-4 d-flex justify-content-between align-items-start">
+                <div>
+                    <h1 class="form-title">Connect to Retail Express</h1>
+                    <p class="form-subtitle">Enter your Retail Express credentials to establish a secure connection.</p>
+                </div>
+
+                <AutoSaveIndicator :is-saving="isSaving" :last-saved-at="lastSavedAt" :save-error="saveError"
+                    :display-duration="1500" />
             </div>
 
             <form>

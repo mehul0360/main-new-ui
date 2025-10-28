@@ -3,40 +3,54 @@ import { defineStore } from "pinia";
 
 export const useStepThreeStore = defineStore('stepThree', () => {
     const payload = ref({
-        primarySystem: 'retail-express',
+        sourceOfTruth: {
+            primarySystem: 'retail-express'
+        },
 
-        retailExpressField: 'product_id',
-        shopifyField: 'barcode',
+        identification: {
+            primary: 'product_id',
+            target: 'barcode'
+        },
 
-        createState: 'draft_inactive',
-        inactiveAction: 'mark_as_draft',
-        backOrders: 'enable',
-        weightUnit: 'kilograms_kg',
+        syncBehavior: {
+            createState: 'draft_inactive',
+            inactiveAction: 'mark_as_draft',
+            backOrders: 'enable',
+            weightUnit: 'kilograms_kg'
+        },
 
-        shortDescSync: 'create_only',
-        longDescSync: 'create_only',
-        titleField: 'product_title',
-        descriptionField: 'product_description',
-        skuField: 'sku',
-        productTypeField: 'product_type',
-        weightField: 'weight',
-        lengthField: 'length',
-        widthField: 'width',
-        heightField: 'height',
-        vendorField: 'vendor',
-        barcodeField: 'barcode',
+        mapping: {
+            masterProductData: {
+                shortDescSync: 'create_only',
+                longDescSync: 'create_only',
+                titleField: 'product_title',
+                descriptionField: 'product_description',
+                skuField: 'sku',
+                productTypeField: 'product_type',
+                weightField: 'weight',
+                lengthField: 'length',
+                widthField: 'width',
+                heightField: 'height',
+                vendorField: 'vendor',
+                barcodeField: 'barcode'
+            },
 
-        productGroupingField: 'Custom1',
-        variantAttributes: [],
+            variantGrouping: {
+                productGroupingField: 'Custom1',
+                variantAttributes: []
+            },
 
-        pricingMode: 'fixed',
-        fixedPriceSync: 'create_only',
-        fixedMSRPSync: 'create_only',
-        typeCost: 'cogs_excl_tax',
-        syncCostPerOutlet: false,
-        selectedOutlet: '',
-        retailExpressPrice: 'rrp_incl_tax',
-        retailExpressMSRP: 'rrp_incl_tax',
+            pricing: {
+                pricingMode: 'fixed',
+                fixedPriceSync: 'create_only',
+                fixedMSRPSync: 'create_only',
+                typCost: 'cogs_excl_tax',
+                syncCostPerOutlet: false,
+                selectedOutlet: '',
+                retailExpressPrice: 'rrp_incl_tax',
+                retailExpressMSRP: 'rrp_incl_tax'
+            }
+        },
 
         savedAt: null
     });
@@ -53,35 +67,49 @@ export const useStepThreeStore = defineStore('stepThree', () => {
 
     function clearStorage() {
         payload.value = {
-            primarySystem: 'retail-express',
-            retailExpressField: 'product_id',
-            shopifyField: 'barcode',
-            createState: 'draft_inactive',
-            inactiveAction: 'mark_as_draft',
-            backOrders: 'enable',
-            weightUnit: 'kilograms_kg',
-            shortDescSync: 'create_only',
-            longDescSync: 'create_only',
-            titleField: 'product_title',
-            descriptionField: 'product_description',
-            skuField: 'sku',
-            productTypeField: 'product_type',
-            weightField: 'weight',
-            lengthField: 'length',
-            widthField: 'width',
-            heightField: 'height',
-            vendorField: 'vendor',
-            barcodeField: 'barcode',
-            productGroupingField: 'Custom1',
-            variantAttributes: [],
-            pricingMode: 'fixed',
-            fixedPriceSync: 'create_only',
-            fixedMSRPSync: 'create_only',
-            typeCost: 'cogs_excl_tax',
-            syncCostPerOutlet: false,
-            selectedOutlet: '',
-            retailExpressPrice: 'rrp_incl_tax',
-            retailExpressMSRP: 'rrp_incl_tax',
+            sourceOfTruth: {
+                primarySystem: 'retail-express'
+            },
+            identification: {
+                primary: 'product_id',
+                target: 'barcode'
+            },
+            syncBehavior: {
+                createState: 'draft_inactive',
+                inactiveAction: 'mark_as_draft',
+                backOrders: 'enable',
+                weightUnit: 'kilograms_kg'
+            },
+            mapping: {
+                masterProductData: {
+                    shortDescSync: 'create_only',
+                    longDescSync: 'create_only',
+                    titleField: 'product_title',
+                    descriptionField: 'product_description',
+                    skuField: 'sku',
+                    productTypeField: 'product_type',
+                    weightField: 'weight',
+                    lengthField: 'length',
+                    widthField: 'width',
+                    heightField: 'height',
+                    vendorField: 'vendor',
+                    barcodeField: 'barcode'
+                },
+                variantGrouping: {
+                    productGroupingField: 'Custom1',
+                    variantAttributes: []
+                },
+                pricing: {
+                    pricingMode: 'fixed',
+                    fixedPriceSync: 'create_only',
+                    fixedMSRPSync: 'create_only',
+                    typCost: 'cogs_excl_tax',
+                    syncCostPerOutlet: false,
+                    selectedOutlet: '',
+                    retailExpressPrice: 'rrp_incl_tax',
+                    retailExpressMSRP: 'rrp_incl_tax'
+                }
+            },
             savedAt: null
         };
         isSaved.value = false;

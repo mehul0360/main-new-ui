@@ -3,37 +3,49 @@ import { defineStore } from "pinia";
 
 export const useStepFiveStore = defineStore('stepFive', () => {
     const payload = ref({
-        orderSyncEnabled: true,
+        orderSyncModule: {
+            orderSyncEnabled: true
+        },
 
-        additionalMappings: [
-            { id: 1, retailField: '', shopifyField: '' },
-            { id: 2, retailField: '', shopifyField: '' }
-        ],
+        additionalMappings: {
+            data: [
+                { id: 1, retailField: '', shopifyField: '' },
+                { id: 2, retailField: '', shopifyField: '' }
+            ]
+        },
 
-        trackingInfoSetting: 'yes_from_retail_express_shipment_tab',
-        salesLocationSetting: 'use_location_from_shopify_order',
-        fulfillmentLocationSetting: 'use_shopify',
-        defaultSalesperson: '',
-        updateCustomerData: 'yes',
+        syncBehavior: {
+            trackingInfoSetting: 'yes_from_retail_express_shipment_tab',
+            salesLocationSetting: 'use_location_from_shopify_order',
+            fulfillmentLocationSetting: 'use_shopify',
+            defaultSalesperson: '',
+            updateCustomerData: 'yes'
+        },
 
-        paymentMethodMappings: [
-            { id: 1, retailPaymentMethod: '', shopifyPaymentMethod: '' },
-            { id: 2, retailPaymentMethod: '', shopifyPaymentMethod: '' },
-            { id: 3, retailPaymentMethod: '', shopifyPaymentMethod: '' },
-            { id: 4, retailPaymentMethod: '', shopifyPaymentMethod: '' }
-        ],
+        paymentMethods: {
+            data: [
+                { id: 1, retailPaymentMethod: '', shopifyPaymentMethod: '' },
+                { id: 2, retailPaymentMethod: '', shopifyPaymentMethod: '' },
+                { id: 3, retailPaymentMethod: '', shopifyPaymentMethod: '' },
+                { id: 4, retailPaymentMethod: '', shopifyPaymentMethod: '' }
+            ]
+        },
 
-        shippingMethodMappings: [
-            { id: 1, retailShippingMethod: '', shopifyShippingMethod: '' },
-            { id: 2, retailShippingMethod: '', shopifyShippingMethod: '' }
-        ],
+        shippingMethods: {
+            data: [
+                { id: 1, retailShippingMethod: '', shopifyShippingMethod: '' },
+                { id: 2, retailShippingMethod: '', shopifyShippingMethod: '' }
+            ]
+        },
 
-        enableClickCollect: false,
-        restrictAvailability: 'all_products',
-        enableMinStock: false,
-        minStockThreshold: '',
-        searchRadius: '',
-        customTag: '',
+        clickCollect: {
+            enableClickCollect: false,
+            restrictAvailability: 'all_products',
+            enableMinStock: false,
+            minStockThreshold: '',
+            searchRadius: '',
+            customTag: ''
+        },
 
         savedAt: null
     });
@@ -50,32 +62,44 @@ export const useStepFiveStore = defineStore('stepFive', () => {
 
     function clearStorage() {
         payload.value = {
-            orderSyncEnabled: true,
-            additionalMappings: [
-                { id: 1, retailField: '', shopifyField: '' },
-                { id: 2, retailField: '', shopifyField: '' }
-            ],
-            trackingInfoSetting: 'yes_from_retail_express_shipment_tab',
-            salesLocationSetting: 'use_location_from_shopify_order',
-            fulfillmentLocationSetting: 'use_shopify',
-            defaultSalesperson: '',
-            updateCustomerData: 'yes',
-            paymentMethodMappings: [
-                { id: 1, retailPaymentMethod: '', shopifyPaymentMethod: '' },
-                { id: 2, retailPaymentMethod: '', shopifyPaymentMethod: '' },
-                { id: 3, retailPaymentMethod: '', shopifyPaymentMethod: '' },
-                { id: 4, retailPaymentMethod: '', shopifyPaymentMethod: '' }
-            ],
-            shippingMethodMappings: [
-                { id: 1, retailShippingMethod: '', shopifyShippingMethod: '' },
-                { id: 2, retailShippingMethod: '', shopifyShippingMethod: '' }
-            ],
-            enableClickCollect: false,
-            restrictAvailability: 'all_products',
-            enableMinStock: false,
-            minStockThreshold: '',
-            searchRadius: '',
-            customTag: '',
+            orderSyncModule: {
+                orderSyncEnabled: true
+            },
+            additionalMappings: {
+                data: [
+                    { id: 1, retailField: '', shopifyField: '' },
+                    { id: 2, retailField: '', shopifyField: '' }
+                ]
+            },
+            syncBehavior: {
+                trackingInfoSetting: 'yes_from_retail_express_shipment_tab',
+                salesLocationSetting: 'use_location_from_shopify_order',
+                fulfillmentLocationSetting: 'use_shopify',
+                defaultSalesperson: '',
+                updateCustomerData: 'yes'
+            },
+            paymentMethods: {
+                data: [
+                    { id: 1, retailPaymentMethod: '', shopifyPaymentMethod: '' },
+                    { id: 2, retailPaymentMethod: '', shopifyPaymentMethod: '' },
+                    { id: 3, retailPaymentMethod: '', shopifyPaymentMethod: '' },
+                    { id: 4, retailPaymentMethod: '', shopifyPaymentMethod: '' }
+                ]
+            },
+            shippingMethods: {
+                mappings: [
+                    { id: 1, retailShippingMethod: '', shopifyShippingMethod: '' },
+                    { id: 2, retailShippingMethod: '', shopifyShippingMethod: '' }
+                ]
+            },
+            clickCollect: {
+                enableClickCollect: false,
+                restrictAvailability: 'all_products',
+                enableMinStock: false,
+                minStockThreshold: '',
+                searchRadius: '',
+                customTag: ''
+            },
             savedAt: null
         };
         isSaved.value = false;

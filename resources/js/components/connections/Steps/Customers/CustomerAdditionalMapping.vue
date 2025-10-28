@@ -1,23 +1,49 @@
 <script setup>
-import { ref, onMounted, defineExpose } from 'vue';
+import { ref, onMounted, defineExpose, watch } from 'vue';
 import { storeToRefs } from 'pinia';
 import { useStepFourStore } from '@/stores/connection-steps/stepfour';
+import AutoSaveIndicator from '@/components/AutoSaveIndicator.vue';
 import TwoWayArrow from '@/components/Icons/TwoWayArrow.vue';
+
+const props = defineProps({
+    isSaving: {
+        type: Boolean,
+        default: false
+    },
+    lastSavedAt: {
+        type: Date,
+        default: null
+    },
+    saveError: {
+        type: Error,
+        default: null
+    },
+    displayDuration: {
+        type: Number,
+        default: 3000
+    }
+});
+
+const emit = defineEmits(['data-changed']);
 
 const stepFourStore = useStepFourStore();
 const { payload, isSaved } = storeToRefs(stepFourStore);
 
-const mappings = ref([
-    { id: 1, retailField: '', shopifyField: '' },
-    { id: 2, retailField: '', shopifyField: '' },
-    { id: 3, retailField: '', shopifyField: '' },
-    { id: 4, retailField: '', shopifyField: '' }
-]);
+const additionalMappingsData = ref({
+    data: [
+        { id: 1, retailField: '', shopifyField: '' },
+        { id: 2, retailField: '', shopifyField: '' },
+        { id: 3, retailField: '', shopifyField: '' },
+        { id: 4, retailField: '', shopifyField: '' }
+    ]
+});
 
 const fetchStoredData = () => {
     if (isSaved.value && payload.value && payload.value.additionalMappings) {
-        if (payload.value.additionalMappings.length > 0) {
-            mappings.value = JSON.parse(JSON.stringify(payload.value.additionalMappings));
+        if (payload.value.additionalMappings.data && payload.value.additionalMappings.data.length > 0) {
+            additionalMappingsData.value.data = JSON.parse(
+                JSON.stringify(payload.value.additionalMappings.data)
+            );
         }
     }
 };
@@ -27,7 +53,7 @@ onMounted(() => {
 });
 
 const addMapping = () => {
-    mappings.value.push({
+    additionalMappingsData.value.data.push({
         id: Date.now(),
         retailField: '',
         shopifyField: ''
@@ -35,16 +61,24 @@ const addMapping = () => {
 };
 
 const removeMapping = (id) => {
-    if (mappings.value.length > 1) {
-        mappings.value = mappings.value.filter(m => m.id !== id);
+    if (additionalMappingsData.value.data.length > 1) {
+        additionalMappingsData.value.data = additionalMappingsData.value.data.filter(m => m.id !== id);
     }
 };
 
 const getFormData = () => {
     return {
-        additionalMappings: JSON.parse(JSON.stringify(mappings.value))
+        data: JSON.parse(JSON.stringify(additionalMappingsData.value.data))
     };
 };
+
+watch(
+    additionalMappingsData,
+    () => {
+        emit('data-changed', getFormData());
+    },
+    { deep: true }
+);
 
 defineExpose({
     getFormData
@@ -54,15 +88,20 @@ defineExpose({
 <template>
     <div class="card shadow-sm">
         <div class="card-body p-4">
-            <div class="mb-4">
-                <h5 class="fw-semibold mb-2"
-                    style="color: #101828; font-size: 20px; font-family: 'Poppins', sans-serif; line-height: 28px;">
-                    Additional Mappings
-                </h5>
-                <p class="text-muted mb-0"
-                    style="font-size: 14px; font-family: 'Roboto', sans-serif; color: #4a5565; line-height: 20px;">
-                    Add optional mappings to match additional customer attributes.
-                </p>
+            <div class="d-flex justify-content-between mb-4">
+                <div>
+                    <h5 class="fw-semibold mb-2"
+                        style="color: #101828; font-size: 20px; font-family: 'Poppins', sans-serif; line-height: 28px;">
+                        Additional Mappings
+                    </h5>
+                    <p class="text-muted mb-0"
+                        style="font-size: 14px; font-family: 'Roboto', sans-serif; color: #4a5565; line-height: 20px;">
+                        Add optional mappings to match additional customer attributes.
+                    </p>
+                </div>
+
+                <AutoSaveIndicator :is-saving="isSaving" :last-saved-at="lastSavedAt" :save-error="saveError"
+                    :display-duration="1500" />
             </div>
 
             <div class="row g-4 py-2 border-bottom mb-3" style="border-color: #e5e7eb;">
@@ -82,7 +121,8 @@ defineExpose({
                 <div class="col-1"></div>
             </div>
 
-            <div v-for="mapping in mappings" :key="mapping.id" class="row g-4 align-items-center mb-3">
+            <div v-for="mapping in additionalMappingsData.data" :key="mapping.id"
+                class="row g-4 align-items-center mb-3">
                 <div class="col-4">
                     <div class="position-relative">
                         <select v-model="mapping.retailField" class="form-select custom-select"

@@ -1,6 +1,7 @@
 <script setup>
-import { onMounted, ref } from 'vue';
+import { computed, onMounted, ref } from 'vue';
 import { useStepSixStore } from '@/stores/connection-steps/stepsix';
+import { useAutoSave } from '@/composables/useAutoSave';
 import MandatoryMapping from '@/components/connections/Steps/StoresInventory/MandatoryMapping.vue';
 import BufferQuantityConfig from '@/components/connections/Steps/StoresInventory/BufferQuantityConfig.vue';
 import InfoRed from '@/components/Icons/InfoRed.vue';
@@ -8,7 +9,29 @@ import InfoRed from '@/components/Icons/InfoRed.vue';
 const stepSixStore = useStepSixStore();
 
 const mandatoryMappingRef = ref(null);
+const mandatoryMappingData = ref({});
+
 const bufferQuantityRef = ref(null);
+const bufferQuantityData = ref({});
+
+const updateMandatoryMappings = (data) => {
+    mandatoryMappingData.value = data;
+};
+
+const updateBufferQuantity = (data) => {
+    bufferQuantityData.value = data;
+};
+
+const formData = computed(() => ({
+    storeMappings: mandatoryMappingData.value,
+    bufferQuantityMappings: bufferQuantityData.value,
+}));
+
+const { isSaving, lastSavedAt, saveError } = useAutoSave(
+    formData,
+    stepSixStore.saveInStorage,
+    { debounceDelay: 800 }
+);
 
 onMounted(() => {
     const tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
@@ -18,19 +41,7 @@ onMounted(() => {
 });
 
 const validateForm = () => {
-    // Validate that at least one store mapping exists and is filled
-    const mandatoryData = mandatoryMappingRef.value?.getFormData();
-
-    if (!mandatoryData || !mandatoryData.storeMappings || mandatoryData.storeMappings.length === 0) {
-        return false;
-    }
-
-    // Check if at least one mapping has both fields filled
-    const hasValidMapping = mandatoryData.storeMappings.some(
-        mapping => mapping.retailStore && mapping.shopifyStore
-    );
-
-    return hasValidMapping;
+    return true
 };
 
 const getFormData = () => {
@@ -80,9 +91,11 @@ defineExpose({
             </div>
         </div>
 
-        <mandatory-mapping ref="mandatoryMappingRef" />
+        <mandatory-mapping ref="mandatoryMappingRef" :is-saving="isSaving" :last-saved-at="lastSavedAt"
+            :save-error="saveError" :display-duration="1500" @data-changed="updateMandatoryMappings" />
 
-        <buffer-quantity-config ref="bufferQuantityRef" />
+        <buffer-quantity-config ref="bufferQuantityRef" :is-saving="isSaving" :last-saved-at="lastSavedAt"
+            :save-error="saveError" :display-duration="1500" @data-changed="updateBufferQuantity" />
     </div>
 </template>
 

@@ -1,15 +1,29 @@
 <script setup>
-import { ref, onMounted } from 'vue';
+import { ref, onMounted, watch } from 'vue';
+import { storeToRefs } from 'pinia';
+import AutoSaveIndicator from '@/components/AutoSaveIndicator.vue';
 import { useStepFiveStore } from '@/stores/connection-steps/stepfive';
 import InfoRed from '@/components/Icons/InfoRed.vue';
 
-const stepFiveStore = useStepFiveStore();
+const props = defineProps({
+    isSaving: { type: Boolean, default: false },
+    lastSavedAt: { type: Date, default: null },
+    saveError: { type: Error, default: null },
+    displayDuration: { type: Number, default: 3000 }
+});
 
-const trackingInfoSetting = ref('yes_from_retail_express_shipment_tab');
-const salesLocationSetting = ref('use_location_from_shopify_order');
-const fulfillmentLocationSetting = ref('use_shopify');
-const defaultSalesperson = ref('');
-const updateCustomerData = ref('yes');
+const emit = defineEmits(['data-changed']);
+
+const stepFiveStore = useStepFiveStore();
+const { payload, isSaved } = storeToRefs(stepFiveStore);
+
+const syncBehaviorData = ref({
+    trackingInfoSetting: 'yes_from_retail_express_shipment_tab',
+    salesLocationSetting: 'use_location_from_shopify_order',
+    fulfillmentLocationSetting: 'use_shopify',
+    defaultSalesperson: '',
+    updateCustomerData: 'yes'
+});
 
 onMounted(() => {
     const tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
@@ -17,26 +31,34 @@ onMounted(() => {
         return new bootstrap.Tooltip(tooltipTriggerEl);
     });
 
-    if (stepFiveStore.isSaved) {
-        const savedData = stepFiveStore.getPayload();
-
-        trackingInfoSetting.value = savedData.trackingInfoSetting || 'yes_from_retail_express_shipment_tab';
-        salesLocationSetting.value = savedData.salesLocationSetting || 'use_location_from_shopify_order';
-        fulfillmentLocationSetting.value = savedData.fulfillmentLocationSetting || 'use_shopify';
-        defaultSalesperson.value = savedData.defaultSalesperson || '';
-        updateCustomerData.value = savedData.updateCustomerData || 'yes';
-    }
+    fetchStoredData();
 });
+
+const fetchStoredData = () => {
+    if (isSaved.value && payload.value) {
+        if (payload.value.syncBehavior) {
+            syncBehaviorData.value = { ...payload.value.syncBehavior };
+        }
+    }
+};
 
 const getFormData = () => {
     return {
-        trackingInfoSetting: trackingInfoSetting.value,
-        salesLocationSetting: salesLocationSetting.value,
-        fulfillmentLocationSetting: fulfillmentLocationSetting.value,
-        defaultSalesperson: defaultSalesperson.value,
-        updateCustomerData: updateCustomerData.value
+        trackingInfoSetting: syncBehaviorData.value.trackingInfoSetting,
+        salesLocationSetting: syncBehaviorData.value.salesLocationSetting,
+        fulfillmentLocationSetting: syncBehaviorData.value.fulfillmentLocationSetting,
+        defaultSalesperson: syncBehaviorData.value.defaultSalesperson,
+        updateCustomerData: syncBehaviorData.value.updateCustomerData
     };
 };
+
+watch(
+    syncBehaviorData,
+    () => {
+        emit('data-changed', getFormData());
+    },
+    { deep: true }
+);
 
 defineExpose({
     getFormData
@@ -46,10 +68,15 @@ defineExpose({
 <template>
     <div class="card order-behavior-card position-relative overflow-hidden">
         <div class="card-body p-4">
-            <div class="d-flex align-items-center gap-2 mb-4">
-                <h2 class="section-title mb-0">Order Sync Behavior Settings</h2>
-                <info-red
-                    title="Configure how order data behaves during sync operations, including sync direction, frequency, and handling of existing orders." />
+            <div class="d-flex justify-content-between mb-4">
+                <div class="d-flex align-items-center gap-2">
+                    <h2 class="section-title mb-0">Order Sync Behavior Settings</h2>
+                    <info-red
+                        title="Configure how order data behaves during sync operations, including sync direction, frequency, and handling of existing orders." />
+                </div>
+
+                <AutoSaveIndicator :is-saving="isSaving" :last-saved-at="lastSavedAt" :save-error="saveError"
+                    :display-duration="1500" />
             </div>
 
             <div class="d-flex flex-column" style="gap: 2rem;">
@@ -59,7 +86,7 @@ defineExpose({
                         <info-red is-small
                             title="Choose where tracking information comes from when orders are fulfilled. This affects customer notifications and order status updates in Shopify." />
                     </div>
-                    <select v-model="trackingInfoSetting" class="form-select custom-select-md">
+                    <select v-model="syncBehaviorData.trackingInfoSetting" class="form-select custom-select-md">
                         <option value="yes_from_retail_express_shipment_tab">
                             Yes (from Retail Express shipment tab)
                         </option>
@@ -76,7 +103,7 @@ defineExpose({
                         <info-red is-small
                             title="Determines which store location gets credit for online sales. This affects reporting, commissions, and inventory allocation for delivery orders." />
                     </div>
-                    <select v-model="salesLocationSetting" class="form-select custom-select-md">
+                    <select v-model="syncBehaviorData.salesLocationSetting" class="form-select custom-select-md">
                         <option value="use_location_from_shopify_order">Use location from Shopify order</option>
                         <option value="use_fixed_location">Use fixed location (set in Shipping Module)</option>
                     </select>
@@ -88,7 +115,7 @@ defineExpose({
                         <info-red is-small
                             title="Determines which location physically processes and ships the order. This affects inventory deduction and shipping workflows." />
                     </div>
-                    <select v-model="fulfillmentLocationSetting" class="form-select custom-select-md">
+                    <select v-model="syncBehaviorData.fulfillmentLocationSetting" class="form-select custom-select-md">
                         <option value="use_shopify">Use Shopify fulfillment location</option>
                         <option value="use_fixed">Use fixed fulfillment location</option>
                     </select>
@@ -100,8 +127,8 @@ defineExpose({
                         <info-red is-small
                             title="Assigns a default salesperson to online orders for commission tracking and reporting. Select from your Retail Express POS users." />
                     </div>
-                    <input type="text" v-model="defaultSalesperson" class="form-control custom-input-md"
-                        placeholder="Enter User Code (e.g., ONLINE001)">
+                    <input type="text" v-model="syncBehaviorData.defaultSalesperson"
+                        class="form-control custom-input-md" placeholder="Enter User Code (e.g., ONLINE001)">
                     <div class="input-helper-text">
                         Enter the User Code found in Retail Express → Users menu
                     </div>
@@ -113,7 +140,7 @@ defineExpose({
                         <info-red is-small
                             title="When enabled, new billing information from orders will overwrite existing customer records in Retail Express. Disable if you prefer to maintain manually entered customer data." />
                     </div>
-                    <select v-model="updateCustomerData" class="form-select custom-select-md">
+                    <select v-model="syncBehaviorData.updateCustomerData" class="form-select custom-select-md">
                         <option value="yes">Yes</option>
                         <option value="no">No</option>
                     </select>

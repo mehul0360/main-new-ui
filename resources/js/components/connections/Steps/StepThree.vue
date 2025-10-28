@@ -2,6 +2,8 @@
 import { computed, onMounted, ref, defineExpose } from 'vue';
 import { storeToRefs } from 'pinia';
 import { useStepThreeStore } from '@/stores/connection-steps/stepthree';
+import { useAutoSave } from '@/composables/useAutoSave';
+import AutoSaveIndicator from '@/components/AutoSaveIndicator.vue';
 import MappingCard from '@/components/connections/Steps/Products/MappingCard.vue';
 import MandatoryLogic from '@/components/connections/Steps/Products/MandatoryLogic.vue';
 import InfoRed from '@/components/Icons/InfoRed.vue';
@@ -11,26 +13,57 @@ import SingleArrow from '@/components/Icons/SingleArrow.vue';
 const stepThreeStore = useStepThreeStore();
 const { payload, isSaved } = storeToRefs(stepThreeStore);
 
-const primarySystem = ref('retail-express');
-const retailExpressField = ref('product_id');
-const shopifyField = ref('barcode');
+const sourceOfTruth = ref({
+    primarySystem: 'retail-express'
+});
 
-const createState = ref('draft_inactive');
-const inactiveAction = ref('mark_as_draft');
-const backOrders = ref('enable');
-const weightUnit = ref('kilograms_kg');
+const identification = ref({
+    primary: 'product_id',
+    target: 'barcode'
+});
+
+const syncBehavior = ref({
+    createState: 'draft_inactive',
+    inactiveAction: 'mark_as_draft',
+    backOrders: 'enable',
+    weightUnit: 'kilograms_kg'
+});
 
 const mappingCardRef = ref(null);
+const mappingData = ref({});
+
+const updateMappingData = (data) => {
+    mappingData.value = data;
+};
+
+const formData = computed(() => ({
+    sourceOfTruth: sourceOfTruth.value,
+    identification: identification.value,
+    syncBehavior: syncBehavior.value,
+    mapping: mappingData.value
+}));
+
+const { isSaving, lastSavedAt, saveError } = useAutoSave(
+    formData,
+    stepThreeStore.saveInStorage,
+    {
+        debounceDelay: 800
+    }
+);
 
 const fetchStoredData = () => {
     if (isSaved.value && payload.value) {
-        primarySystem.value = payload.value.primarySystem || 'retail-express';
-        retailExpressField.value = payload.value.retailExpressField || 'product_id';
-        shopifyField.value = payload.value.shopifyField || 'barcode';
-        createState.value = payload.value.createState || 'draft_inactive';
-        inactiveAction.value = payload.value.inactiveAction || 'mark_as_draft';
-        backOrders.value = payload.value.backOrders || 'enable';
-        weightUnit.value = payload.value.weightUnit || 'kilograms_kg';
+        if (payload.value.sourceOfTruth) {
+            sourceOfTruth.value = { ...payload.value.sourceOfTruth };
+        }
+
+        if (payload.value.identification) {
+            identification.value = { ...payload.value.identification };
+        }
+
+        if (payload.value.syncBehavior) {
+            syncBehavior.value = { ...payload.value.syncBehavior };
+        }
     }
 };
 
@@ -44,29 +77,25 @@ onMounted(() => {
 });
 
 const sourceSystem = computed(() => {
-    return primarySystem.value === 'retail-express' ? 'Retail Express' : 'Shopify';
+    return sourceOfTruth.value.primarySystem === 'retail-express' ? 'Retail Express' : 'Shopify';
 });
 
 const targetSystem = computed(() => {
-    return primarySystem.value === 'retail-express' ? 'Shopify' : 'Retail Express';
+    return sourceOfTruth.value.primarySystem === 'retail-express' ? 'Shopify' : 'Retail Express';
 });
 
 const arrowDirection = computed(() => {
-    return primarySystem.value === 'retail-express' ? 'right' : 'left';
+    return sourceOfTruth.value.primarySystem === 'retail-express' ? 'right' : 'left';
 });
 
 const getFormData = () => {
-    const mappingData = mappingCardRef.value ? mappingCardRef.value.getFormData() : {};
+    const mappingCardData = mappingCardRef.value ? mappingCardRef.value.getFormData() : {};
 
     return {
-        primarySystem: primarySystem.value,
-        retailExpressField: retailExpressField.value,
-        shopifyField: shopifyField.value,
-        createState: createState.value,
-        inactiveAction: inactiveAction.value,
-        backOrders: backOrders.value,
-        weightUnit: weightUnit.value,
-        ...mappingData
+        sourceOfTruth: sourceOfTruth.value,
+        identification: identification.value,
+        syncBehavior: syncBehavior.value,
+        mapping: mappingCardData
     };
 };
 
@@ -85,8 +114,10 @@ defineExpose({
         <div class="card product-mapping-card position-relative overflow-hidden">
             <div class="card-body p-4">
                 <div class="header-container position-relative">
-                    <div class="d-flex flex-column align-items-center justify-content-start">
-                        <h1 class="product-title text-center mb-0">Product Data Mapping</h1>
+                    <div class="d-flex justify-content-between align-items-start">
+                        <div class="d-flex flex-column align-items-center justify-content-start flex-grow-1">
+                            <h1 class="product-title text-center mb-0">Product Data Mapping</h1>
+                        </div>
                     </div>
 
                     <div class="description-container mx-auto text-center mt-3">
@@ -110,10 +141,15 @@ defineExpose({
         <div class="card source-card position-relative overflow-hidden mt-4">
             <div class="card-body p-4">
                 <div class="d-flex flex-column gap-4">
-                    <div class="d-flex align-items-center gap-2">
-                        <h2 class="section-title mb-0">Source of Truth for Product Creation</h2>
-                        <info-red
-                            title="Select which system will be the primary source for product creation and data flow. This determines the direction of synchronization and field mapping below." />
+                    <div class="d-flex align-items-center justify-content-between">
+                        <div class="d-flex gap-2 align-items-center">
+                            <h2 class="section-title mb-0">Source of Truth for Product Creation</h2>
+                            <info-red
+                                title="Select which system will be the primary source for product creation and data flow. This determines the direction of synchronization and field mapping below." />
+                        </div>
+
+                        <AutoSaveIndicator :is-saving="isSaving" :last-saved-at="lastSavedAt" :save-error="saveError"
+                            :display-duration="1500" />
                     </div>
 
                     <p class="section-description mb-0">
@@ -124,7 +160,7 @@ defineExpose({
                     <div class="d-flex flex-column gap-3">
                         <label class="dropdown-label mb-0">Primary Source System</label>
 
-                        <select v-model="primarySystem" class="form-select custom-select">
+                        <select v-model="sourceOfTruth.primarySystem" class="form-select custom-select">
                             <option value="retail-express">Retail Express</option>
                             <option value="shopify">Shopify</option>
                         </select>
@@ -152,9 +188,14 @@ defineExpose({
         <div class="card identification-card position-relative overflow-hidden mt-4">
             <div class="card-body p-4">
                 <div class="d-flex flex-column gap-4">
-                    <div class="d-flex align-items-center gap-2">
-                        <h2 class="section-title mb-0">Product Identification</h2>
-                        <info-red title="Configure how products are identified and matched between systems" />
+                    <div class="d-flex align-items-center justify-content-between">
+                        <div class="d-flex gap-2 align-items-center">
+                            <h2 class="section-title mb-0">Product Identification</h2>
+                            <info-red title="Configure how products are identified and matched between systems" />
+                        </div>
+
+                        <AutoSaveIndicator :is-saving="isSaving" :last-saved-at="lastSavedAt" :save-error="saveError"
+                            :display-duration="1500" />
                     </div>
 
                     <div>
@@ -176,14 +217,14 @@ defineExpose({
 
                         <div class="row g-3 align-items-center mapping-row">
                             <div class="col-4">
-                                <select v-if="primarySystem === 'retail-express'" v-model="retailExpressField"
-                                    class="form-select custom-select">
-                                    <option value="product_id" selected>Product ID</option>
+                                <select v-if="sourceOfTruth.primarySystem === 'retail-express'"
+                                    v-model="identification.primary" class="form-select custom-select">
+                                    <option value="product_id">Product ID</option>
                                     <option value="sku">SKU</option>
                                     <option value="supplier_sku">Supplier SKU</option>
                                 </select>
-                                <select v-else v-model="shopifyField" class="form-select custom-select">
-                                    <option value="barcode" selected>Barcode</option>
+                                <select v-else v-model="identification.target" class="form-select custom-select">
+                                    <option value="barcode">Barcode</option>
                                     <option value="sku">SKU</option>
                                 </select>
                             </div>
@@ -192,13 +233,13 @@ defineExpose({
                                 <single-arrow :direction="arrowDirection" color="red" />
                             </div>
                             <div class="col-4">
-                                <select v-if="primarySystem === 'retail-express'" v-model="shopifyField"
-                                    class="form-select custom-select">
-                                    <option value="barcode" selected>Barcode</option>
+                                <select v-if="sourceOfTruth.primarySystem === 'retail-express'"
+                                    v-model="identification.target" class="form-select custom-select">
+                                    <option value="barcode">Barcode</option>
                                     <option value="sku">SKU</option>
                                 </select>
-                                <select v-else v-model="retailExpressField" class="form-select custom-select">
-                                    <option value="product_id" selected>Product ID</option>
+                                <select v-else v-model="identification.primary" class="form-select custom-select">
+                                    <option value="product_id">Product ID</option>
                                     <option value="sku">SKU</option>
                                     <option value="supplier_sku">Supplier SKU</option>
                                 </select>
@@ -211,19 +252,26 @@ defineExpose({
 
         <mandatory-logic />
 
-        <mapping-card ref="mappingCardRef" :primary-system="primarySystem" />
+        <mapping-card ref="mappingCardRef" :primary-system="sourceOfTruth.primarySystem" :is-saving="isSaving"
+            :last-saved-at="lastSavedAt" :save-error="saveError" :display-duration="1500"
+            @data-changed="updateMappingData" />
 
         <div class="card sync-behavior-card position-relative overflow-hidden my-4">
             <div class="card-body p-4">
-                <div class="d-flex align-items-center gap-2 mb-4">
-                    <h2 class="section-title mb-0">Product Sync Behavior Settings</h2>
-                    <info-red title="Configure how products sync between systems" placement="top" />
+                <div class="d-flex align-items-center justify-content-between mb-4">
+                    <div class="d-flex gap-2 align-items-center">
+                        <h2 class="section-title mb-0">Product Sync Behavior Settings</h2>
+                        <info-red title="Configure how products sync between systems" placement="top" />
+                    </div>
+
+                    <AutoSaveIndicator :is-saving="isSaving" :last-saved-at="lastSavedAt" :save-error="saveError"
+                        :display-duration="1500" />
                 </div>
 
                 <div class="d-flex flex-column" style="gap: 1.5rem;">
                     <div class="d-flex flex-column gap-2">
                         <label class="field-label">Create State in Shopify</label>
-                        <select v-model="createState" class="form-select custom-select-md">
+                        <select v-model="syncBehavior.createState" class="form-select custom-select-md">
                             <option value="draft_inactive">Draft/Inactive</option>
                             <option value="publish_active">Publish/Active</option>
                         </select>
@@ -231,7 +279,7 @@ defineExpose({
 
                     <div class="d-flex flex-column gap-2">
                         <label class="field-label">Action for Inactive REX Products</label>
-                        <select v-model="inactiveAction" class="form-select custom-select-md">
+                        <select v-model="syncBehavior.inactiveAction" class="form-select custom-select-md">
                             <option value="delete_product">Delete The Product</option>
                             <option value="mark_as_draft">Mark as draft</option>
                             <option value="do_not_update">Do not update</option>
@@ -244,7 +292,7 @@ defineExpose({
                             <info-blue is-small title="Enable to allow selling products even when out of stock"
                                 placement="top" />
                         </div>
-                        <select v-model="backOrders" class="form-select custom-select-md">
+                        <select v-model="syncBehavior.backOrders" class="form-select custom-select-md">
                             <option value="enable">Enable</option>
                             <option value="disable">Disable</option>
                         </select>
@@ -252,7 +300,7 @@ defineExpose({
 
                     <div class="d-flex flex-column gap-2">
                         <label class="field-label">Product Weight Unit</label>
-                        <select v-model="weightUnit" class="form-select custom-select-md">
+                        <select v-model="syncBehavior.weightUnit" class="form-select custom-select-md">
                             <option value="kilograms_kg">Kilograms (kg)</option>
                             <option value="grams_g">Grams (g)</option>
                             <option value="pounds_lb">Pounds (lb)</option>
@@ -407,14 +455,6 @@ defineExpose({
     background-color: #f9fafb;
     border-radius: 8px;
     padding: 0.5rem 1rem;
-}
-
-.section-title {
-    font-family: 'Poppins', sans-serif;
-    font-weight: 600;
-    font-size: 20px;
-    line-height: 28px;
-    color: #101828;
 }
 
 .field-label {

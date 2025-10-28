@@ -1,39 +1,61 @@
 <script setup>
-import { ref, onMounted } from 'vue';
+import { ref, onMounted, watch } from 'vue';
+import { storeToRefs } from 'pinia';
+import AutoSaveIndicator from '@/components/AutoSaveIndicator.vue';
 import { useStepFiveStore } from '@/stores/connection-steps/stepfive';
 import InfoRed from '@/components/Icons/InfoRed.vue';
 
-const stepFiveStore = useStepFiveStore();
+const props = defineProps({
+    isSaving: { type: Boolean, default: false },
+    lastSavedAt: { type: Date, default: null },
+    saveError: { type: Error, default: null },
+    displayDuration: { type: Number, default: 3000 }
+});
 
-const enableClickCollect = ref(false);
-const restrictAvailability = ref('all_products');
-const enableMinStock = ref(false);
-const minStockThreshold = ref('');
-const searchRadius = ref('');
-const customTag = ref('');
+const emit = defineEmits(['data-changed']);
+
+const stepFiveStore = useStepFiveStore();
+const { payload, isSaved } = storeToRefs(stepFiveStore);
+
+const clickCollectData = ref({
+    enableClickCollect: false,
+    restrictAvailability: 'all_products',
+    enableMinStock: false,
+    minStockThreshold: '',
+    searchRadius: '',
+    customTag: ''
+});
 
 onMounted(() => {
-    if (stepFiveStore.isSaved) {
-        const savedData = stepFiveStore.getPayload();
-        enableClickCollect.value = savedData.enableClickCollect || false;
-        restrictAvailability.value = savedData.restrictAvailability || 'all_products';
-        enableMinStock.value = savedData.enableMinStock || false;
-        minStockThreshold.value = savedData.minStockThreshold || '';
-        searchRadius.value = savedData.searchRadius || '';
-        customTag.value = savedData.customTag || '';
-    }
+    fetchStoredData();
 });
+
+const fetchStoredData = () => {
+    if (isSaved.value && payload.value) {
+        if (payload.value.clickCollect) {
+            clickCollectData.value = { ...payload.value.clickCollect };
+        }
+    }
+};
 
 const getFormData = () => {
     return {
-        enableClickCollect: enableClickCollect.value,
-        restrictAvailability: restrictAvailability.value,
-        enableMinStock: enableMinStock.value,
-        minStockThreshold: minStockThreshold.value,
-        searchRadius: searchRadius.value,
-        customTag: customTag.value
+        enableClickCollect: clickCollectData.value.enableClickCollect,
+        restrictAvailability: clickCollectData.value.restrictAvailability,
+        enableMinStock: clickCollectData.value.enableMinStock,
+        minStockThreshold: clickCollectData.value.minStockThreshold,
+        searchRadius: clickCollectData.value.searchRadius,
+        customTag: clickCollectData.value.customTag,
     };
 };
+
+watch(
+    clickCollectData,
+    () => {
+        emit('data-changed', getFormData());
+    },
+    { deep: true }
+);
 
 defineExpose({
     getFormData
@@ -43,84 +65,91 @@ defineExpose({
 <template>
     <div class="card click-collect-card position-relative overflow-hidden">
         <div class="card-body p-4">
-            <div class="d-flex flex-column" style="gap: 2rem;">
-                <div class="d-flex flex-column gap-3">
-                    <h3 class="subsection-title mb-0">Enable Click & Collect</h3>
+            <div class="d-flex justify-content-between mb-3">
+                <h3 class="subsection-title">Enable Click & Collect</h3>
 
-                    <div class="d-flex align-items-start gap-3">
-                        <div class="d-flex align-items-start gap-3" style="padding-top: 0.25rem;">
-                            <input type="checkbox" v-model="enableClickCollect" id="enable_click_collect"
-                                class="form-check-input checkbox-custom mt-1">
-                            <div class="d-flex flex-column gap-1 flex-fill">
-                                <label for="enable_click_collect" class="checkbox-main-label cursor-pointer mb-0">
-                                    Enable Click & Collect for this integration
-                                </label>
-                                <div class="checkbox-description">
-                                    Allow customers to place orders online and collect from your store locations
-                                </div>
-                            </div>
-                        </div>
+                <AutoSaveIndicator :is-saving="isSaving" :last-saved-at="lastSavedAt" :save-error="saveError"
+                    :display-duration="1500" />
+            </div>
+
+            <div class="d-flex align-items-start gap-3 mb-4" style="padding-top: 0.25rem;">
+                <input type="checkbox" v-model="clickCollectData.enableClickCollect" id="enable_click_collect"
+                    class="form-check-input checkbox-custom mt-1">
+
+                <div class="d-flex flex-column gap-1 flex-fill">
+                    <label for="enable_click_collect" class="checkbox-main-label cursor-pointer mb-0">
+                        Enable Click & Collect for this integration
+                    </label>
+                    <div class="checkbox-description">
+                        Allow customers to place orders online and collect from your store locations
+                    </div>
+                </div>
+            </div>
+
+            <div class="mb-4">
+                <div class="d-flex align-items-center gap-2 mb-2">
+                    <h3 class="subsection-title mb-0">Restrict Click & Collect availability to:</h3>
+
+                    <info-red is-small
+                        title="Filter which products are available for Click & Collect based on Shopify product tags or collections. By default, all products are available for pickup." />
+                </div>
+
+                <select v-model="clickCollectData.restrictAvailability" class="form-select custom-select-md">
+                    <option value="all_products">All Products</option>
+                    <option value="based_on_collection_name">Based on Collection Name</option>
+                    <option value="based_on_tag">Based on Tag</option>
+                </select>
+            </div>
+
+            <div class="mb-4">
+                <div class="d-flex align-items-center gap-2 mb-2">
+                    <h3 class="subsection-title mb-0">Set minimum stock level for Pick Up availability?</h3>
+
+                    <info-red is-small
+                        title="Prevents customers from selecting pick-up if stock falls below this threshold at the location. Helps ensure product availability when customers arrive." />
+                </div>
+
+                <div class="d-flex align-items-start gap-2 mb-3" style="padding-top: 0.25rem;">
+                    <input type="checkbox" v-model="clickCollectData.enableMinStock" id="enable_min_stock"
+                        class="form-check-input checkbox-custom mt-1">
+
+                    <div class="d-flex flex-column gap-1 flex-fill">
+                        <label for="enable_min_stock" class="checkbox-main-label cursor-pointer mb-0">
+                            Yes, set minimum stock threshold
+                        </label>
                     </div>
                 </div>
 
-                <div class="d-flex flex-column gap-3">
-                    <div class="d-flex align-items-center gap-2">
-                        <h3 class="subsection-title mb-0">Restrict Click & Collect availability to:</h3>
-                        <info-red is-small
-                            title="Filter which products are available for Click & Collect based on Shopify product tags or collections. By default, all products are available for pickup." />
-                    </div>
-                    <select v-model="restrictAvailability" class="form-select custom-select-md">
-                        <option value="all_products">All Products</option>
-                        <option value="based_on_collection_name">Based on Collection Name</option>
-                        <option value="based_on_tag">Based on Tag</option>
-                    </select>
+                <div class="mb-4">
+                    <label class="field-label-md">Minimum stock threshold</label>
+
+                    <input type="number" v-model="clickCollectData.minStockThreshold"
+                        class="form-control custom-input-md" placeholder="Enter minimum stock level" min="0">
+                </div>
+            </div>
+
+            <div class="mb-4">
+                <div class="d-flex align-items-center gap-2 mb-2">
+                    <h3 class="subsection-title mb-0">Customer location search radius (km)</h3>
+
+                    <info-red is-small
+                        title="Defines the maximum distance from the customer's location to eligible Click & Collect stores. Customers will only see pickup locations within this radius." />
                 </div>
 
-                <div class="d-flex flex-column gap-3">
-                    <div class="d-flex align-items-center gap-2">
-                        <h3 class="subsection-title mb-0">Set minimum stock level for Pick Up availability?</h3>
-                        <info-red is-small
-                            title="Prevents customers from selecting pick-up if stock falls below this threshold at the location. Helps ensure product availability when customers arrive." />
-                    </div>
+                <input type="number" v-model="clickCollectData.searchRadius" class="form-control custom-input-md"
+                    placeholder="Enter radius in kilometers" min="1" step="0.1">
+            </div>
 
-                    <div class="d-flex align-items-start gap-3">
-                        <div class="d-flex align-items-start gap-3" style="padding-top: 0.25rem;">
-                            <input type="checkbox" v-model="enableMinStock" id="enable_min_stock"
-                                class="form-check-input checkbox-custom mt-1">
-                            <div class="d-flex flex-column gap-1 flex-fill">
-                                <label for="enable_min_stock" class="checkbox-main-label cursor-pointer mb-0">
-                                    Yes, set minimum stock threshold
-                                </label>
-                            </div>
-                        </div>
-                    </div>
+            <div class="mb-4">
+                <div class="d-flex align-items-center gap-2 mb-2">
+                    <h3 class="subsection-title mb-0">Custom tag for Click & Collect orders</h3>
 
-                    <div class="d-flex flex-column gap-2">
-                        <label class="field-label-md">Minimum stock threshold</label>
-                        <input type="number" v-model="minStockThreshold" class="form-control custom-input-md"
-                            placeholder="Enter minimum stock level" min="0">
-                    </div>
+                    <info-red is-small
+                        title="This tag will be attached to Click & Collect orders in Shopify to differentiate from delivery orders. Useful for filtering and reporting." />
                 </div>
 
-                <div class="d-flex flex-column gap-3">
-                    <div class="d-flex align-items-center gap-2">
-                        <h3 class="subsection-title mb-0">Customer location search radius (km)</h3>
-                        <info-red is-small
-                            title="Defines the maximum distance from the customer's location to eligible Click & Collect stores. Customers will only see pickup locations within this radius." />
-                    </div>
-                    <input type="number" v-model="searchRadius" class="form-control custom-input-md"
-                        placeholder="Enter radius in kilometers" min="1" step="0.1">
-                </div>
-
-                <div class="d-flex flex-column gap-3">
-                    <div class="d-flex align-items-center gap-2">
-                        <h3 class="subsection-title mb-0">Custom tag for Click & Collect orders</h3>
-                        <info-red is-small
-                            title="This tag will be attached to Click & Collect orders in Shopify to differentiate from delivery orders. Useful for filtering and reporting." />
-                    </div>
-                    <input type="text" v-model="customTag" class="form-control custom-input-md"
-                        placeholder="Enter custom tag (e.g., click-collect)">
-                </div>
+                <input type="text" v-model="clickCollectData.customTag" class="form-control custom-input-md"
+                    placeholder="Enter custom tag (e.g., click-collect)">
             </div>
         </div>
     </div>

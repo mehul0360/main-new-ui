@@ -1,14 +1,28 @@
 <script setup>
-import { ref, onMounted } from 'vue';
+import { ref, onMounted, watch } from 'vue';
+import { storeToRefs } from 'pinia';
+import AutoSaveIndicator from '@/components/AutoSaveIndicator.vue';
 import { useStepSixStore } from '@/stores/connection-steps/stepsix';
 import InfoRed from '@/components/Icons/InfoRed.vue';
 
-const stepSixStore = useStepSixStore();
+const props = defineProps({
+    isSaving: { type: Boolean, default: false },
+    lastSavedAt: { type: Date, default: null },
+    saveError: { type: Error, default: null },
+    displayDuration: { type: Number, default: 3000 }
+});
 
-const mappings = ref([
-    { id: 1, shopifyStore: '', product_type: '', brand: '', buffer_quantity: 0 },
-    { id: 2, shopifyStore: '', product_type: '', brand: '', buffer_quantity: 0 },
-]);
+const emit = defineEmits(['data-changed']);
+
+const stepSixStore = useStepSixStore();
+const { payload, isSaved } = storeToRefs(stepSixStore);
+
+const bufferQuantityData = ref({
+    data: [
+        { id: 1, shopifyStore: '', product_type: '', brand: '', buffer_quantity: 0 },
+        { id: 2, shopifyStore: '', product_type: '', brand: '', buffer_quantity: 0 },
+    ]
+});
 
 const shopifyStores = ref([
     { id: 1, name: 'Main Store' },
@@ -35,16 +49,21 @@ const brands = ref([
 ]);
 
 onMounted(() => {
-    if (stepSixStore.isSaved) {
-        const savedData = stepSixStore.getPayload();
-        if (savedData.bufferQuantityMappings && savedData.bufferQuantityMappings.length > 0) {
-            mappings.value = savedData.bufferQuantityMappings;
-        }
-    }
+    fetchStoredData();
 });
 
+const fetchStoredData = () => {
+    if (isSaved.value && payload.value) {
+        if (payload.value.bufferQuantityMappings && payload.value.bufferQuantityMappings.data) {
+            bufferQuantityData.value = JSON.parse(
+                JSON.stringify(payload.value.bufferQuantityMappings)
+            );
+        }
+    }
+};
+
 const addMapping = () => {
-    mappings.value.push({
+    bufferQuantityData.value.data.push({
         id: Date.now(),
         shopifyStore: '',
         product_type: '',
@@ -54,16 +73,24 @@ const addMapping = () => {
 };
 
 const removeMapping = (id) => {
-    if (mappings.value.length > 1) {
-        mappings.value = mappings.value.filter(m => m.id !== id);
+    if (bufferQuantityData.value.data.length > 1) {
+        bufferQuantityData.value.data = bufferQuantityData.value.data.filter(m => m.id !== id);
     }
 };
 
 const getFormData = () => {
     return {
-        bufferQuantityMappings: mappings.value
+        data: JSON.parse(JSON.stringify(bufferQuantityData.value.data))
     };
 };
+
+watch(
+    bufferQuantityData,
+    () => {
+        emit('data-changed', getFormData());
+    },
+    { deep: true }
+);
 
 defineExpose({
     getFormData
@@ -73,14 +100,19 @@ defineExpose({
 <template>
     <div class="card shadow-sm my-4">
         <div class="card-body p-4">
-            <div class="d-flex align-items-center mb-1 gap-2">
-                <h5 class="fw-semibold mt-1"
-                    style="color: #101828; font-size: 20px; font-family: 'Poppins', sans-serif; line-height: 28px;">
-                    Buffer Quantity Configuration
-                </h5>
+            <div class="d-flex justify-content-between mb-1">
+                <div class="d-flex align-items-center gap-2">
+                    <h5 class="fw-semibold mt-1"
+                        style="color: #101828; font-size: 20px; font-family: 'Poppins', sans-serif; line-height: 28px;">
+                        Buffer Quantity Configuration
+                    </h5>
 
-                <info-red
-                    title="Configure buffer quantities based on store, product type, and brand attributes. This helps maintain stock levels and prevents overselling." />
+                    <info-red
+                        title="Configure buffer quantities based on store, product type, and brand attributes. This helps maintain stock levels and prevents overselling." />
+                </div>
+
+                <AutoSaveIndicator :is-saving="isSaving" :last-saved-at="lastSavedAt" :save-error="saveError"
+                    :display-duration="1500" />
             </div>
             <p class="text-muted mb-4"
                 style="font-size: 14px; font-family: 'Roboto', sans-serif; color: #4a5565; line-height: 20px;">
@@ -116,7 +148,8 @@ defineExpose({
                 <div class="col-1"></div>
             </div>
 
-            <div v-for="mapping in mappings" :key="mapping.id" class="row g-4 align-items-center mb-3">
+            <div v-for="(mapping, index) in bufferQuantityData.data" :key="mapping.id"
+                class="row g-4 align-items-center mb-3">
                 <div class="col-3">
                     <div class="position-relative">
                         <select v-model="mapping.shopifyStore" class="form-select custom-select"

@@ -1,6 +1,9 @@
 <script setup>
 import { computed, onMounted, ref } from 'vue';
+import { storeToRefs } from 'pinia';
 import { useStepFiveStore } from '@/stores/connection-steps/stepfive';
+import { useAutoSave } from '@/composables/useAutoSave';
+import AutoSaveIndicator from '@/components/AutoSaveIndicator.vue';
 import AdditionalMapping from '@/components/connections/Steps/Orders/OrderAdditionalMapping.vue';
 import SyncBehaviourSettings from '@/components/connections/Steps/Orders/OrderSyncBehaviourSettings.vue';
 import PaymentMethodsMapping from '@/components/connections/Steps/Orders/PaymentMethodsMapping.vue';
@@ -10,8 +13,11 @@ import InfoRed from '@/components/Icons/InfoRed.vue';
 import SingleArrow from '@/components/Icons/SingleArrow.vue';
 
 const stepFiveStore = useStepFiveStore();
+const { payload, isSaved } = storeToRefs(stepFiveStore);
 
-const orderSyncEnabled = ref(true);
+const orderSyncModule = ref({
+    orderSyncEnabled: true
+});
 
 const additionalMappingRef = ref(null);
 const syncBehaviourRef = ref(null);
@@ -19,24 +25,70 @@ const paymentMethodsRef = ref(null);
 const shippingMethodsRef = ref(null);
 const clickCollectRef = ref(null);
 
+const additionalMappingsData = ref({});
+const syncBehaviorData = ref({});
+const paymentMethodsData = ref({});
+const shippingMethodsData = ref({});
+const clickCollectData = ref({});
+
+const updateAdditionalMappings = (data) => {
+    additionalMappingsData.value = data;
+};
+
+const updateSyncBehavior = (data) => {
+    syncBehaviorData.value = data;
+};
+
+const updatePaymentMethods = (data) => {
+    paymentMethodsData.value = data;
+};
+
+const updateShippingMethods = (data) => {
+    shippingMethodsData.value = data;
+};
+
+const updateClickCollect = (data) => {
+    clickCollectData.value = data;
+};
+
+const formData = computed(() => ({
+    orderSyncModule: orderSyncModule.value,
+    additionalMappings: additionalMappingsData.value,
+    syncBehavior: syncBehaviorData.value,
+    paymentMethods: paymentMethodsData.value,
+    shippingMethods: shippingMethodsData.value,
+    clickCollect: clickCollectData.value
+}));
+
+const { isSaving, lastSavedAt, saveError } = useAutoSave(
+    formData,
+    stepFiveStore.saveInStorage,
+    { debounceDelay: 800 }
+);
+
 onMounted(() => {
     const tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
     tooltipTriggerList.map(function (tooltipTriggerEl) {
         return new bootstrap.Tooltip(tooltipTriggerEl);
     });
 
-    if (stepFiveStore.isSaved) {
-        const savedData = stepFiveStore.getPayload();
-        orderSyncEnabled.value = savedData.orderSyncEnabled;
-    }
+    fetchStoredData();
 });
 
+const fetchStoredData = () => {
+    if (isSaved.value && payload.value) {
+        if (payload.value.orderSyncModule) {
+            orderSyncModule.value = { ...payload.value.orderSyncModule };
+        }
+    }
+};
+
 const syncStatusText = computed(() => {
-    return orderSyncEnabled.value ? 'Order sync is enabled' : 'Order sync is disabled';
+    return orderSyncModule.value.orderSyncEnabled ? 'Order sync is enabled' : 'Order sync is disabled';
 });
 
 const syncDescriptionText = computed(() => {
-    return orderSyncEnabled.value
+    return orderSyncModule.value.orderSyncEnabled
         ? 'Orders will sync automatically between Retail Express and Shopify.'
         : 'No orders will sync while this module is disabled.';
 });
@@ -62,7 +114,7 @@ const getFormData = () => {
     const clickCollectData = clickCollectRef.value?.getFormData() || {};
 
     return {
-        orderSyncEnabled: orderSyncEnabled.value,
+        orderSyncEnabled: orderSyncModule.value.orderSyncEnabled,
         ...additionalMappingData,
         ...syncBehaviourData,
         ...paymentMethodsData,
@@ -107,18 +159,23 @@ defineExpose({
         <div class="card order-sync-card position-relative overflow-hidden my-4">
             <div class="card-body p-4">
                 <div class="d-flex flex-column gap-4">
-                    <div class="d-flex align-items-center gap-1">
-                        <h2 class="section-title mb-0">Order Sync Module</h2>
-                        <info-red
-                            title="Control whether orders sync between Retail Express and Shopify. When disabled, no order data will be synchronized in either direction." />
+                    <div class="d-flex align-items-center justify-content-between mb-3">
+                        <div class="d-flex align-items-center gap-2">
+                            <h2 class="section-title mb-0">Order Sync Module</h2>
+                            <info-red
+                                title="Control whether orders sync between Retail Express and Shopify. When disabled, no order data will be synchronized in either direction." />
+                        </div>
+
+                        <AutoSaveIndicator :is-saving="isSaving" :last-saved-at="lastSavedAt" :save-error="saveError"
+                            :display-duration="1500" />
                     </div>
 
                     <div class="d-flex align-items-center justify-content-between gap-4 w-100">
                         <div class="d-flex flex-column gap-2 flex-fill">
                             <div class="d-flex align-items-center gap-3">
                                 <label class="toggle-switch" for="order-sync-toggle">
-                                    <input type="checkbox" id="order-sync-toggle" v-model="orderSyncEnabled"
-                                        class="toggle-input">
+                                    <input type="checkbox" id="order-sync-toggle"
+                                        v-model="orderSyncModule.orderSyncEnabled" class="toggle-input" />
                                     <span class="toggle-slider"></span>
                                 </label>
                                 <label for="order-sync-toggle" class="toggle-label cursor-pointer mb-0">
@@ -128,7 +185,7 @@ defineExpose({
                             <div class="toggle-description">
                                 {{ syncDescriptionText }}
 
-                                <div v-if="!orderSyncEnabled" class="mt-4 alert-warning-box">
+                                <div v-if="!orderSyncModule.orderSyncEnabled" class="mt-4 alert-warning-box">
                                     <div class="alert-title">
                                         ⚠️ Important Notice
                                     </div>
@@ -180,15 +237,20 @@ defineExpose({
             </div>
         </div>
 
-        <additional-mapping ref="additionalMappingRef" />
+        <additional-mapping ref="additionalMappingRef" :is-saving="isSaving" :last-saved-at="lastSavedAt"
+            :save-error="saveError" :display-duration="1500" @data-changed="updateAdditionalMappings" />
 
-        <sync-behaviour-settings ref="syncBehaviourRef" />
+        <sync-behaviour-settings ref="syncBehaviourRef" :is-saving="isSaving" :last-saved-at="lastSavedAt"
+            :save-error="saveError" :display-duration="1500" @data-changed="updateSyncBehavior" />
 
-        <payment-methods-mapping ref="paymentMethodsRef" />
+        <payment-methods-mapping ref="paymentMethodsRef" :is-saving="isSaving" :last-saved-at="lastSavedAt"
+            :save-error="saveError" :display-duration="1500" @data-changed="updatePaymentMethods" />
 
-        <shipping-methods-mapping ref="shippingMethodsRef" />
+        <shipping-methods-mapping ref="shippingMethodsRef" :is-saving="isSaving" :last-saved-at="lastSavedAt"
+            :save-error="saveError" :display-duration="1500" @data-changed="updateShippingMethods" />
 
-        <click-and-collect ref="clickCollectRef" />
+        <click-and-collect ref="clickCollectRef" :is-saving="isSaving" :last-saved-at="lastSavedAt"
+            :save-error="saveError" :display-duration="1500" @data-changed="updateClickCollect" />
     </div>
 </template>
 

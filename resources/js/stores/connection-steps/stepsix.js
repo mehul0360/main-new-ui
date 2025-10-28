@@ -3,14 +3,18 @@ import { defineStore } from "pinia";
 
 export const useStepSixStore = defineStore('stepSix', () => {
     const payload = ref({
-        storeMappings: [
-            { id: 1, retailStore: '', shopifyStore: '' }
-        ],
+        storeMappings: {
+            data: [
+                { id: 1, retailStore: '', shopifyStore: '' }
+            ]
+        },
 
-        bufferQuantityMappings: [
-            { id: 1, shopifyStore: '', product_type: '', brand: '', buffer_quantity: 0 },
-            { id: 2, shopifyStore: '', product_type: '', brand: '', buffer_quantity: 0 }
-        ],
+        bufferQuantityMappings: {
+            data: [
+                { id: 1, shopifyStore: '', product_type: '', brand: '', buffer_quantity: 0 },
+                { id: 2, shopifyStore: '', product_type: '', brand: '', buffer_quantity: 0 }
+            ]
+        },
 
         savedAt: null
     });
@@ -27,13 +31,17 @@ export const useStepSixStore = defineStore('stepSix', () => {
 
     function clearStorage() {
         payload.value = {
-            storeMappings: [
-                { id: 1, retailStore: '', shopifyStore: '' }
-            ],
-            bufferQuantityMappings: [
-                { id: 1, shopifyStore: '', product_type: '', brand: '', buffer_quantity: 0 },
-                { id: 2, shopifyStore: '', product_type: '', brand: '', buffer_quantity: 0 }
-            ],
+            storeMappings: {
+                data: [
+                    { id: 1, retailStore: '', shopifyStore: '' }
+                ]
+            },
+            bufferQuantityMappings: {
+                data: [
+                    { id: 1, shopifyStore: '', product_type: '', brand: '', buffer_quantity: 0 },
+                    { id: 2, shopifyStore: '', product_type: '', brand: '', buffer_quantity: 0 }
+                ]
+            },
             savedAt: null
         };
         isSaved.value = false;

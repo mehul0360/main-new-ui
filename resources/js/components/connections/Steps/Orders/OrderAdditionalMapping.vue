@@ -1,26 +1,45 @@
 <script setup>
-import { ref, onMounted } from 'vue';
+import { ref, onMounted, watch } from 'vue';
+import { storeToRefs } from 'pinia';
+import AutoSaveIndicator from '@/components/AutoSaveIndicator.vue';
 import { useStepFiveStore } from '@/stores/connection-steps/stepfive';
 import TwoWayArrow from '@/components/Icons/TwoWayArrow.vue';
 
-const stepFiveStore = useStepFiveStore();
-
-const mappings = ref([
-    { id: 1, retailField: '', shopifyField: '' },
-    { id: 2, retailField: '', shopifyField: '' },
-]);
-
-onMounted(() => {
-    if (stepFiveStore.isSaved) {
-        const savedData = stepFiveStore.getPayload();
-        if (savedData.additionalMappings && savedData.additionalMappings.length > 0) {
-            mappings.value = savedData.additionalMappings;
-        }
-    }
+const props = defineProps({
+    isSaving: { type: Boolean, default: false },
+    lastSavedAt: { type: Date, default: null },
+    saveError: { type: Error, default: null },
+    displayDuration: { type: Number, default: 3000 }
 });
 
+const emit = defineEmits(['data-changed']);
+
+const stepFiveStore = useStepFiveStore();
+const { payload, isSaved } = storeToRefs(stepFiveStore);
+
+const additionalMappingsData = ref({
+    data: [
+        { id: 1, retailField: '', shopifyField: '' },
+        { id: 2, retailField: '', shopifyField: '' }
+    ]
+});
+
+onMounted(() => {
+    fetchStoredData();
+});
+
+const fetchStoredData = () => {
+    if (isSaved.value && payload.value) {
+        if (payload.value.additionalMappings && payload.value.additionalMappings.data) {
+            additionalMappingsData.value.data = JSON.parse(
+                JSON.stringify(payload.value.additionalMappings.data)
+            );
+        }
+    }
+};
+
 const addMapping = () => {
-    mappings.value.push({
+    additionalMappingsData.value.data.push({
         id: Date.now(),
         retailField: '',
         shopifyField: ''
@@ -28,16 +47,24 @@ const addMapping = () => {
 };
 
 const removeMapping = (id) => {
-    if (mappings.value.length > 1) {
-        mappings.value = mappings.value.filter(m => m.id !== id);
+    if (additionalMappingsData.value.data.length > 1) {
+        additionalMappingsData.value.data = additionalMappingsData.value.data.filter(m => m.id !== id);
     }
 };
 
 const getFormData = () => {
     return {
-        additionalMappings: mappings.value
+        data: JSON.parse(JSON.stringify(additionalMappingsData.value.data))
     };
 };
+
+watch(
+    additionalMappingsData,
+    () => {
+        emit('data-changed', getFormData());
+    },
+    { deep: true }
+);
 
 defineExpose({
     getFormData
@@ -47,15 +74,20 @@ defineExpose({
 <template>
     <div class="card shadow-sm my-4">
         <div class="card-body p-4">
-            <div class="gap-2 mb-4">
-                <h5 class="fw-semibold mb-2"
-                    style="color: #101828; font-size: 20px; font-family: 'Poppins', sans-serif; line-height: 28px;">
-                    Additional Order Mappings
-                </h5>
-                <p class="text-muted mb-0"
-                    style="font-size: 14px; font-family: 'Roboto', sans-serif; color: #4a5565; line-height: 20px;">
-                    Add optional mappings to match additional order attributes.
-                </p>
+            <div class="d-flex justify-content-between mb-4">
+                <div>
+                    <h5 class="fw-semibold mb-2"
+                        style="color: #101828; font-size: 20px; font-family: 'Poppins', sans-serif; line-height: 28px;">
+                        Additional Order Mappings
+                    </h5>
+                    <p class="text-muted mb-0"
+                        style="font-size: 14px; font-family: 'Roboto', sans-serif; color: #4a5565; line-height: 20px;">
+                        Add optional mappings to match additional order attributes.
+                    </p>
+                </div>
+
+                <AutoSaveIndicator :is-saving="isSaving" :last-saved-at="lastSavedAt" :save-error="saveError"
+                    :display-duration="1500" />
             </div>
 
             <div class="row g-4 py-2 border-bottom mb-3" style="border-color: #e5e7eb;">
@@ -75,10 +107,12 @@ defineExpose({
                 <div class="col-1"></div>
             </div>
 
-            <div v-for="mapping in mappings" :key="mapping.id" class="row g-4 align-items-center mb-3">
+            <div v-for="(mapping, index) in additionalMappingsData.data" :key="mapping.id"
+                class="row g-4 align-items-center mb-3">
                 <div class="col-4">
                     <div class="position-relative">
-                        <select v-model="mapping.retailField" class="form-select custom-select"
+                        <select v-model="additionalMappingsData.data[index].retailField"
+                            class="form-select custom-select"
                             style="font-size: 14px; height: 36px; font-family: 'Roboto', sans-serif;">
                             <option value="">Select field</option>
                             <option value="billing_address">Billing Address</option>
@@ -107,7 +141,8 @@ defineExpose({
 
                 <div class="col-4">
                     <div class="position-relative">
-                        <select v-model="mapping.shopifyField" class="form-select custom-select"
+                        <select v-model="additionalMappingsData.data[index].shopifyField"
+                            class="form-select custom-select"
                             style="font-size: 14px; height: 36px; font-family: 'Roboto', sans-serif;">
                             <option value="">Select field</option>
                             <option value="billing_address">Billing Address</option>
@@ -130,7 +165,7 @@ defineExpose({
                     </div>
                 </div>
 
-                <div class="col-1 text-center">
+                <div class="col-1">
                     <button @click="removeMapping(mapping.id)" type="button" class="btn btn-sm btn-delete p-0"
                         style="width: 32px; height: 32px; border: none; border-radius: 6px; background-color: transparent;">
                         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"

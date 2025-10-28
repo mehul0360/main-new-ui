@@ -1,7 +1,9 @@
 <script setup>
-import { onMounted, ref, defineExpose } from 'vue';
+import { onMounted, ref, defineExpose, computed } from 'vue';
 import { storeToRefs } from 'pinia';
 import { useStepFourStore } from '@/stores/connection-steps/stepfour';
+import { useAutoSave } from '@/composables/useAutoSave';
+import AutoSaveIndicator from '@/components/AutoSaveIndicator.vue';
 import AdditionalMappings from '@/components/connections/Steps/Customers/CustomerAdditionalMapping.vue';
 import SyncBehaviourSettings from '@/components/connections/Steps/Customers/CustomerSyncBehaviourSettings.vue';
 import TierGroups from '@/components/connections/Steps/Customers/TierGroups.vue';
@@ -11,17 +13,50 @@ import InfoBlue from '@/components/Icons/InfoBlue.vue';
 const stepFourStore = useStepFourStore();
 const { payload, isSaved } = storeToRefs(stepFourStore);
 
-const primaryId = ref('email');
+const primaryIdField = ref({
+    data: 'email'
+});
 
 const tierGroupsRef = ref(null);
 const syncBehaviourRef = ref(null);
 const additionalMappingsRef = ref(null);
 
+const additionalMappingsData = ref({});
+const syncBehaviorData = ref({});
+const tierGroupsData = ref({});
+
+const updateAdditionalMappings = (data) => {
+    additionalMappingsData.value = data;
+};
+
+const updateSyncBehavior = (data) => {
+    syncBehaviorData.value = data;
+};
+
+const updateTierGroups = (data) => {
+    tierGroupsData.value = data;
+};
+
+const formData = computed(() => ({
+    primaryIdField: primaryIdField.value,
+    additionalMappings: additionalMappingsData.value,
+    syncBehavior: syncBehaviorData.value,
+    tierGroups: tierGroupsData.value
+}));
+
+const { isSaving, lastSavedAt, saveError } = useAutoSave(
+    formData,
+    stepFourStore.saveInStorage,
+    {
+        debounceDelay: 800
+    }
+);
+
 const fetchStoredData = () => {
     if (isSaved.value && payload.value) {
-        primaryId.value = payload.value.primaryId || 'email';
-    } else {
-        console.log('No Step 4 data found - using defaults');
+        if (payload.value.primaryIdField) {
+            primaryIdField.value = { ...payload.value.primaryIdField };
+        }
     }
 };
 
@@ -35,15 +70,15 @@ onMounted(() => {
 });
 
 const getFormData = () => {
-    const tierGroupsData = tierGroupsRef.value ? tierGroupsRef.value.getFormData() : {};
-    const syncBehaviourData = syncBehaviourRef.value ? syncBehaviourRef.value.getFormData() : {};
-    const additionalMappingsData = additionalMappingsRef.value ? additionalMappingsRef.value.getFormData() : {};
+    const tierGroupsFormData = tierGroupsRef.value ? tierGroupsRef.value.getFormData() : {};
+    const syncBehaviourFormData = syncBehaviourRef.value ? syncBehaviourRef.value.getFormData() : {};
+    const additionalMappingsFormData = additionalMappingsRef.value ? additionalMappingsRef.value.getFormData() : {};
 
     return {
-        primaryId: primaryId.value,
-        ...tierGroupsData,
-        ...syncBehaviourData,
-        ...additionalMappingsData
+        primaryIdField: primaryIdField.value,
+        additionalMappings: additionalMappingsFormData,
+        syncBehavior: syncBehaviourFormData,
+        tierGroups: tierGroupsFormData
     };
 };
 
@@ -86,12 +121,17 @@ defineExpose({
 
         <div class="card primary-field-card position-relative overflow-hidden mt-4">
             <div class="card-body p-4">
-                <div class="d-flex align-items-center gap-2">
-                    <h2 class="section-title mb-0">Primary ID Field</h2>
-                    <info-red title="Used to match customers between systems. Must match Shopify configuration." />
+                <div class="d-flex align-items-center justify-content-between mb-3">
+                    <div class="d-flex align-items-center gap-2">
+                        <h2 class="section-title mb-0">Primary ID Field</h2>
+                        <info-red title="Used to match customers between systems. Must match Shopify configuration." />
+                    </div>
+
+                    <AutoSaveIndicator :is-saving="isSaving" :last-saved-at="lastSavedAt" :save-error="saveError"
+                        :display-duration="1500" />
                 </div>
 
-                <select v-model="primaryId" class="form-select custom-select">
+                <select v-model="primaryIdField.data" class="form-select custom-select">
                     <option value="email">Email Address</option>
                     <option value="phone_number">Phone Number</option>
                 </select>
@@ -217,11 +257,14 @@ defineExpose({
             </div>
         </div>
 
-        <additional-mappings ref="additionalMappingsRef" />
+        <additional-mappings ref="additionalMappingsRef" :is-saving="isSaving" :last-saved-at="lastSavedAt"
+            :save-error="saveError" :display-duration="1500" @data-changed="updateAdditionalMappings" />
 
-        <sync-behaviour-settings ref="syncBehaviourRef" />
+        <sync-behaviour-settings ref="syncBehaviourRef" :is-saving="isSaving" :last-saved-at="lastSavedAt"
+            :save-error="saveError" :display-duration="1500" @data-changed="updateSyncBehavior" />
 
-        <tier-groups ref="tierGroupsRef" />
+        <tier-groups ref="tierGroupsRef" :is-saving="isSaving" :last-saved-at="lastSavedAt" :save-error="saveError"
+            :display-duration="1500" @data-changed="updateTierGroups" />
     </div>
 </template>
 
@@ -281,7 +324,6 @@ defineExpose({
 }
 
 .custom-select {
-    margin-top: 1rem;
     max-width: 448px;
     height: 36px;
     font-size: 14px;
@@ -298,10 +340,6 @@ defineExpose({
     border-radius: 14px;
     border: 1px solid #e5e7eb;
     box-shadow: 0px 1px 3px 0px rgba(0, 0, 0, 0.1), 0px 1px 2px -1px rgba(0, 0, 0, 0.1);
-}
-
-.card-body {
-    padding: 33px !important;
 }
 
 .card-title {

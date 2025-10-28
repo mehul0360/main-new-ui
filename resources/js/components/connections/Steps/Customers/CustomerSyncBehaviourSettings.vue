@@ -1,23 +1,44 @@
 <script setup>
-import { ref, onMounted, defineExpose } from 'vue';
+import { ref, onMounted, defineExpose, watch } from 'vue';
 import { storeToRefs } from 'pinia';
 import { useStepFourStore } from '@/stores/connection-steps/stepfour';
+import AutoSaveIndicator from '@/components/AutoSaveIndicator.vue';
 import InfoRed from '@/components/Icons/InfoRed.vue';
+
+const props = defineProps({
+    isSaving: {
+        type: Boolean,
+        default: false
+    },
+    lastSavedAt: {
+        type: Date,
+        default: null
+    },
+    saveError: {
+        type: Error,
+        default: null
+    },
+    displayDuration: {
+        type: Number,
+        default: 3000
+    }
+});
+
+const emit = defineEmits(['data-changed']);
 
 const stepFourStore = useStepFourStore();
 const { payload, isSaved } = storeToRefs(stepFourStore);
 
-const importExistingCustomers = ref(false);
-const defaultCustomerType = ref('');
-const defaultPaymentTerms = ref('');
-const sendWelcomeEmail = ref(false);
+const syncBehaviorData = ref({
+    importExistingCustomers: false,
+    defaultCustomerType: '',
+    defaultPaymentTerms: '',
+    sendWelcomeEmail: false
+});
 
 const fetchStoredData = () => {
-    if (isSaved.value && payload.value) {
-        importExistingCustomers.value = payload.value.importExistingCustomers || false;
-        defaultCustomerType.value = payload.value.defaultCustomerType || '';
-        defaultPaymentTerms.value = payload.value.defaultPaymentTerms || '';
-        sendWelcomeEmail.value = payload.value.sendWelcomeEmail || false;
+    if (isSaved.value && payload.value && payload.value.syncBehavior) {
+        syncBehaviorData.value = { ...payload.value.syncBehavior };
     }
 };
 
@@ -27,12 +48,20 @@ onMounted(() => {
 
 const getFormData = () => {
     return {
-        importExistingCustomers: importExistingCustomers.value,
-        defaultCustomerType: defaultCustomerType.value,
-        defaultPaymentTerms: defaultPaymentTerms.value,
-        sendWelcomeEmail: sendWelcomeEmail.value
+        importExistingCustomers: syncBehaviorData.value.importExistingCustomers,
+        defaultCustomerType: syncBehaviorData.value.defaultCustomerType,
+        defaultPaymentTerms: syncBehaviorData.value.defaultPaymentTerms,
+        sendWelcomeEmail: syncBehaviorData.value.sendWelcomeEmail
     };
 };
+
+watch(
+    syncBehaviorData,
+    () => {
+        emit('data-changed', getFormData());
+    },
+    { deep: true }
+);
 
 defineExpose({
     getFormData
@@ -42,10 +71,15 @@ defineExpose({
 <template>
     <div class="card sync-behavior-card position-relative overflow-hidden my-4">
         <div class="card-body p-4">
-            <div class="d-flex align-items-center gap-2 mb-4">
-                <h2 class="section-title mb-0">Sync Behavior Settings</h2>
-                <info-red
-                    title="These settings control how customer data behaves during sync operations. Configure defaults for new customers, payment terms, and notification preferences based on your business requirements." />
+            <div class="d-flex align-items-center justify-content-between mb-4">
+                <div class="d-flex align-items-center gap-2">
+                    <h2 class="section-title mb-0">Sync Behavior Settings</h2>
+                    <info-red
+                        title="These settings control how customer data behaves during sync operations. Configure defaults for new customers, payment terms, and notification preferences based on your business requirements." />
+                </div>
+
+                <AutoSaveIndicator :is-saving="isSaving" :last-saved-at="lastSavedAt" :save-error="saveError"
+                    :display-duration="1500" />
             </div>
 
             <div class="d-flex flex-column" style="gap: 2rem;">
@@ -54,8 +88,8 @@ defineExpose({
 
                     <div class="d-flex align-items-start gap-3">
                         <div class="d-flex align-items-start gap-3" style="padding-top: 0.25rem;">
-                            <input type="checkbox" v-model="importExistingCustomers" id="import_existing_customers"
-                                class="form-check-input checkbox-custom mt-1">
+                            <input type="checkbox" v-model="syncBehaviorData.importExistingCustomers"
+                                id="import_existing_customers" class="form-check-input checkbox-custom mt-1">
                             <div class="d-flex flex-column gap-2 flex-fill">
                                 <label for="import_existing_customers" class="checkbox-main-label cursor-pointer mb-0">
                                     Import existing Shopify customers to Retail Express
@@ -80,7 +114,7 @@ defineExpose({
                     <div class="d-flex flex-column" style="gap: 1.5rem;">
                         <div class="d-flex flex-column gap-2">
                             <label class="field-label-lg">Default customer type</label>
-                            <select v-model="defaultCustomerType" class="form-select custom-select-md">
+                            <select v-model="syncBehaviorData.defaultCustomerType" class="form-select custom-select-md">
                                 <option value="">Select default customer type</option>
                                 <option value="retail">Retail</option>
                                 <option value="wholesale">Wholesale</option>
@@ -90,7 +124,7 @@ defineExpose({
 
                         <div class="d-flex flex-column gap-2">
                             <label class="field-label-lg">Default payment terms</label>
-                            <select v-model="defaultPaymentTerms" class="form-select custom-select-md">
+                            <select v-model="syncBehaviorData.defaultPaymentTerms" class="form-select custom-select-md">
                                 <option value="">Select payment terms</option>
                                 <option value="no_credit">No Credit</option>
                                 <option value="30_days">30 Days</option>
@@ -100,7 +134,7 @@ defineExpose({
                         </div>
 
                         <div class="d-flex align-items-center gap-3">
-                            <input type="checkbox" v-model="sendWelcomeEmail" id="welcome_email"
+                            <input type="checkbox" v-model="syncBehaviorData.sendWelcomeEmail" id="welcome_email"
                                 class="form-check-input checkbox-custom">
                             <label for="welcome_email" class="checkbox-main-label cursor-pointer mb-0">
                                 Send welcome email when customer is created in Shopify

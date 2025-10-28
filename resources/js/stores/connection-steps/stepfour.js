@@ -3,26 +3,34 @@ import { defineStore } from "pinia";
 
 export const useStepFourStore = defineStore('stepFour', () => {
     const payload = ref({
-        primaryId: 'email',
+        primaryIdField: {
+            data: 'email'
+        },
 
-        tierGroupSystem: 'standard_shopify',
-        tierGroupMappings: [
-            { id: 1, priceGroup: '', shopifyTier: '' },
-            { id: 2, priceGroup: '', shopifyTier: '' },
-            { id: 3, priceGroup: '', shopifyTier: '' }
-        ],
+        additionalMappings: {
+            data: [
+                { id: 1, retailField: '', shopifyField: '' },
+                { id: 2, retailField: '', shopifyField: '' },
+                { id: 3, retailField: '', shopifyField: '' },
+                { id: 4, retailField: '', shopifyField: '' }
+            ]
+        },
 
-        importExistingCustomers: false,
-        defaultCustomerType: '',
-        defaultPaymentTerms: '',
-        sendWelcomeEmail: false,
+        syncBehavior: {
+            importExistingCustomers: false,
+            defaultCustomerType: '',
+            defaultPaymentTerms: '',
+            sendWelcomeEmail: false
+        },
 
-        additionalMappings: [
-            { id: 1, retailField: '', shopifyField: '' },
-            { id: 2, retailField: '', shopifyField: '' },
-            { id: 3, retailField: '', shopifyField: '' },
-            { id: 4, retailField: '', shopifyField: '' }
-        ],
+        tierGroups: {
+            tierGroupSystem: 'standard_shopify',
+            data: [
+                { id: 1, priceGroup: '', shopifyTier: '' },
+                { id: 2, priceGroup: '', shopifyTier: '' },
+                { id: 3, priceGroup: '', shopifyTier: '' }
+            ]
+        },
 
         savedAt: null
     });
@@ -39,22 +47,31 @@ export const useStepFourStore = defineStore('stepFour', () => {
 
     function clearStorage() {
         payload.value = {
-            tierGroupSystem: 'standard_shopify',
-            tierGroupMappings: [
-                { id: 1, priceGroup: '', shopifyTier: '' },
-                { id: 2, priceGroup: '', shopifyTier: '' },
-                { id: 3, priceGroup: '', shopifyTier: '' }
-            ],
-            importExistingCustomers: false,
-            defaultCustomerType: '',
-            defaultPaymentTerms: '',
-            sendWelcomeEmail: false,
-            additionalMappings: [
-                { id: 1, retailField: '', shopifyField: '' },
-                { id: 2, retailField: '', shopifyField: '' },
-                { id: 3, retailField: '', shopifyField: '' },
-                { id: 4, retailField: '', shopifyField: '' }
-            ],
+            primaryIdField: {
+                primaryId: 'email'
+            },
+            additionalMappings: {
+                data: [
+                    { id: 1, retailField: '', shopifyField: '' },
+                    { id: 2, retailField: '', shopifyField: '' },
+                    { id: 3, retailField: '', shopifyField: '' },
+                    { id: 4, retailField: '', shopifyField: '' }
+                ]
+            },
+            syncBehavior: {
+                importExistingCustomers: false,
+                defaultCustomerType: '',
+                defaultPaymentTerms: '',
+                sendWelcomeEmail: false
+            },
+            tierGroups: {
+                tierGroupSystem: 'standard_shopify',
+                data: [
+                    { id: 1, priceGroup: '', shopifyTier: '' },
+                    { id: 2, priceGroup: '', shopifyTier: '' },
+                    { id: 3, priceGroup: '', shopifyTier: '' }
+                ]
+            },
             savedAt: null
         };
         isSaved.value = false;

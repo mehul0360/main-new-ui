@@ -1,26 +1,46 @@
 <script setup>
-import { ref, onMounted } from 'vue';
+import { ref, onMounted, watch } from 'vue';
+import { storeToRefs } from 'pinia';
+import AutoSaveIndicator from '@/components/AutoSaveIndicator.vue';
 import { useStepSixStore } from '@/stores/connection-steps/stepsix';
 import InfoRed from '@/components/Icons/InfoRed.vue';
 import SingleArrow from '@/components/Icons/SingleArrow.vue';
 
-const stepSixStore = useStepSixStore();
-
-const mappings = ref([
-    { id: 1, retailStore: '', shopifyStore: '' },
-]);
-
-onMounted(() => {
-    if (stepSixStore.isSaved) {
-        const savedData = stepSixStore.getPayload();
-        if (savedData.storeMappings && savedData.storeMappings.length > 0) {
-            mappings.value = savedData.storeMappings;
-        }
-    }
+const props = defineProps({
+    isSaving: { type: Boolean, default: false },
+    lastSavedAt: { type: Date, default: null },
+    saveError: { type: Error, default: null },
+    displayDuration: { type: Number, default: 3000 }
 });
 
+const emit = defineEmits(['data-changed']);
+
+const stepSixStore = useStepSixStore();
+const { payload, isSaved } = storeToRefs(stepSixStore);
+
+const mandatoryMappingData = ref({
+    data: [
+        { id: 1, retailStore: '', shopifyStore: '' },
+        { id: 2, retailStore: '', shopifyStore: '' }
+    ]
+});
+
+onMounted(() => {
+    fetchStoredData();
+});
+
+const fetchStoredData = () => {
+    if (isSaved.value && payload.value) {
+        if (payload.value.storeMappings && payload.value.storeMappings.data) {
+            mandatoryMappingData.value = JSON.parse(
+                JSON.stringify(payload.value.storeMappings)
+            );
+        }
+    }
+};
+
 const addMapping = () => {
-    mappings.value.push({
+    mandatoryMappingData.value.data.push({
         id: Date.now(),
         retailStore: '',
         shopifyStore: ''
@@ -28,16 +48,24 @@ const addMapping = () => {
 };
 
 const removeMapping = (id) => {
-    if (mappings.value.length > 1) {
-        mappings.value = mappings.value.filter(m => m.id !== id);
+    if (mandatoryMappingData.value.data.length > 1) {
+        mandatoryMappingData.value.data = mandatoryMappingData.value.data.filter(m => m.id !== id);
     }
 };
 
 const getFormData = () => {
     return {
-        storeMappings: mappings.value
+        data: JSON.parse(JSON.stringify(mandatoryMappingData.value.data))
     };
 };
+
+watch(
+    mandatoryMappingData,
+    () => {
+        emit('data-changed', getFormData());
+    },
+    { deep: true }
+);
 
 defineExpose({
     getFormData
@@ -47,14 +75,19 @@ defineExpose({
 <template>
     <div class="card shadow-sm my-4">
         <div class="card-body p-4">
-            <div class="d-flex align-items-center mb-1 gap-2">
-                <h5 class="fw-semibold mt-1"
-                    style="color: #101828; font-size: 20px; font-family: 'Poppins', sans-serif; line-height: 28px;">
-                    Mandatory Store Mappings
-                </h5>
+            <div class="d-flex justify-content-between mb-1">
+                <div class="d-flex align-items-center gap-2">
+                    <h5 class="fw-semibold mt-1"
+                        style="color: #101828; font-size: 20px; font-family: 'Poppins', sans-serif; line-height: 28px;">
+                        Mandatory Store Mappings
+                    </h5>
 
-                <info-red
-                    title="At least one location mapping is required to begin inventory synchronization. Multiple Retail Express stores can be mapped to a single Shopify location." />
+                    <info-red
+                        title="At least one location mapping is required to begin inventory synchronization. Multiple Retail Express stores can be mapped to a single Shopify location." />
+                </div>
+
+                <AutoSaveIndicator :is-saving="isSaving" :last-saved-at="lastSavedAt" :save-error="saveError"
+                    :display-duration="1500" />
             </div>
             <p class="text-muted mb-4"
                 style="font-size: 14px; font-family: 'Roboto', sans-serif; color: #4a5565; line-height: 20px;">
@@ -79,7 +112,7 @@ defineExpose({
                 <div class="col-1"></div>
             </div>
 
-            <div v-for="mapping in mappings" :key="mapping.id" class="row g-4 align-items-center mb-3">
+            <div v-for="mapping in mandatoryMappingData.data" :key="mapping.id" class="row g-4 align-items-center mb-3">
                 <div class="col-4">
                     <div class="position-relative">
                         <select v-model="mapping.retailStore" class="form-select custom-select"

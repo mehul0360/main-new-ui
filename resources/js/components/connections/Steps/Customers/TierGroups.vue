@@ -1,30 +1,53 @@
 <script setup>
-import { ref, onMounted, defineExpose } from 'vue';
+import { ref, onMounted, defineExpose, watch } from 'vue';
 import { storeToRefs } from 'pinia';
 import { useStepFourStore } from '@/stores/connection-steps/stepfour';
+import AutoSaveIndicator from '@/components/AutoSaveIndicator.vue';
 import InfoRed from '@/components/Icons/InfoRed.vue';
 import TwoWayArrow from '@/components/Icons/TwoWayArrow.vue';
+
+const props = defineProps({
+    isSaving: {
+        type: Boolean,
+        default: false
+    },
+    lastSavedAt: {
+        type: Date,
+        default: null
+    },
+    saveError: {
+        type: Error,
+        default: null
+    },
+    displayDuration: {
+        type: Number,
+        default: 3000
+    }
+});
+
+const emit = defineEmits(['data-changed']);
 
 const stepFourStore = useStepFourStore();
 const { payload, isSaved } = storeToRefs(stepFourStore);
 
-const tierGroupSystem = ref('standard_shopify');
-const mappings = ref([
-    { id: 1, priceGroup: '', shopifyTier: '' },
-    { id: 2, priceGroup: '', shopifyTier: '' },
-    { id: 3, priceGroup: '', shopifyTier: '' }
-]);
+const tierGroupsData = ref({
+    tierGroupSystem: 'standard_shopify',
+    data: [
+        { id: 1, priceGroup: '', shopifyTier: '' },
+        { id: 2, priceGroup: '', shopifyTier: '' },
+        { id: 3, priceGroup: '', shopifyTier: '' }
+    ]
+});
 
 let nextId = 4;
 
 const fetchStoredData = () => {
-    if (isSaved.value && payload.value) {
-        tierGroupSystem.value = payload.value.tierGroupSystem || 'standard_shopify';
+    if (isSaved.value && payload.value && payload.value.tierGroups) {
+        tierGroupsData.value.tierGroupSystem = payload.value.tierGroups.tierGroupSystem || 'standard_shopify';
 
-        if (payload.value.tierGroupMappings && payload.value.tierGroupMappings.length > 0) {
-            mappings.value = JSON.parse(JSON.stringify(payload.value.tierGroupMappings));
-            // Update nextId to avoid conflicts
-            const maxId = Math.max(...mappings.value.map(m => m.id));
+        if (payload.value.tierGroups.data && payload.value.tierGroups.data.length > 0) {
+            tierGroupsData.value.data = JSON.parse(JSON.stringify(payload.value.tierGroups.data));
+            const maxId = Math.max(...tierGroupsData.value.data.map(m => m.id));
             nextId = maxId + 1;
         }
     }
@@ -35,7 +58,7 @@ onMounted(() => {
 });
 
 const addMapping = () => {
-    mappings.value.push({
+    tierGroupsData.value.data.push({
         id: nextId++,
         priceGroup: '',
         shopifyTier: ''
@@ -43,15 +66,25 @@ const addMapping = () => {
 };
 
 const removeMapping = (id) => {
-    mappings.value = mappings.value.filter(m => m.id !== id);
+    if (tierGroupsData.value.data.length > 1) {
+        tierGroupsData.value.data = tierGroupsData.value.data.filter(m => m.id !== id);
+    }
 };
 
 const getFormData = () => {
     return {
-        tierGroupSystem: tierGroupSystem.value,
-        tierGroupMappings: JSON.parse(JSON.stringify(mappings.value))
+        tierGroupSystem: tierGroupsData.value.tierGroupSystem,
+        data: JSON.parse(JSON.stringify(tierGroupsData.value.data))
     };
 };
+
+watch(
+    tierGroupsData,
+    () => {
+        emit('data-changed', getFormData());
+    },
+    { deep: true }
+);
 
 defineExpose({
     getFormData
@@ -61,15 +94,20 @@ defineExpose({
 <template>
     <div class="card tier-groups-card position-relative overflow-hidden">
         <div class="card-body p-4">
-            <div class="d-flex flex-column gap-2 mb-4">
-                <div class="d-flex align-items-center gap-2">
-                    <h2 class="card-title mb-0">Tier Groups</h2>
-                    <info-red
-                        title="Choose between Standard Shopify's native customer tier group functionality or the BSS Commerce custom app for advanced tier management. The BSS Commerce option requires the app to be installed in your Shopify store." />
+            <div class="d-flex justify-content-between mb-4">
+                <div class="d-flex flex-column gap-2">
+                    <div class="d-flex align-items-center gap-2">
+                        <h2 class="card-title mb-0">Tier Groups</h2>
+                        <info-red
+                            title="Choose between Standard Shopify's native customer tier group functionality or the BSS Commerce custom app for advanced tier management. The BSS Commerce option requires the app to be installed in your Shopify store." />
+                    </div>
+                    <p class="card-description mb-0">
+                        Map price groups from Retail Express to customer tier groups in Shopify.
+                    </p>
                 </div>
-                <p class="card-description mb-0">
-                    Map price groups from Retail Express to customer tier groups in Shopify.
-                </p>
+
+                <AutoSaveIndicator :is-saving="isSaving" :last-saved-at="lastSavedAt" :save-error="saveError"
+                    :display-duration="1500" />
             </div>
 
             <div class="d-flex flex-column gap-3">
@@ -79,10 +117,10 @@ defineExpose({
                         <info-red is-small
                             title="Standard Shopify:<br />Uses Shopify's native customer tier group feature for managing customer pricing levels and segmentation.<br /><br />BSS Commerce:<br />A third-party app that provides advanced tier management features. Requires installation from the Shopify App Store." />
                     </div>
-                    <select v-model="tierGroupSystem" class="form-select custom-select-md">
-                        <option value="standard_shopify" selected>Standard Shopify</option>
-                        <option value="BSS Commerce">BSS Commerce</option>
-                        <option value="Custom">Custom</option>
+                    <select v-model="tierGroupsData.tierGroupSystem" class="form-select custom-select-md">
+                        <option value="standard_shopify">Standard Shopify</option>
+                        <option value="bss_commerce">BSS Commerce</option>
+                        <option value="custom">Custom</option>
                     </select>
                 </div>
 
@@ -101,7 +139,8 @@ defineExpose({
                     </div>
 
                     <div class="d-flex flex-column gap-3">
-                        <div v-for="mapping in mappings" :key="mapping.id" class="row g-3 align-items-center">
+                        <div v-for="mapping in tierGroupsData.data" :key="mapping.id"
+                            class="row g-3 align-items-center">
                             <div class="col-4">
                                 <select v-model="mapping.priceGroup" class="form-select custom-select-sm">
                                     <option value="">Select price group</option>
